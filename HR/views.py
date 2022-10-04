@@ -407,6 +407,10 @@ class TrainingDetail(UserObjectMixin, View):
             responseNeeds = self.get_object(Lines_Res)
             openLines = [x for x in responseNeeds['value']]
 
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+
 
         except requests.exceptions.ConnectionError as e:
             print(e)
@@ -422,7 +426,7 @@ class TrainingDetail(UserObjectMixin, View):
             return redirect('training_request')
 
         ctx = {"today": self.todays_date, "res": res,
-            "Approvers": Approvers,"year": year, "full": userID,
+            "Approvers": Approvers,"year": year, "full": userID,"file":allFiles,
             "line": openLines,"local":Local,"foreign":Foreign,"Comments":Comments}
         return render(request, 'trainingDetail.html', ctx)
     def post(self,request,pk):
@@ -480,7 +484,7 @@ def UploadTrainingAttachment(request, pk):
         try:
             attach = request.FILES.getlist('attachment')
         except Exception as e:
-            return redirect('IMPDetails', pk=pk)
+            return redirect('TrainingDetail', pk=pk)
         for files in attach:
             fileName = request.FILES['attachment'].name
             attachment = base64.b64encode(files.read())
@@ -859,3 +863,4 @@ def DisciplinaryResponse(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('DisciplineDetail', pk=pk)
+
