@@ -9,6 +9,7 @@ urlpatterns = [
          views.FnDeleteLeavePlannerLine, name='FnDeleteLeavePlannerLine'),
 
     path('leave', views.Leave_Request.as_view(), name="leave"),
+    path('myLeave', views.myLeave.as_view(), name="myLeave"),
     path('leave/detail/<str:pk>', views.LeaveDetail.as_view(), name='LeaveDetail'),
     path('LeaveApprove/<str:pk>', views.LeaveApproval, name='LeaveApprove'),
     path('LeaveCancel/<str:pk>', views.LeaveCancelApproval, name='LeaveCancel'),

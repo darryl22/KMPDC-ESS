@@ -34,7 +34,7 @@ class ImprestRequisition(UserObjectMixin,View):
             userID =  request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/Imprests?$filter%20=User_Id%20eq%20%27{userID}%27")
+            Access_Point = config.O_DATA.format(f"/Imprests?$filter=User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             openImprest = [x for x in response['value'] if x['Status'] == 'Open']
             Pending = [x for x in response['value'] if x['Status'] == 'Pending Approval']
@@ -104,7 +104,6 @@ class ImprestDetails(UserObjectMixin, View):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
-
 
             Access_Point = config.O_DATA.format(f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20User_Id%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)

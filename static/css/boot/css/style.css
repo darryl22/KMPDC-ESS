@@ -530,14 +530,22 @@ fieldset:disabled a.btn {
 }
 .btn-successs{
   color: #fff;
-  font-size: 15px !important;
+  text-align: center;
   background-color: #46c35f !important;
   border-color: #46c35f !important;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  transition: 0.5s;
 }
 .btn-successs:hover{
   color: #fff;
-  background-color: #144a85 !important;
-  border-color: #144a85 !important;
+  background-color: #e51e25 !important;
+  border-color: #e51e25 !important;
+}
+.btn-successs:active{
+  transform: scale(0.95);
 }
 
 .btn-primary {

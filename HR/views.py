@@ -125,6 +125,15 @@ def FnDeleteLeavePlannerLine(request, pk):
             print(e)
     return redirect('PlanDetail', pk=pk)
 
+class myLeave(UserObjectMixin,View):
+    def get(self, request):
+        fullname = request.session['User_ID']
+        year = request.session['years']
+        ctx = {
+            "today": self.todays_date, 
+            "year": year, "full": fullname,
+            }
+        return render(request,"myLeave.html",ctx)
 
 class Leave_Request(UserObjectMixin,View):
     def get(self,request):
