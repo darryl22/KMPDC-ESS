@@ -68,6 +68,7 @@ class advance(UserObjectMixin,View):
                 productType = request.POST.get('productType')
                 amountRequested = float(request.POST.get('amountRequested'))
                 myUserId = request.session['User_ID']
+                installments = int(request.POST.get('installments'))
                 myAction = request.POST.get('myAction')
             except ValueError as e:
                 print(e)
@@ -77,9 +78,13 @@ class advance(UserObjectMixin,View):
                 print(e)
                 messages.info(request, "Session Expired. Please Login")
                 return redirect('auth')
+            if installments <=0 or installments > 12:
+                messages.info(request, "Installments cannot be less than 1 or more than 12")
+                return redirect('advance')
+
             try:
                 response = config.CLIENT.service.FnSalaryAdvanceApplication(
-                    loanNo, employeeNo,productType,amountRequested,myUserId, myAction)
+                    loanNo, employeeNo,productType,amountRequested,myUserId,installments, myAction)
                 print(response)
                 if response == True:
                     messages.success(request, "Request Successful")

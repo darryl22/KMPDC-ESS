@@ -288,10 +288,10 @@ def CreateImprestLines(request, pk):
             requisitionType = request.POST.get('requisitionType')
             DSAType= request.POST.get('DSAType')
             travelDate = datetime.strptime(
-                request.POST.get('travel'), '%Y-%m-%d').date()
+                request.POST.get('travel'), '%d-%m-%Y').date()
             amount = float(request.POST.get("amount"))
             returnDate = datetime.strptime(
-                request.POST.get('returnDate'), '%Y-%m-%d').date()
+                request.POST.get('returnDate'), '%d-%m-%Y').date()
             myAction = request.POST.get('myAction')
         except ValueError:
             messages.error(request, "Missing Input")
@@ -685,7 +685,7 @@ def CreateClaimLines(request, pk):
             claimType = request.POST.get('claimType')
             amount = float(request.POST.get('amount'))
             expenditureDate = datetime.strptime(
-                request.POST.get('expenditureDate'), '%Y-%m-%d').date()
+                request.POST.get('expenditureDate'), '%d-%m-%Y').date()
             expenditureDescription = request.POST.get('expenditureDescription')
             attach = request.FILES.getlist('attachment')
             myAction = request.POST.get('myAction')

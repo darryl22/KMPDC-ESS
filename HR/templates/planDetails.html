@@ -2,6 +2,7 @@
 {% load bootstrap5 %}
 {% load static %}
 {% block main %}
+
 <section class="dash2">
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
@@ -182,24 +183,22 @@
             <div class="modal-body">
                 <form class="myForm" action="{% url 'PlanDetail' res.No_ %}" method="post" novalidate>
                     {% csrf_token %}
+                    <input type="hidden" name="lineNo" value="0">
                     <div class="mb-2">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input type="hidden" name="lineNo" value="0">
-                            </div>
-                        </div>
-                        <div class="row">
+                        <div class="row my-3">
                             <div class="col-md-12">
                                 <label for="" class="form-label">Start
                                     Date:</label>
-                                <input type="date" class="form-control" name="startDate" required>
+                                <input type="text" class="datepicker" id="datepicker-range-start" name="startDate"
+                                    placeholder="dd/mm/yyyy" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="" class="form-label">End
                                     Date:</label>
-                                <input type="date" class="form-control" name="endDate" required>
+                                <input type="text" class="datepicker" name="endDate" id="datepicker-range-end"
+                                    placeholder="dd/mm/yyyy" required>
                             </div>
                         </div>
                         <div class="row my-3">
@@ -220,6 +219,22 @@
         $("#approveBtn").click(function () {
             $("#approvalForm").toggle(500)
         })
+
+        window.setTimeout(function () {
+            $('#datepicker-range-start').Zebra_DatePicker({
+                direction: true,
+                pair: $('#datepicker-range-end'),
+                format: 'd-m-Y',
+                show_week_number: 'Wk',
+            });
+
+            $('#datepicker-range-end').Zebra_DatePicker({
+                direction: 1,
+                format: 'd-m-Y',
+                show_week_number: 'Wk',
+               
+            });
+        }, 100);
     })
 </script>
 {% endblock %}

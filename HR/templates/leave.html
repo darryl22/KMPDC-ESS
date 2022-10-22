@@ -23,8 +23,12 @@
         {% include 'alerts.html' %}
         <div class="row my-2">
             <div class="col-md-12">
-                <div class="card" id="d-card">
-                    <div class="m-4">
+                <div class="card data-card">
+                    <!-- <h1 class="heading display-5"><img src="../../../static/img/logo/fav.png" width="70px"
+                            class="img-fluid"> Leave History <span><button class="btn btn-success align-items-center"
+                                style="float: right;">{{today}}</button></span>
+                    </h1> -->
+                    <div class="top-part">
                         <ul class="nav nav-tabs d-flex" id="myTab">
                             <li class="nav-item flex-fill">
                                 <a href="#home" class="nav-link active" data-bs-toggle="tab">Open
@@ -167,12 +171,15 @@
                                                                             </div>
                                                                             <div class="row EditLeaveStartDateRow"
                                                                                 style="display:none">
-                                                                                <div class="col-md-12">
-                                                                                    <label for=""
+                                                                            <div class="col-md-12">
+                                                                                <label for=""
                                                                                         class="form-label">Leave Start
                                                                                         Date:</label>
-                                                                                    <input type="date"
-                                                                                        class="form-control EditLeaveStartDate"
+                                                                            </div>
+                                                                                <div class="col-md-12">
+                                                                                    
+                                                                                    <input type="text"
+                                                                                        class="datepicker datepickers EditLeaveStartDate"
                                                                                         name="plannerStartDate"
                                                                                         disabled>
                                                                                 </div>
@@ -503,7 +510,7 @@
                             <div class="row" id="LeaveStartDateRow" style="display:none">
                                 <div class="col-md-12">
                                     <label for="" class="form-label">Leave Start Date:</label>
-                                    <input type="date" class="form-control" name="plannerStartDate" id="LeaveStartDate"
+                                    <input type="text" class="datepicker datepickers" name="plannerStartDate" id="LeaveStartDate"
                                         disabled>
                                 </div>
                             </div>
@@ -536,7 +543,15 @@
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
+
     $(document).ready(function () {
+        window.setTimeout(function () {
+            $('.datepickers').Zebra_DatePicker({
+                format: 'd-m-Y',
+                show_week_number: 'Wk',
+               
+            });
+        }, 100);
         // Return Same Day on change to display and hide planner start date
         $('#isReturnSameDay').on('change', function () {
             if (this.value == "False") {

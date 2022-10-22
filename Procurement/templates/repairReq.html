@@ -201,9 +201,10 @@
                                                                                     <label for=""
                                                                                         class="form-label">Order
                                                                                         Date:</label>
-                                                                                    <input type="date" name="orderDate"
-                                                                                        class="form-control" required>
-
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <input type="text" name="orderDate"
+                                                                                        class="datepicker" required>
                                                                                 </div>
                                                                             </div>
 
@@ -338,7 +339,7 @@
                                 <div class="col-md-12">
                                     <label for="" class="form-label">Order Date <span
                                             class="text-danger">*</span></label>
-                                    <input type="date" name="orderDate" class="form-control" required>
+                                    <input type="text" name="orderDate" class="datepicker" required>
                                 </div>
                             </div>
                             <div class="row">
@@ -355,5 +356,15 @@
         </div>
     </div>
 </section>
-
+<script>
+    $(document).ready(function(){
+        window.setTimeout(function () {
+            $('.datepicker').Zebra_DatePicker({
+                format: 'd-m-Y',
+                show_week_number: 'Wk',
+               
+            });
+        }, 100);
+    })
+</script>
 {% endblock %}

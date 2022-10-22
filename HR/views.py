@@ -90,8 +90,8 @@ class PlanDetail(UserObjectMixin,View):
         try:
             plannerNo = pk
             lineNo = int(request.POST.get('lineNo'))
-            startDate = datetime.strptime((request.POST.get('startDate')), '%Y-%m-%d').date()
-            endDate = datetime.strptime((request.POST.get('endDate')), '%Y-%m-%d').date()
+            startDate = datetime.strptime((request.POST.get('startDate')), '%d-%m-%Y').date()
+            endDate = datetime.strptime((request.POST.get('endDate')), '%d-%m-%Y').date()
             myAction = request.POST.get('myAction')
 
             response = config.CLIENT.service.FnLeavePlannerLine(
@@ -186,7 +186,7 @@ class Leave_Request(UserObjectMixin,View):
             myAction = request.POST.get('myAction')
             if not daysApplied:
                 daysApplied = 0
-            plannerStartDate =  datetime.strptime(plannerStartDate, '%Y-%m-%d').date()
+            plannerStartDate =  datetime.strptime(plannerStartDate, '%d-%m-%Y').date()
             try:
                 response = config.CLIENT.service.FnLeaveApplication(
                     applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
@@ -446,8 +446,8 @@ class TrainingDetail(UserObjectMixin, View):
                 employeeNo = request.session['Employee_No_']
                 myAction = "insert"
                 trainingName = request.POST.get('trainingName')
-                startDate = request.POST.get('startDate')
-                endDate = request.POST.get('endDate')
+                startDate = datetime.strptime((request.POST.get('startDate')), '%d-%m-%Y').date()
+                endDate = datetime.strptime((request.POST.get('endDate')), '%d-%m-%Y').date()
                 trainingArea = request.POST.get('trainingArea')
                 trainingObjectives = request.POST.get('trainingObjectives')
                 venue = request.POST.get('venue')
@@ -457,7 +457,7 @@ class TrainingDetail(UserObjectMixin, View):
                 provider = request.POST.get('provider')
 
             except ValueError as e:
-                messages.error(request, "Invalid Input, Try Again!!")
+                messages.error(request, e)
                 return redirect('TrainingDetail', pk=pk)
             if not sponsor:
                 sponsor = 0

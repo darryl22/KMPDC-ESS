@@ -540,12 +540,24 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <label for="" class="form-label">Start Date:</label>
-                                <input type="date" class="form-control" name="startDate" required>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="" class="form-label">Start Date:</label>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="text" class="LargeDatepicker" id="datepicker-range-start" name="startDate" required>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="" class="form-label">End Date:</label>
-                                <input type="date" class="form-control" name="endDate" required>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="" class="form-label">End Date:</label>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="text" class="LargeDatepicker" id="datepicker-range-end" name="endDate" required>
+                                    </div>
+                                </div>                              
                             </div>
                         </div>
                         <div class="row">
@@ -604,6 +616,21 @@
 </section>
 <script>
     $(document).ready(function () {
+        window.setTimeout(function () {
+            $('#datepicker-range-start').Zebra_DatePicker({
+                direction: true,
+                pair: $('#datepicker-range-end'),
+                format: 'd-m-Y',
+                show_week_number: 'Wk',
+            });
+
+            $('#datepicker-range-end').Zebra_DatePicker({
+                direction: 1,
+                format: 'd-m-Y',
+                show_week_number: 'Wk',
+               
+            });
+        }, 100);
         $('#travelType').on('change', function () {
             if (this.value == "1") {
                 $("#LocaldestinationsRow").show(1000);

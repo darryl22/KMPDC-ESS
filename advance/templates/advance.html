@@ -221,6 +221,13 @@
                                                                                         placeholder="000.000" required>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label">Repayment Installments(1-12 month(s)) <span class="text-danger">*</span></label>
+                                                                                    <input type="number" name="installments" class="form-control"  min="1" max="12"
+                                                                                        required>
+                                                                                </div>
+                                                                            </div>
                                                                             <button type="submit"
                                                                                 class="btn btn-success my-3 w-100">Submit</button>
                                                                     </form>
@@ -356,7 +363,13 @@
                                     required>
                             </div>
                         </div>
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Repayment Installments(1-12 month(s)) <span class="text-danger">*</span></label>
+                                <input type="number" name="installments" class="form-control"  min="1" max="12"
+                                    required>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <input type="hidden" name="myAction" value="insert">

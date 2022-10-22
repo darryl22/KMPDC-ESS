@@ -71,7 +71,7 @@ class PurchaseRequisition(UserObjectMixin,View):
                 myUserId = request.session['User_ID']
                 employeeNo = request.session['Employee_No_']
                 orderDate = datetime.strptime(
-                    request.POST.get('orderDate'), '%Y-%m-%d').date()
+                    request.POST.get('orderDate'), '%d-%m-%Y').date()
                 myAction = request.POST.get('myAction')
             except ValueError:
                 messages.error(request, "Missing Input")
@@ -373,7 +373,7 @@ class RepairRequest(UserObjectMixin,View):
                 myUserId = request.session['User_ID']
                 requisitionNo = request.POST.get('requisitionNo')
                 orderDate = datetime.strptime(
-                    request.POST.get('orderDate'), '%Y-%m-%d').date()
+                    request.POST.get('orderDate'), '%d-%m-%Y').date()
                 reason = request.POST.get('reason')
                 myAction = request.POST.get('myAction')
             except ValueError:
@@ -916,7 +916,7 @@ class GeneralRequisition(UserObjectMixin,View):
                 requisitionNo = request.POST.get('requisitionNo')
                 myUserId = request.session['User_ID']
                 orderDate = datetime.strptime(
-                    request.POST.get('orderDate'), '%Y-%m-%d').date()
+                    request.POST.get('orderDate'), '%d-%m-%Y').date()
                 reason = request.POST.get('reason')
                 myAction = request.POST.get('myAction')
             except ValueError:
