@@ -451,14 +451,14 @@ section {
     padding-left: 0;
   }
 
-  .form-inline .form-check-input {
+  /* .form-inline .form-check-input {
     position: relative;
     -ms-flex-negative: 0;
     flex-shrink: 0;
     margin-top: 0;
     margin-right: 0.25rem;
     margin-left: 0;
-  }
+  } */
 
   .form-inline .custom-control {
     -webkit-box-align: center;
@@ -11346,14 +11346,11 @@ code {
 .form-check .form-check-label {
   display: block;
   margin-left: 1.75rem;
+  margin-top: 7px !important;
   font-size: 0.875rem;
   line-height: 1.5;
 }
 
-.rtl .form-check .form-check-label {
-  margin-left: 0;
-  margin-right: 1.75rem;
-}
 
 .form-check .form-check-label input {
   position: absolute;
@@ -11367,10 +11364,7 @@ code {
   filter: alpha(opacity=0);
 }
 
-.rtl .form-check .form-check-label input {
-  left: auto;
-  right: 0;
-}
+
 
 .form-check .form-check-label input[type="checkbox"]+.input-helper:before,
 .form-check .form-check-label input[type="checkbox"]+.input-helper:after {
@@ -11379,11 +11373,6 @@ code {
   left: 0;
 }
 
-.rtl .form-check .form-check-label input[type="checkbox"]+.input-helper:before,
-.rtl .form-check .form-check-label input[type="checkbox"]+.input-helper:after {
-  left: auto;
-  right: 0;
-}
 
 .form-check .form-check-label input[type="checkbox"]+.input-helper:before {
   content: "";
@@ -11430,7 +11419,7 @@ code {
   transform: scale(1);
 }
 
-.form-check .form-check-label input[type="checkbox"]:disabled+.input-helper:before {
+/* .form-check .form-check-label input[type="checkbox"]:disabled+.input-helper:before {
   border-color: rgba(151, 151, 151, 0.3);
 }
 
@@ -11454,12 +11443,8 @@ code {
   transition-duration: 0s;
   -webkit-transition-duration: 250ms;
   transition-duration: 250ms;
-}
+} */
 
-.rtl .form-check .form-check-label input[type="radio"]+.input-helper:before {
-  left: auto;
-  right: 0;
-}
 
 .form-check .form-check-label input[type="radio"]+.input-helper:after {
   content: "";
@@ -11481,10 +11466,7 @@ code {
   position: absolute;
 }
 
-.rtl .form-check .form-check-label input[type="radio"]+.input-helper:after {
-  left: auto;
-  right: 6px;
-}
+
 
 .form-check .form-check-label input[type="radio"]:checked+.input-helper:before {
   background: -webkit-gradient(linear, left top, right top, from(#da8cff), to(#9a55ff));

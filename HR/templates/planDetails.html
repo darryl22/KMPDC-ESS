@@ -117,6 +117,65 @@
                                     <td>{{res.Days}}</td>
                                     <td>{{res.Leave_Period}}</td>
                                     <td>
+                                        <!-- <button class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+                                            title="edit" data-bs-toggle="modal"
+                                            data-bs-target="#staticBackdrop{{res.Line_No_}}"><i class="fas fa-edit"></i>
+                                        </button> -->
+                                        <!-- Edit Modal -->
+                                        <div class="modal fade" id="staticBackdrop{{res.Line_No_}}"
+                                            data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title"><i class="las la-edit"></i> Edit Leave
+                                                            Planner Line <span class="editSpan">{{res.Line_No_}}</span>
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="myForm"
+                                                            action="{% url 'PlanDetail' res.Document_No_ %}"
+                                                            method="post" novalidate>
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="lineNo" value="{{res.Line_No_}}">
+                                                            <div class="mb-2">
+                                                                <div class="row my-3">
+                                                                    <div class="col-md-12">
+                                                                        <label for="" class="form-label">Start
+                                                                            Date:</label>
+                                                                        <input type="text" class="datepicker"
+                                                                            id="EditDatepicker-range-start"
+                                                                            name="startDate" placeholder="dd/mm/yyyy"
+                                                                            required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <label for="" class="form-label">End
+                                                                            Date:</label>
+                                                                        <input type="text" class="datepicker"
+                                                                            name="endDate" id="EditDatepicker-range-end"
+                                                                            placeholder="dd/mm/yyyy" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row my-3">
+                                                                    <div class="col-md-12">
+                                                                        <input type="hidden" name="myAction"
+                                                                            value="modify">
+                                                                    </div>
+                                                                </div>
+
+                                                                <button type="submit" id="sasa"
+                                                                    class="btn btn-success w-100">Submit</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End -->
                                         <form action="{% url 'FnDeleteLeavePlannerLine' res.Document_No_ %}"
                                             method="post" style="display: inline-block;">
                                             {% csrf_token %}
@@ -232,7 +291,20 @@
                 direction: 1,
                 format: 'd-m-Y',
                 show_week_number: 'Wk',
-               
+
+            });
+            $('#EditDatepicker-range-start').Zebra_DatePicker({
+                direction: true,
+                pair: $('#EditDatepicker-range-end'),
+                format: 'd-m-Y',
+                show_week_number: 'Wk',
+            });
+
+            $('#EditDatepicker-range-end').Zebra_DatePicker({
+                direction: 1,
+                format: 'd-m-Y',
+                show_week_number: 'Wk',
+
             });
         }, 100);
     })

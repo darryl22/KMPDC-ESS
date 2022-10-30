@@ -545,7 +545,8 @@
                                         <label for="" class="form-label">Start Date:</label>
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="text" class="LargeDatepicker" id="datepicker-range-start" name="startDate" required>
+                                        <input type="text" class="LargeDatepicker" id="datepicker-range-start"
+                                            name="startDate" required>
                                     </div>
                                 </div>
                             </div>
@@ -555,23 +556,28 @@
                                         <label for="" class="form-label">End Date:</label>
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="text" class="LargeDatepicker" id="datepicker-range-end" name="endDate" required>
+                                        <input type="text" class="LargeDatepicker" id="datepicker-range-end"
+                                            name="endDate" required>
                                     </div>
-                                </div>                              
+                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label">Sponsor Type</label>
                                 <select class="form-select" name="sponsor" required>
-                                    <option selected disabled value="">Select </option>
+                                    <option selected disabled value="0">Select </option>
                                     <option value="1">Self Sponsored</option>
                                     <option value="2">Organization Sponsored</option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="" class="form-label">Provider</label>
                                 <input type="text" class="form-control" name="provider" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="" class="form-label">Training Cost</label>
+                                <input type="text" class="form-control" name="trainingCost" placeholder="00.00">
                             </div>
                         </div>
                         <div class="row">
@@ -628,7 +634,7 @@
                 direction: 1,
                 format: 'd-m-Y',
                 show_week_number: 'Wk',
-               
+
             });
         }, 100);
         $('#travelType').on('change', function () {

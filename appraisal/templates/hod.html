@@ -1,0 +1,370 @@
+<div class="row my-2">
+    <div class="col-md-12">
+        <div class="card card-body data-card">
+            <h1 class="heading display-5 pb-3"><img src="../../../static/img/logo/fav.png" width="70px"
+                    class="img-fluid"> Appraisals<span><button class="btn btn-success align-items-center"
+                        style="float: right;">{{today}} <span id="timer"></span></button></span>
+            </h1>
+            <div class="row my-2">
+                <div class="btn-group btn-group-justified pb-2">
+                    <button href="#" class="btn btn-successs" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdropForTargets">
+                        <i class="las la-plus text-white"></i> New
+                        Departmental
+                        Targets</button>
+                    <a href="#" class="btn btn-primary">Appraisal Responses <i
+                            class="las la-history text-white"></i></a>
+                    <!-- <a href="#" class="btn btn-success">Leave Planner <i
+                            class="las la-external-link-alt"></i></a> -->
+                </div>
+            </div>
+            <div class="row gy-2 top-part">
+                <div class="col-md-12">
+                    <div class="row g-2">
+                        <div class="col-md-6 m-15px-tb">
+                            <div class="media box-shadow-only-hover hover-top border-all-1 border-color-gray p-15px">
+                                <div class="icon-50 theme-bg white-color border-radius-50 d-inline-block">
+                                    <i class="number"><i class="las la-briefcase"></i></i>
+                                </div>
+                                <div class="p-20px-l media-body">
+                                    <h6 class="m-5px-tb">Department Name</h6>
+                                    <p class="m-0px font-small">{{department}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6  m-15px-tb">
+                            <div class="media box-shadow-only-hover hover-top border-all-1 border-color-gray p-15px">
+                                <div class="icon-50 theme-bg white-color border-radius-50 d-inline-block">
+                                    <i class="number"><i class="las la-users"></i></i>
+                                </div>
+                                <div class="p-20px-l media-body">
+                                    <h6 class="m-5px-tb">Number of Employees in Department</h6>
+                                    <p class="m-0px font-small">{{DPTCount}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="">
+                                <ul class="nav nav-tabs d-flex" id="myTab">
+                                    <li class="nav-item flex-fill">
+                                        <a href="#home" class="nav-link active" data-bs-toggle="tab">{{department}}
+                                            Appraisal
+                                            Targets
+                                            ({{targetCount}})</a>
+                                    </li>
+                                    <li class="nav-item flex-fill">
+                                        <a href="#pending" class="nav-link" data-bs-toggle="tab">Assigned
+                                            Targets
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="home">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Appraisal No</th>
+                                                        <th>Maximum Score</th>
+                                                        <th>Quarter 1</th>
+                                                        <th>Quarter 2</th>
+                                                        <th>Quarter 3</th>
+                                                        <th>Quarter 4</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for outputTarget in outputTarget %}
+                                                    <tr>
+                                                        <td>{{outputTarget.Code}}</td>
+                                                        <td id="rap">{{outputTarget.MaximumScore}}</td>
+                                                        <td>
+                                                            {% if outputTarget.Quarter1 == True %}
+                                                            <img src="../../static/icons/check-mark.png" alt="">
+                                                            {% else %}
+                                                            <img src="../../static/icons/close.png" alt="" srcset="">
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if outputTarget.Quarter2 == True %}
+                                                            <img src="../../static/icons/check-mark.png" alt="">
+                                                            {% else %}
+                                                            <img src="../../static/icons/close.png" alt="" srcset="">
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if outputTarget.Quarter3 == True %}
+                                                            <img src="../../static/icons/check-mark.png" alt="">
+                                                            {% else %}
+                                                            <img src="../../static/icons/close.png" alt="" srcset="">
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if outputTarget.Quarter4 == True %}
+                                                            <img src="../../static/icons/check-mark.png" alt="">
+                                                            {% else %}
+                                                            <img src="../../static/icons/close.png" alt="" srcset="">
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            <!-- <button class="btn btn-primary" data-toggle="tooltip"
+                                                                data-placement="top" title="edit" data-bs-toggle="modal"
+                                                                data-bs-target="#editLeave">Edit <i
+                                                                    class="fas fa-edit"></i>
+                                                            </button> -->
+                                                            <a href="{% url 'HODDetails' outputTarget.Code %}"
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top" title="View">
+                                                                View Details..<i class="far fa-eye"></i>
+                                                            </a>
+                                                            <!-- Modal Edit Leave -->
+                                                            <div class="modal fade" id="editLeave"
+                                                                data-bs-backdrop="static" data-bs-keyboard="false"
+                                                                tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                                                aria-hidden="true">
+                                                                <div
+                                                                    class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title"
+                                                                                id="staticBackdropLabel">
+                                                                                <i class="las la-edit"></i> Edit
+                                                                                Leave
+                                                                                Request <span
+                                                                                    class="editSpan">{{res.Application_No}}</span>
+                                                                            </h5>
+                                                                            <button type="button"
+                                                                                class="btn-close btn-close-white"
+                                                                                data-bs-dismiss="modal"
+                                                                                aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <form class="myForm" action="" method="post"
+                                                                                novalidate>
+                                                                                {% csrf_token %}
+                                                                                <div class="mb-2 myForm">
+
+                                                                                    <input type="hidden" name="myAction"
+                                                                                        value="modify">
+                                                                                    <input type="hidden"
+                                                                                        name="applicationNo"
+                                                                                        value="{{res.Application_No}}">
+                                                                                    <div class="row mt-3">
+                                                                                        <div class="col-md-12">
+                                                                                            <label class="form-label">
+                                                                                                Weighted
+                                                                                                Score</label>
+                                                                                            <input type="number"
+                                                                                                class="form-control"
+                                                                                                name="weightedScore"
+                                                                                                placeholder="0.00">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12">
+                                                                                            <label
+                                                                                                class="form-label my-2">Check
+                                                                                                Quarter for the
+                                                                                                weighted
+                                                                                                Score</label>
+                                                                                            <div class="row">
+                                                                                                <div class="col-md-3">
+                                                                                                    <input
+                                                                                                        class="form-check-input"
+                                                                                                        type="checkbox"
+                                                                                                        name="Quarter1"
+                                                                                                        value="True">
+                                                                                                    <label
+                                                                                                        class="form-check-label mt-1">Quarter
+                                                                                                        1</label>
+                                                                                                </div>
+                                                                                                <div class="col-md-3">
+                                                                                                    <input
+                                                                                                        class="form-check-input"
+                                                                                                        type="checkbox"
+                                                                                                        name="Quarter2"
+                                                                                                        value="True">
+                                                                                                    <label
+                                                                                                        class="form-check-label mt-1">Quarter
+                                                                                                        2</label>
+                                                                                                </div>
+                                                                                                <div class="col-md-3">
+                                                                                                    <input
+                                                                                                        class="form-check-input"
+                                                                                                        type="checkbox"
+                                                                                                        name="Quarter3"
+                                                                                                        value="True">
+                                                                                                    <label
+                                                                                                        class="form-check-label mt-1">Quarter
+                                                                                                        3</label>
+                                                                                                </div>
+                                                                                                <div class="col-md-3">
+                                                                                                    <input
+                                                                                                        class="form-check-input"
+                                                                                                        type="checkbox"
+                                                                                                        name="Quarter4"
+                                                                                                        value="True">
+                                                                                                    <label
+                                                                                                        class="form-check-label mt-1">Quarter
+                                                                                                        4</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row my-2">
+                                                                                        <div class="col-md-12">
+                                                                                            <label for=""
+                                                                                                class="form-label">Description</label>
+                                                                                            <textarea
+                                                                                                class="form-control"
+                                                                                                name="description"
+                                                                                                rows="3"
+                                                                                                required></textarea>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <button type="submit" id="sasa"
+                                                                                        class="btn btn-success my-3 w-100">Submit</button>
+                                                                                </div>
+
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="pending">
+                                        <div class="card-body">
+                                            <table id="example"
+                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                                style="width:100%">
+                                                <thead>
+                                                    <tr id="tops">
+                                                        <th id="long">Target No</th>
+                                                        <th>Score</th>
+                                                        <th>Quarter</th>
+                                                        <th>Description</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for res in pending %}
+                                                    <tr>
+                                                        <td>{{res.Application_No}}</td>
+                                                        <td id="rap">{{res.Status}}</td>
+                                                        <td>{{res.Planner_Start_Date}}</td>
+                                                        <td>{{res.Return_same_day}}</td>
+                                                        <td>
+                                                            <a href="{% url 'LeaveDetail' res.Application_No %} "
+                                                                class="btn btn-success btn-icon-text" type="button"
+                                                                data-toggle="tooltip" data-placement="top"
+                                                                title="Click to View"> View
+                                                                <i class="far fa-eye"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for targets -->
+<div class="modal fade" id="staticBackdropForTargets" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">
+                    Set Departmental Targets ( <span class="text-small">{{department}} Department</span> )
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="myForm" action="{% url 'AppraisalRequests' %}" method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-2">
+                        <input type="hidden" name="myAction" value="insert">
+                        <input type="hidden" name="applicationCode" value="">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Department Financial Year<span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" name="departmentalAppraisalCode" required>
+                                    <option selected disabled value="">--Select--</option>
+                                    {% for appraisalCode in appraisalCode %}
+                                    <option value="{{appraisalCode.Code}}"><span class="text-success">Financial
+                                            Year</span> <span
+                                            class="text-primary">({{appraisalCode.FinancialYear}})</span></option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">
+                                    Weighted
+                                    Score</label>
+                                <input type="number" class="form-control" name="weightedScore" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label my-2">Check
+                                    Quarter for the
+                                    weighted
+                                    Score</label>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <input class="form-check-input" type="checkbox" name="Quarter1" value="True">
+                                        <label class="form-check-label mt-1">Quarter
+                                            1</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input class="form-check-input" type="checkbox" name="Quarter2" value="True">
+                                        <label class="form-check-label mt-1">Quarter
+                                            2</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input class="form-check-input" type="checkbox" name="Quarter3" value="True">
+                                        <label class="form-check-label mt-1">Quarter
+                                            3</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input class="form-check-input" type="checkbox" name="Quarter4" value="True">
+                                        <label class="form-check-label mt-1">Quarter
+                                            4</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row my-2">
+                            <div class="col-md-12">
+                                <label for="" class="form-label">Description</label>
+                                <textarea class="form-control" name="description" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

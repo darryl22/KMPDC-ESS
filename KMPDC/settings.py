@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'Approvals',
     'accounts',
     'advance',
+    'appraisal',
 
 ]
 
@@ -184,7 +185,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHS = Session()
 
-WEB_SERVICE_PWD = 'Admin@123'
+WEB_SERVICE_PWD = 'W3C0d3@llD@y'
 
 
 O_DATA = "http://20.121.189.145:7048/KMPDC/ODataV4/Company('KMPDC'){}"

@@ -359,7 +359,13 @@ class Training_Request(UserObjectMixin,View):
                 "year": year, "full": userId}
         return render(request, 'training.html', ctx)
     def post(self,request):
+        Username = request.session['User_ID']
+        Password = request.session['password']
+        AUTHS = Session()
+        AUTHS.auth = HTTPBasicAuth(Username, Password)
+        CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
         if request.method == 'POST':
+            
             try:
                 employeeNo = request.session['Employee_No_']
                 usersId = request.session['User_ID']
@@ -376,7 +382,7 @@ class Training_Request(UserObjectMixin,View):
             if not trainingNeed:
                 trainingNeed = ''
             try:
-                response = config.CLIENT.service.FnTrainingRequest(
+                response = CLIENT.service.FnTrainingRequest(
                     requestNo, employeeNo, usersId, isAdhoc, trainingNeed, myAction)
                 messages.success(request, "Successfully Added!!")
                 print(response)
@@ -439,6 +445,11 @@ class TrainingDetail(UserObjectMixin, View):
             "line": openLines,"local":Local,"foreign":Foreign,"Comments":Comments}
         return render(request, 'trainingDetail.html', ctx)
     def post(self,request,pk):
+        Username = request.session['User_ID']
+        Password = request.session['password']
+        AUTHS = Session()
+        AUTHS.auth = HTTPBasicAuth(Username, Password)
+        CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
         if request.method == 'POST':
             try:
                 requestNo = pk
@@ -455,6 +466,7 @@ class TrainingDetail(UserObjectMixin, View):
                 destination = request.POST.get('destination')
                 OtherDestinationName = request.POST.get('OtherDestinationName')
                 provider = request.POST.get('provider')
+                trainingCost = float(request.POST.get('trainingCost'))
 
             except ValueError as e:
                 messages.error(request, e)
@@ -471,10 +483,13 @@ class TrainingDetail(UserObjectMixin, View):
 
             if OtherDestinationName:
                 destination = OtherDestinationName
+            if not trainingCost:
+                trainingCost = 0
             try:
-                response = config.CLIENT.service.FnAdhocTrainingNeedRequest(requestNo,
-                                                                            no, employeeNo, trainingName, trainingArea, trainingObjectives, venue, provider, myAction,sponsor,startDate,endDate,destination)
-                messages.success(request, "Successfully Added!!")
+                response = CLIENT.service.FnAdhocTrainingNeedRequest(
+                    requestNo,no, employeeNo, trainingName, trainingArea, trainingObjectives,
+                     venue, provider, myAction,sponsor,startDate,endDate,destination,trainingCost)
+                messages.success(request, "Successfully Added")
                 print(response)
                 return redirect('TrainingDetail', pk=pk)
             except Exception as e:
@@ -511,40 +526,6 @@ def UploadTrainingAttachment(request, pk):
             messages.error(request, "Not Sent !!")
             return redirect('TrainingDetail', pk=pk)
 
-    return redirect('TrainingDetail', pk=pk)
-
-
-def FnAdhocTrainingEdit(request, pk, no):
-    requestNo = pk
-    no = no
-    employeeNo = request.session['Employee_No_']
-    trainingName = ""
-    trainingArea = ""
-    trainingObjectives = ""
-    venue = ""
-    provider = ""
-    myAction = "modify"
-
-    if request.method == 'POST':
-        try:
-            trainingName = request.POST.get('trainingName')
-            trainingArea = request.POST.get('trainingArea')
-            trainingObjectives = request.POST.get('trainingObjectives')
-            venue = request.POST.get('venue')
-            provider = request.POST.get('provider')
-
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('TrainingDetail', pk=pk)
-    try:
-        response = config.CLIENT.service.FnAdhocTrainingNeedRequest(requestNo,
-                                                                    no, employeeNo, trainingName, trainingArea, trainingObjectives, venue, provider, myAction)
-        messages.success(request, "Successfully Edited!!")
-        print(response)
-        return redirect('TrainingDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
     return redirect('TrainingDetail', pk=pk)
 
 def FnAdhocLineDelete(request, pk):

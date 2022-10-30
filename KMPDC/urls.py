@@ -25,4 +25,5 @@ urlpatterns = [
     path('', include('Approvals.urls')),
     path('', include('accounts.urls')),
     path('', include('advance.urls')),
+    path('', include('appraisal.urls')),
 ]

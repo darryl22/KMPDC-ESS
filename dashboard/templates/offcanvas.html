@@ -143,8 +143,14 @@
                             </li>
                             <li class="nav-item"> <a class="nav-link" href="{% url 'imprestSurr' %}"><i
                                         class="las la-arrow-right mr-2"></i>Imprest Surrender</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="{% url 'claim' %}"><i
-                                        class="las la-arrow-right mr-2"></i>Staff Claim</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'claim' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Staff Claim</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'advance' %}"><i
+                                        class="las la-arrow-right mr-2"></i>Salary Advance</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -176,9 +182,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'advance' %}">
+                    <a class="nav-link" href="{% url 'AppraisalRequests' %}">
                         <span class="icon-bg"><i class="las la-briefcase"></i></span>
-                        <span class="menu-title">Salary Advance </span>
+                        <span class="menu-title">Appraisals </span>
                     </a>
                 </li>
                 <!-- <li class="nav-item" style="margin-top:.1rem;">

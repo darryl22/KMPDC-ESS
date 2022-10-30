@@ -43,10 +43,11 @@ class Login(UserObjectMixin,View):
                 request.session['User_ID'] = loadedData['User_ID']
                 request.session['E_Mail'] = loadedData['E_Mail']
                 request.session['User_Responsibility_Center'] = loadedData['User_Responsibility_Center']
+                request.session['HOD_User'] = loadedData['HOD_User']
                 request.session['password'] = password
                 current_year = date.today().year
                 request.session['years'] = current_year
-                print(request.session['Employee_No_'])
+                print(request.session['HOD_User'])
                 QyEmployees = config.O_DATA.format(f"/QyEmployees?$filter=No_%20eq%20%27{request.session['Employee_No_']}%27")
                 response = self.get_object(username, password,QyEmployees)
                 if response.status_code != 200:

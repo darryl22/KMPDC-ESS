@@ -27,8 +27,6 @@ urlpatterns = [
     path('UploadTrainingAttachment/<str:pk>', views.UploadTrainingAttachment,
          name='UploadTrainingAttachment'),
 
-    path('FnAdhocEdit/<str:pk>/<str:no>',
-         views.FnAdhocTrainingEdit, name='FnAdhocEdit'),
     path('FnAdhocLineDelete/<str:pk>',
          views.FnAdhocLineDelete, name='FnAdhocLineDelete'),
     path('p9', views.PNineRequest.as_view(), name='pNine'),

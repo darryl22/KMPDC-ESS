@@ -1,0 +1,282 @@
+{% extends 'offcanvas.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block main %}
+<section class="dash2">
+    <div class="content-wrapper" style="padding-bottom: 5rem;">
+        <div class="d-xl-flex justify-content-between align-items-start">
+            <h2 class="text-dark font-weight-bold mb-2"> Appraisal Target Details
+            </h2>
+
+            <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
+                <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
+                    data-bs-target="#Attachment" type="button"> <i class="las la-plus text-white"
+                        style="font-size:15px;"></i> Upload Attachment
+                </button>
+                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+                    <button class="btn btn-successs p-3 d-flex align-items-center" type="button" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Assign Target(S)
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--alert -->
+        {% include 'alerts.html' %}
+        <div class="row my-3">
+            <div class="col-md-3">
+                <div class="card l-bg-cherry statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Target Code</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{target.Code}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-blue-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Maximum Score</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{target.MaximumScore}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-green-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Department Code</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{target.DepartmentCode}}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card l-bg-orange-dark statCard h-100">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Total Maximum Score</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-md-12">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    {{target.TotalMaximumScore}}
+                                </h2>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Quarter 1</label>
+                        <input type="text" class="form-control" placeholder="{{target.Quarter1}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Quarter 2</label>
+                        <input type="text" class="form-control" placeholder="{{target.Quarter2}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Quarter 3 </label>
+                        <input type="text" class="form-control" placeholder="{{target.Quarter3}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Quarter 4 </label>
+                        <input type="text" class="form-control" placeholder="{{target.Quarter4}}" readonly>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" placeholder="{{target.TargetDescription}}" rows="3"
+                            readonly></textarea>
+                    </div>
+            </div>
+            </form>
+        </div>
+        <!-- <div class="row my-2 py-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">
+                            Attachments
+                        </h4>
+                        <div class="row">
+                            {% for data in file %}
+                            <div class="col-lg-4 col-xl-3">
+                                <div class="file-man-box">
+                                    {% if res.Status == 'Open' %}
+                                    <form action="{% url 'DeleteClaimAttachment' data.No_  %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
+                                        <input type="hidden" name="tableID" value="{{data.Table_ID}}">
+                                        <button class="file-close" id="file-close"><i
+                                                class="fa fa-times-circle"></i></button>
+                                    </form>
+                                    {% endif %}
+                                    <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
+                                    <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
+                                        <input type="hidden" name="File_Name" value="{{data.File_Name}}">
+                                        <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
+                                        <button class="file-download mx-1"><i
+                                                class="fa fa-download text-success"></i></button>
+                                    </form>
+                                    <div class="file-man-title">
+                                        <h5 class="mb-0 text-overflow">
+                                            {{data.File_Name}}.{{data.File_Extension}}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-danger">
+                                You have not uploaded any attachments <i class="las la-file-download"></i>
+                            </p>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Employees Assigned</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Employee No</th>
+                                    <th>Employee Name</th>
+                                    <th>Target No</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for outputEmployees in outputEmployees %}
+                                <tr>
+                                    <td>{{outputEmployees.EmployeeNo}}</td>
+                                    <td>{{outputEmployees.EmployeeName}}</td>
+                                    <td>{{outputEmployees.DepartmentalTarget}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true" style="height:350px !important">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Assign To Employees
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm" action="{% url 'HODDetails' target.Code %}" method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="hidden" name="lineNo" value="0">
+                                <input type="hidden" name="myAction" value="insert">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Select Employee <span class="text-danger">*</span></label>
+                                <select class="form-select" name="employeeNo" required>
+                                    <option selected disabled value="0">--select--</option>
+                                    {% for availableEmployees in availableEmployees %}
+                                    <option value="{{availableEmployees.Employee_No_}}">{{availableEmployees.User_ID}}
+                                    </option>
+                                    {% empty %}
+                                    <option selected disabled value="0">All Employees Assigned.</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Modal -->
+<div class="modal fade" id="Attachment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upload Attachment</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'UploadTargetAttachment' target.Code %}" method="post" class="myForm"
+                    enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class=" mb-3">
+                        <label class="form-label">Attachments </label>
+                        <input class="form-control" name="attachment" type="file" multiple>
+                    </div>
+                    <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        window.setTimeout(function () {
+            $('.LargeDatepicker').Zebra_DatePicker({
+                direction: -1,
+                format: 'd-m-Y',
+                show_week_number: 'Wk',
+
+            });
+        }, 100);
+        var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
+        var x = document.getElementById("Expenditure").max = utc;
+        var text = document.getElementById("Expenditure").getAttribute("max");
+    })
+</script>
+
+{% endblock %}
