@@ -77,6 +77,7 @@ def logout(request):
         del request.session['Department']
         del request.session['years']
         del request.session['E_Mail']
+        del request.session['HOD_User']
         messages.success(request,"Logged out successfully")
     except KeyError:
         print(False)

@@ -21,6 +21,10 @@ class AppraisalRequests(UserObjectMixin,View):
         HOD_User = request.session['HOD_User']
         userID = request.session['User_ID']
         department = request.session['User_Responsibility_Center']
+        empNo = request.session['Employee_No_']
+        numberOfEmployees = '0'
+        outputTarget = '0'
+        outputCode = '0'
 
         if HOD_User == True:
             departmentUsers = config.O_DATA.format(f"/QyUserSetup?$filter=User_Responsibility_Center%20eq%20%27{department}%27")
@@ -34,14 +38,22 @@ class AppraisalRequests(UserObjectMixin,View):
             appraisalTargets = config.O_DATA.format(f"/QyDepartmentalAppraisalTargets?$filter=DepartmentCode%20eq%20%27{department}%27")
             targetResponse = self.get_object(appraisalTargets)
             outputTarget = [x for x in targetResponse['value'] if x['DepartmentCode'] == department]
+
+        empAppraisalEndpoint =config.O_DATA.format(f"/QyEmployeeAppraisals")
+        empAppraisalResponse = self.get_object(empAppraisalEndpoint)
+        empAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo']==empNo and x['DepartmentCode'] == department]
+
         DPTCount = len(numberOfEmployees)
         targetCount = len(outputTarget)
+        empAppraisalCount = len(empAppraisal)
+
 
         ctx = {
             "today": self.todays_date,
             "HOD_User":HOD_User,"department":department,
             'DPTCount':DPTCount,"full": userID,"appraisalCode":outputCode,
             "targetCount":targetCount, "outputTarget":outputTarget,
+            "empAppraisalCount":empAppraisalCount,"empAppraisal":empAppraisal
             }
         return render(request,"appraisal.html",ctx)
     def post(self,request):

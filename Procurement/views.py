@@ -981,7 +981,9 @@ class GeneralRequisitionDetails(UserObjectMixin,View):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
-        ctx = {"today": self.todays_date, "res": res,"Approvers": Approvers,"file":allFiles,"Comments":Comments,
+        ctx = {
+            "today": self.todays_date, "res": res,"Approvers": Approvers,
+            "file":allFiles,"Comments":Comments,"full":userID,
                "itemsCategory":itemsCategory,"openLines":openLines}
         return render(request,"generalDetails.html",ctx)
     def post(self,request,pk):
