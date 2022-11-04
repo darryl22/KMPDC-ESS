@@ -196,4 +196,3 @@ CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
 AUTHS = HTTPBasicAuth('EMAEBA', WEB_SERVICE_PWD)
 django_heroku.settings(locals())
 
-# live Company Name = KMPDC LIVE

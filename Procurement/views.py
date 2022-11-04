@@ -97,6 +97,7 @@ class PurchaseRequestDetails(UserObjectMixin,View):
         try:
             Dpt = request.session['Department']
             empNo = request.session['Employee_No_']
+            myUserId = request.session['User_ID']
 
             Access_Point = config.O_DATA.format(f"/QyPurchaseRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Employee_No_%20eq%20%27{empNo}%27")
             response = self.get_object(Access_Point)
@@ -140,9 +141,12 @@ class PurchaseRequestDetails(UserObjectMixin,View):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
-        ctx = {"today": self.todays_date, "res": res, "line": openLines,
+        ctx = {
+            "today": self.todays_date, "res": res, "line": openLines,
              "Approvers": Approvers,"plans": planitem, "items": Items,
-            "gl": Gl_Accounts,"file":allFiles,"Comments":Comments}
+            "gl": Gl_Accounts,"file":allFiles,"Comments":Comments,
+            "full":myUserId
+            }
         return render(request, 'purchaseDetail.html', ctx)
     def post(self, request,pk):
         if request.method == 'POST':
@@ -739,6 +743,7 @@ def itemUnitOfMeasure(request):
     text = request.GET.get('ItemNumber')
     try:
         Item_res = session.get(Item, timeout=10).json()
+        print(Item_res)
         return JsonResponse(Item_res)
 
     except  Exception as e:

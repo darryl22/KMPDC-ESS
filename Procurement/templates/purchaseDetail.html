@@ -186,6 +186,112 @@
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
+                                        <button class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#staticBackdrop{{line.Line_No_}}" data-toggle="tooltip"
+                                            data-placement="top" title="Edit"><i class="fas fa-edit"></i>
+                                        </button>
+                                        <div class="modal fade" id="staticBackdrop{{line.Line_No_}}"
+                                            data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                            <div class="modal-dialog  modal-dialog-scrollable modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">
+                                                            <i class="las la-edit"></i> Edit Purchase Requisition Line
+                                                            <span class="editSpan">{{line.Line_No_}}</span>
+
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form class="myForm" action="{% url 'PurchaseDetail' res.No_ %}"
+                                                            method="post" id="EditPurchaseForm" novalidate>
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <input type="hidden" name="lineNo"
+                                                                        value="{{line.Line_No_}}">
+                                                                    <input type="hidden" name="myAction" value="modify">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Procurement Plan Item
+                                                                    </label>
+                                                                    <select class="form-select" name="procPlanItem">
+                                                                        <option selected disabled value="">Select
+                                                                            Procurement Plan Item</option>
+                                                                        {% for res in plans %}
+                                                                        <option value="{{res.Plan_Item_No}}">
+                                                                            {{res.Item_Description}}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="form-label">Requisition Type <span
+                                                                            class="text-danger">*</span></label>
+                                                                    <select class="form-select" id="EditItemType"
+                                                                        name="itemTypes" required>
+                                                                        <option selected disabled value="">Select
+                                                                            Requisition Type</option>
+                                                                        <option value="1">G/L</option>
+                                                                        <option value="2">Item</option>
+                                                                        <option value="3">Fixed Asset</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">Requisition
+                                                                        Item</label>
+                                                                    <select class="form-select" name="itemNo"
+                                                                        id="EditAllItems">
+                                                                        <option class="after" value="" disabled>
+                                                                            --Select--</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row" id="EditUnit_of_MeasureRow"
+                                                                style="display: none;">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">Unit of Measure <span
+                                                                            class="text-danger">*</span></label>
+                                                                    <select class="form-select" name="Unit_of_Measure"
+                                                                        id="EditUnit_of_Measure" disabled>
+                                                                        <option class="after" value="" disabled>
+                                                                            --Select--</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="mb-2">
+                                                                        <label class="col-form-label">Quantity <span
+                                                                                class="text-danger">*</span></label>
+                                                                        <input type="number" class="form-control"
+                                                                            name="quantity">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <label class="form-label">Detail <span
+                                                                            class="text-danger">*</span></label>
+                                                                    <textarea class="form-control" rows="3"
+                                                                        name="specification" required></textarea>
+                                                                </div>
+                                                            </div>
+
+                                                            <button type="submit"
+                                                                class="btn btn-success my-3 w-100">Submit</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </td>
                                     {% endif %}
                                 </tr>
@@ -469,6 +575,45 @@
                 $("#PurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
             }
         });
+        // Edit Modal
+        $('#EditItemType').on('change', function (e) {
+            e.preventDefault();
+            var ItemCode = $("#EditItemType").val();
+            if (ItemCode == '2') {
+                $('#EditUnit_of_MeasureRow').show(1000)
+                $('#EditUnit_of_Measure').prop('disabled', false);
+            } else {
+                $('#EditUnit_of_Measure').prop('disabled', true);
+                $('#EditUnit_of_MeasureRow').hide(1000);
+            }
+            if (ItemCode != null) {
+                $("#EditPurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
+                $.ajax({
+                    type: 'get',
+                    url: '{% url "RequisitionCategory" %}',
+                    dataType: 'json',
+                    data: {
+                        ItemCode: ItemCode
+                    },
+                    success: function (response) {
+                        let options = '';
+                        for (var i = 0; i < response.value.length; i++) {
+                            options += '<option value=' + response.value[i]
+                                .No_ + '>' + response.value[i].Description + '</option>';
+                        }
+                        $("#EditPurchaseForm select[name='itemNo']").find('.after').after(
+                            options);
+
+                    },
+                    error: function (response) {
+                        console.log('Something went wrong');
+                    }
+                });
+            } else {
+                $("#EditPurchaseForm select[name='itemNo']").find('.after').nextAll().remove();
+            }
+        });
+
         $('#allItems').on('change', function (e) {
             e.preventDefault();
             var ItemNumber = $("#allItems").val();
@@ -482,6 +627,7 @@
                         ItemNumber: ItemNumber
                     },
                     success: function (response) {
+                        console.log(response)
                         let options = '';
                         for (var i = 0; i < response.value.length; i++) {
                             if (response.value[i].Item_No_ == ItemNumber) {
@@ -506,6 +652,46 @@
                 });
             } else {
                 $("#PurchaseForm select[name='Unit_of_Measure']").find('.after').nextAll().remove();
+            }
+        });
+        // Edit
+        $('#EditAllItems').on('change', function (e) {
+            e.preventDefault();
+            var ItemNumber = $("#EditAllItems").val();
+            if (ItemNumber != null) {
+                $("#EditPurchaseForm select[name='Unit_of_Measure']").find('.after').nextAll().remove();
+                $.ajax({
+                    type: 'get',
+                    url: '{% url "itemUnitOfMeasure" %}',
+                    dataType: 'json',
+                    data: {
+                        ItemNumber: ItemNumber
+                    },
+                    success: function (response) {
+                        let options = '';
+                        for (var i = 0; i < response.value.length; i++) {
+                            if (response.value[i].Item_No_ == ItemNumber) {
+                                options += '<option value=' + response.value[i]
+                                    .Code + '>' + response.value[i].Code + ' ' + '-' + ' ' +
+                                    '(' +
+                                    response.value[i].Qty__per_Unit_of_Measure + ' ' +
+                                    'PER' + ' ' +
+                                    response.value[i].Code + ')' +
+                                    '</option>';
+
+                            }
+                        }
+                        $("#EditPurchaseForm select[name='Unit_of_Measure']").find('.after')
+                            .after(
+                                options);
+
+                    },
+                    error: function (response) {
+                        console.log('Something went wrong');
+                    }
+                });
+            } else {
+                $("#EditPurchaseForm select[name='Unit_of_Measure']").find('.after').nextAll().remove();
             }
         });
     })
