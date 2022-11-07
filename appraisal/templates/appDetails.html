@@ -5,7 +5,7 @@
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2">Target Details
+            <h2 class="text-dark font-weight-bold mb-2"> Appraisal Details
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
@@ -15,7 +15,7 @@
                 </button>
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
                     <button class="btn btn-successs p-3 d-flex align-items-center" type="button" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Assign Targets
+                        data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Appraisal Scores
                     </button>
                 </div>
             </div>
@@ -28,12 +28,12 @@
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Target Code</h5>
+                            <h5 class="card-title mb-0">Appraisal Code</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{target.Code}}
+                                    {{appraisal.Code}}
                                 </h2>
                             </div>
                         </div>
@@ -45,12 +45,12 @@
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Maximum Score</h5>
+                            <h5 class="card-title mb-0">Current Quarter</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{target.MaximumScore}}
+                                    {{appraisal.CurrentQuarter}}
                                 </h2>
                             </div>
                         </div>
@@ -62,12 +62,12 @@
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-calendar-alt"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Department Code</h5>
+                            <h5 class="card-title mb-0">Status</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{target.DepartmentCode}}
+                                    {{appraisal.Status}}
                                 </h2>
                             </div>
                         </div>
@@ -79,12 +79,12 @@
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Total Maximum Score</h5>
+                            <h5 class="card-title mb-0">Financial Year</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    {{target.TotalMaximumScore}}
+                                    {{appraisal.FinancialYear}}
                                 </h2>
                             </div>
 
@@ -93,7 +93,50 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Appraiser No</label>
+                        <input type="text" class="form-control" placeholder="{{appraisal.AppraiserNo}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Appraiser Name</label>
+                        <input type="text" class="form-control" placeholder="{{appraisal.AppraiserName}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Department Name</label>
+                        <input type="text" class="form-control" placeholder="{{appraisal.DepartmentName}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Total Targets</label>
+                        <input type="text" class="form-control" placeholder="{{appraisal.TotalTargets}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Total Targets Quarter 1</label>
+                        <input type="text" class="form-control" placeholder="{{appraisal.TotalTargetsQ1}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Total Targets Quarter 2 </label>
+                        <input type="text" class="form-control" placeholder="{{appraisal.TotalTargetsQ2}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Total Targets Quarter 3 </label>
+                        <input type="text" class="form-control" placeholder="{{appraisal.TotalTargetsQ3}}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Total Targets Quarter 4 </label>
+                        <input type="text" class="form-control" placeholder="{{appraisal.TotalTargetsQ4}}" readonly>
+                    </div>
 
+                    <!-- <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" placeholder="{{target.TargetDescription}}" rows="3"
+                            readonly></textarea>
+                    </div> -->
+            </div>
+            </form>
+        </div>
         <!-- <div class="row my-2 py-3">
             <div class="col-md-12">
                 <div class="card">
@@ -140,111 +183,39 @@
                 </div>
             </div>
         </div> -->
-
-        <div class="row my-2">
+        <div class="row mt-4">
             <div class="col-md-12">
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Details
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body p-3">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <form class="row g-3">
-                                            <div class="col-md-3">
-                                                <label class="form-label">Quarter 1</label>
-                                                <input type="text" class="form-control"
-                                                    placeholder="{{target.Quarter1}}" readonly>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <label class="form-label">Quarter 2</label>
-                                                <input type="text" class="form-control"
-                                                    placeholder="{{target.Quarter2}}" readonly>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <label class="form-label">Quarter 3 </label>
-                                                <input type="text" class="form-control"
-                                                    placeholder="{{target.Quarter3}}" readonly>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <label class="form-label">Quarter 4 </label>
-                                                <input type="text" class="form-control"
-                                                    placeholder="{{target.Quarter4}}" readonly>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <label class="form-label">Description</label>
-                                                <textarea class="form-control"
-                                                    placeholder="{{target.TargetDescription}}" rows="3"
-                                                    readonly></textarea>
-                                            </div>
-                                    </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                <div class="card" id="d-card">
+                    <h4 class="mt-2 mx-2 text-dark">Employees Assigned</h4>
+                    <div class="card-body">
+                        <table id="example"
+                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                            style="width:100%">
+                            <thead>
+                                <tr id="tops">
+                                    <th id="long">Employee No</th>
+                                    <th>Employee Name</th>
+                                    <th>Target No</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for outputEmployees in outputEmployees %}
+                                <tr>
+                                    <td>{{outputEmployees.EmployeeNo}}</td>
+                                    <td>{{outputEmployees.EmployeeName}}</td>
+                                    <td>{{outputEmployees.DepartmentalTarget}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwo">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                Employees Assigned
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                <div class="row mt-4">
-                                    <div class="col-md-12">
-                                        <div class="card" id="d-card">
-                                            <h4 class="mt-2 mx-2 text-dark">Employees Assigned</h4>
-                                            <div class="card-body">
-                                                <table id="example"
-                                                    class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                                    style="width:100%">
-                                                    <thead>
-                                                        <tr id="tops">
-                                                            <th id="long">Employee No</th>
-                                                            <th>Employee Name</th>
-                                                            <th>Target No</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {% for outputEmployees in outputEmployees %}
-                                                        <tr>
-                                                            <td>{{outputEmployees.EmployeeNo}}</td>
-                                                            <td>{{outputEmployees.EmployeeName}}</td>
-                                                            <td>{{outputEmployees.DepartmentalTarget}}</td>
-                                                        </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-                <form action="{% url 'HODInitiate' target.Code %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-successs my-3 w-100">Initiate</button>
-                </form>
-
             </div>
         </div>
     </div>
     </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true" style="height:350px !important">
+        aria-labelledby="staticBackdropLabel" aria-hidden="true" style="height:450px !important">
         <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
@@ -254,26 +225,32 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm" action="{% url 'HODDetails' target.Code %}" method="post" novalidate>
+                    <form class="myForm" action="{% url 'FnAppraisalScores' %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-12">
-                                <input type="hidden" name="lineNo" value="0">
+                                <input type="hidden" name="depAppraisalPeriod"
+                                    value="{{appraisal.DepartmentalAppraisalPeriod}}">
+                                <input type="hidden" name="target" value="{{appraisal.Code}}">
                                 <input type="hidden" name="myAction" value="insert">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="form-label">Select Employee <span class="text-danger">*</span></label>
-                                <select class="form-select" name="employeeNo" required>
+                                <label class="form-label">Quarter<span class="text-danger">*</span></label>
+                                <select class="form-select" name="quarter" required>
                                     <option selected disabled value="0">--select--</option>
-                                    {% for availableEmployees in availableEmployees %}
-                                    <option value="{{availableEmployees.Employee_No_}}">{{availableEmployees.User_ID}}
-                                    </option>
-                                    {% empty %}
-                                    <option selected disabled value="0">All Employees Assigned.</option>
-                                    {% endfor %}
+                                    <option value="1">Quarter 1 </option>
+                                    <option value="2">Quarter 2 </option>
+                                    <option value="3">Quarter 3 </option>
+                                    <option value="4">Quarter 4 </option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label">Score<span class="text-danger">*</span></label>
+                                <input type="text" name="score" placeholder="0" class="form-control">
                             </div>
                         </div>
                         <button type="submit" class="btn btn-success my-3 w-100">Submit</button>
@@ -294,8 +271,7 @@
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{% url 'UploadTargetAttachment' target.Code %}" method="post" class="myForm"
-                    enctype="multipart/form-data">
+                <form action="" method="post" class="myForm" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class=" mb-3">
                         <label class="form-label">Attachments </label>

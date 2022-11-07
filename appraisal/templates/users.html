@@ -36,7 +36,7 @@
                                     </thead>
                                     <tbody>
                                         {% for empAppraisal in empAppraisal %}
-                                        <tr style="background: #fee36e !important;">
+                                        <tr>
                                             <td>{{empAppraisal.Code}}</td>
                                             <td id="rap">{{empAppraisal.Status}}</td>
                                             <td>{{empAppraisal.AppraiserName}}</td>
@@ -44,12 +44,12 @@
                                             <td>{{empAppraisal.FinancialYear}} </td>
 
                                             <td>
-                                                <form action="" method="post">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-primary">Initiate <i
-                                                            class="fas fa-edit"></i>
-                                                    </button>
-                                                </form>
+                                                <a href="{% url 'FnInitiateAppraisal' empAppraisal.Code %} "
+                                                    class="btn btn-success btn-icon-text" type="button"
+                                                    data-toggle="tooltip" data-placement="top" title="View"> View <i
+                                                        class="far fa-eye"></i>
+                                                </a>
+
                                             </td>
                                         </tr>
                                         {% endfor %}

@@ -101,9 +101,6 @@ class PlanDetail(UserObjectMixin,View):
                 messages.success(request, "Request Successful")
                 print(response)
                 return redirect('PlanDetail', pk=pk)
-        except ValueError as e:
-            messages.error(request, "Missing Input")
-            return redirect('PlanDetail', pk=pk)
         except Exception as e:
             messages.error(request, e)
             print(e)

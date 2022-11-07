@@ -110,54 +110,63 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for res in line %}
+                                {% for line in line %}
                                 <tr>
-                                    <td>{{res.Start_Date}}</td>
-                                    <td>{{res.End_Date}}</td>
-                                    <td>{{res.Days}}</td>
-                                    <td>{{res.Leave_Period}}</td>
+                                    <td>{{line.Start_Date}}</td>
+                                    <td>{{line.End_Date}}</td>
+                                    <td>{{line.Days}}</td>
+                                    <td>{{line.Leave_Period}}</td>
                                     <td>
-                                        <!-- <button class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+                                        <button class="btn btn-primary" data-toggle="tooltip" data-placement="top"
                                             title="edit" data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop{{res.Line_No_}}"><i class="fas fa-edit"></i>
-                                        </button> -->
+                                            data-bs-target="#staticBackdrop{{line.Line_No_}}"><i
+                                                class="fas fa-edit"></i>
+                                        </button>
                                         <!-- Edit Modal -->
-                                        <div class="modal fade" id="staticBackdrop{{res.Line_No_}}"
+                                        <div class="modal fade" id="staticBackdrop{{line.Line_No_}}"
                                             data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                             aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title"><i class="las la-edit"></i> Edit Leave
-                                                            Planner Line <span class="editSpan">{{res.Line_No_}}</span>
+                                                            Planner Line <span class="editSpan">{{line.Line_No_}}</span>
                                                         </h5>
                                                         <button type="button" class="btn-close btn-close-white"
                                                             data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <form class="myForm"
-                                                            action="{% url 'PlanDetail' res.Document_No_ %}"
+                                                            action="{% url 'PlanDetail' line.Document_No_ %}"
                                                             method="post" novalidate>
                                                             {% csrf_token %}
-                                                            <input type="hidden" name="lineNo" value="{{res.Line_No_}}">
+                                                            <input type="hidden" name="lineNo"
+                                                                value="{{line.Line_No_}}">
                                                             <div class="mb-2">
                                                                 <div class="row my-3">
                                                                     <div class="col-md-12">
                                                                         <label for="" class="form-label">Start
                                                                             Date:</label>
+                                                                    </div>
+                                                                    <div class="col-md-12">
                                                                         <input type="text" class="datepicker"
                                                                             id="EditDatepicker-range-start"
-                                                                            name="startDate" placeholder="dd/mm/yyyy"
-                                                                            required>
+                                                                            name="startDate"
+                                                                            placeholder="{{line.Start_Date}}"
+                                                                            value="{{line.Start_Date}}">
                                                                     </div>
                                                                 </div>
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <label for="" class="form-label">End
                                                                             Date:</label>
+
+                                                                    </div>
+                                                                    <div class="col-md-12">
                                                                         <input type="text" class="datepicker"
                                                                             name="endDate" id="EditDatepicker-range-end"
-                                                                            placeholder="dd/mm/yyyy" required>
+                                                                            placeholder="{{line.End_Date}}"
+                                                                            value="{{line.End_Date}}">
                                                                     </div>
                                                                 </div>
                                                                 <div class="row my-3">
@@ -176,10 +185,10 @@
                                             </div>
                                         </div>
                                         <!-- End -->
-                                        <form action="{% url 'FnDeleteLeavePlannerLine' res.Document_No_ %}"
+                                        <form action="{% url 'FnDeleteLeavePlannerLine' line.Document_No_ %}"
                                             method="post" style="display: inline-block;">
                                             {% csrf_token %}
-                                            <input type="hidden" name="lineNo" value="{{res.Line_No_}}">
+                                            <input type="hidden" name="lineNo" value="{{line.Line_No_}}">
                                             <button type="submit" class="btn btn-danger" data-toggle="tooltip"
                                                 data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
                                             </button>
