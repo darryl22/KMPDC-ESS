@@ -9,10 +9,10 @@
             </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
-                <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
+                <!-- <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#Attachment" type="button"> <i class="las la-plus text-white"
                         style="font-size:15px;"></i> Upload Attachment
-                </button>
+                </button> -->
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
                     <button class="btn btn-successs p-3 d-flex align-items-center" type="button" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Assign Targets
@@ -140,20 +140,20 @@
                 </div>
             </div>
         </div> -->
-
-        <div class="row my-2">
+        <div class="row justify-content-center">
             <div class="col-md-12">
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Details
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body p-3">
+                <div id="accordion" class="accordion-style">
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    Details
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#accordion">
+                            <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <form class="row g-3">
@@ -190,57 +190,108 @@
                             </div>
                         </div>
                     </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwo">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                Employees Assigned
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                            data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingThree">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                                    aria-expanded="true" aria-controls="collapseThree">Employees Assigned</button>
+                            </h5>
+                        </div>
+                        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree"
+                            data-bs-parent="#accordion">
+                            <div class="card-body">
                                 <div class="row mt-4">
                                     <div class="col-md-12">
-                                        <div class="card" id="d-card">
-                                            <h4 class="mt-2 mx-2 text-dark">Employees Assigned</h4>
-                                            <div class="card-body">
-                                                <table id="example"
-                                                    class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                                    style="width:100%">
-                                                    <thead>
-                                                        <tr id="tops">
-                                                            <th id="long">Employee No</th>
-                                                            <th>Employee Name</th>
-                                                            <th>Target No</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {% for outputEmployees in outputEmployees %}
-                                                        <tr>
-                                                            <td>{{outputEmployees.EmployeeNo}}</td>
-                                                            <td>{{outputEmployees.EmployeeName}}</td>
-                                                            <td>{{outputEmployees.DepartmentalTarget}}</td>
-                                                        </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
+                                        <table id="example"
+                                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                            style="width:100%">
+                                            <thead>
+                                                <tr id="tops">
+                                                    <th id="long">Employee No</th>
+                                                    <th>Employee Name</th>
+                                                    <th>Target No</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for outputEmployees in outputEmployees %}
+                                                <tr>
+                                                    <td>{{outputEmployees.EmployeeNo}}</td>
+                                                    <td>{{outputEmployees.EmployeeName}}</td>
+                                                    <td>{{outputEmployees.DepartmentalTarget}}</td>
+                                                    <td>
+                                                        <form
+                                                            action="{% url 'HODInitiate' outputEmployees.Appraisal_Code %}"
+                                                            method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="DepartmentalTarget"
+                                                                value="{{outputEmployees.DepartmentalTarget}}">
+                                                            <button class="btn btn-success btn-icon-text" type="submit"
+                                                                data-toggle="tooltip" data-placement="top" title="View">
+                                                                Initiate Target <i class="far fa-eye"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingFour">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">My
+                                    Attachments</button>
+                            </h5>
+                        </div>
+                        <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
+                            data-bs-parent="#accordion">
+                            <div class="row my-2">
+                                {% for data in file %}
+                                <div class="col-lg-4 col-xl-3">
+                                    <div class="file-man-box">
+                                        {% if res.Status == 'Open' %}
+                                        <form action="{% url 'DeletePurchaseAttachment' data.No_  %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
+                                            <input type="hidden" name="tableID" value="{{data.Table_ID}}">
+                                            <button class="file-close" id="file-close"><i
+                                                    class="fa fa-times-circle"></i></button>
+                                        </form>
+                                        {% endif %}
+                                        <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon">
+                                        </div>
+                                        <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
+                                            <input type="hidden" name="File_Name" value="{{data.File_Name}}">
+                                            <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
+                                            <button class="file-download mx-1"><i
+                                                    class="fa fa-download text-success"></i></button>
+                                        </form>
+                                        <div class="file-man-title">
+                                            <h5 class="mb-0 text-overflow">
+                                                {{data.File_Name}}.{{data.File_Extension}}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <p class="text-danger p-4">
+                                    You have not uploaded any attachments <i class="las la-file-download"></i>
+                                </p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <form action="{% url 'HODInitiate' target.Code %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-successs my-3 w-100">Initiate</button>
-                </form>
-
             </div>
         </div>
+
     </div>
     </div>
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

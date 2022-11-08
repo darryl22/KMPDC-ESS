@@ -656,6 +656,8 @@ ul.tasks::after {
     margin-bottom: 15px;
     margin-top: 0 !important;
     border: none;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
 }
 .accordion-style .card:last-child {
     margin-bottom: 0;
@@ -689,9 +691,10 @@ ul.tasks::after {
 }
 .accordion-style .btn-link.collapsed {
     background: #ffffff;
-    border: 1px solid var(--first-color);
+    border: 1px solid whitesmoke;
     color: #1e2022;
     border-radius: 3px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .accordion-style .btn-link.collapsed:after {
     background: none;
@@ -705,7 +708,7 @@ ul.tasks::after {
     height: 26px;
     transform: none;
     width: 26px;
-    top: 15px;
+    top: 10px;
     text-align: center;
     background-color: var(--first-color);
     color: white;
@@ -723,7 +726,7 @@ ul.tasks::after {
     line-height: 26px;
     transform: none;
     width: 26px;
-    top: 15px;
+    top: 10px;
     position: absolute;
     color: #f30ce7;
     text-align: center;

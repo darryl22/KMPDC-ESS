@@ -25,6 +25,13 @@ class AppraisalRequests(UserObjectMixin,View):
         numberOfEmployees = '0'
         outputTarget = '0'
         outputCode = '0'
+        submittedAppraisals = '0'
+        empAppraisal = ''
+        submittedAppraisal = ''
+        completeAppraisal = ''
+
+        empAppraisalEndpoint =config.O_DATA.format(f"/QyEmployeeAppraisals?$filter=DepartmentCode%20eq%20%27{department}%27")
+        empAppraisalResponse = self.get_object(empAppraisalEndpoint)
 
         if HOD_User == True:
             departmentUsers = config.O_DATA.format(f"/QyUserSetup?$filter=User_Responsibility_Center%20eq%20%27{department}%27")
@@ -39,13 +46,18 @@ class AppraisalRequests(UserObjectMixin,View):
             targetResponse = self.get_object(appraisalTargets)
             outputTarget = [x for x in targetResponse['value'] if x['DepartmentCode'] == department]
 
-        empAppraisalEndpoint =config.O_DATA.format(f"/QyEmployeeAppraisals?$filter=EmployeeNo%20eq%20%27{empNo}%27")
-        empAppraisalResponse = self.get_object(empAppraisalEndpoint)
-        empAppraisal = [x for x in empAppraisalResponse['value'] if x['DepartmentCode'] == department and x['Status']=='Self Appraisal']
+            submittedAppraisals = [x for x in empAppraisalResponse['value'] if x['Status']=='Supervisor Appraisal']
+        if HOD_User == False:
+            empAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Self Appraisal']
+            submittedAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Supervisor Appraisal']
+            completeAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Completed']
 
         DPTCount = len(numberOfEmployees)
         targetCount = len(outputTarget)
         empAppraisalCount = len(empAppraisal)
+        submittedAppraisalCount = len(submittedAppraisal)
+        completeAppraisalCount = len(completeAppraisal)
+        submittedAppraisalsCount = len(submittedAppraisals)
 
 
         ctx = {
@@ -53,7 +65,10 @@ class AppraisalRequests(UserObjectMixin,View):
             "HOD_User":HOD_User,"department":department,
             'DPTCount':DPTCount,"full": userID,"appraisalCode":outputCode,
             "targetCount":targetCount, "outputTarget":outputTarget,
-            "empAppraisalCount":empAppraisalCount,"empAppraisal":empAppraisal
+            "empAppraisalCount":empAppraisalCount,"empAppraisal":empAppraisal,
+            "submittedAppraisalCount":submittedAppraisalCount,"completeAppraisalCount":completeAppraisalCount,
+            "submittedAppraisal":submittedAppraisal,"completeAppraisal":completeAppraisal,
+            "submittedAppraisalsCount":submittedAppraisalsCount,"submittedAppraisals":submittedAppraisals,
             }
         return render(request,"appraisal.html",ctx)
     def post(self,request):
@@ -150,25 +165,24 @@ class HODDetails(UserObjectMixin,View):
 def HODInitiate(request,pk):
     if request.method == "POST":
         try:
+            DepartmentalTarget = request.POST.get('DepartmentalTarget')
             response = config.CLIENT.service.FnInitiateAppraisal(pk)
             print("response:",response)
-            print(pk)
             if response == True:
                 messages.success(request, "Success")
-                return redirect('HODDetails',pk=pk)
+                return redirect('HODDetails',pk=DepartmentalTarget)
             messages.error(request, response)
-            return redirect('HODDetails',pk=pk)
+            return redirect('HODDetails',pk=DepartmentalTarget)
         except Exception as e:
             messages.error(request, e)
             print(e)
-            return redirect('HODDetails',pk=pk)
-    return redirect('HODDetails',pk=pk)
+            return redirect('HODDetails',pk=DepartmentalTarget)
 
 
 def UploadTargetAttachment(request, pk):
     if request.method == "POST":
         try:
-            tableID = ""
+            tableID = 52177591
             attach = request.FILES.getlist('attachment')
         except Exception as e:
             return redirect('HODDetails', pk=pk)
@@ -189,17 +203,37 @@ def UploadTargetAttachment(request, pk):
             return redirect('HODDetails', pk=pk)
     return redirect('HODDetails', pk=pk)
 
+
 class FnInitiateAppraisal(UserObjectMixin,View):
     def get(self,request,pk):
         try:
+            userID = request.session['User_ID']
             department = request.session['User_Responsibility_Center']
+            empNo = request.session['Employee_No_']
+            HOD_User = request.session['HOD_User']
 
             Access_Point = config.O_DATA.format(f"/QyEmployeeAppraisals?$filter=Code%20eq%20%27{pk}%27%20and%20DepartmentCode%20eq%20%27{department}%27")
             response = self.get_object(Access_Point)
             for appraisal in response['value']:
                 res = appraisal
+
+            assignedEmployees = config.O_DATA.format(f"/QyAppraisalTargetEmployees?$filter=Appraisal_Code%20eq%20%27{pk}%27%20and%20EmployeeNo%20eq%20%27{empNo}%27")
+            assignedEmployeesResponse = self.get_object(assignedEmployees)
+            targets = [x for x in assignedEmployeesResponse['value']]
+
+            scoresEndpoint = config.O_DATA.format(f"/QyEmployeeAppraisalScores?$filter=Appraisal_Code%20eq%20%27{pk}%27")
+            scoreResponse = self.get_object(scoresEndpoint)
+            scores = [x for x in scoreResponse['value']]
+
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
             ctx = {
-                "appraisal":res,
+                "appraisal":res,"HOD_User":HOD_User,
+                "targets":targets,
+                "full":userID,
+                "scores":scores,
+                "file":allFiles
             }
         except Exception as e:
             print(e)
@@ -211,25 +245,107 @@ class FnInitiateAppraisal(UserObjectMixin,View):
 def FnAppraisalScores(request):
     if request.method == "POST":
         try:
-            depAppraisalPeriod = request.POST.get('depAppraisalPeriod')
-            employeeNo = request.session['Employee_No_']
-            print(employeeNo)
-            target = request.POST.get('target')
-            quarter = int(request.POST.get('quarter'))
+            scoreScode = request.POST.get('scoreScode')
+            employeeNo = request.POST.get('employeeNo')
             score = float(request.POST.get('score'))
-            selfAppraisal = True
+            selfAppraisal = eval(request.POST.get('selfAppraisal'))
+            appraisalCode = request.POST.get('appraisalCode')
             myAction = request.POST.get('myAction')
+            recommendedTraining = request.POST.get('recommendedTraining')
+            quarter = request.POST.get('quarter')
 
-            response = config.CLIENT.service.FnAppraisalScores(depAppraisalPeriod,
-            employeeNo,target,quarter,score,selfAppraisal,myAction)
-            print("response:",response)
-            if response == True:
-                messages.success(request, "Success")
-                return redirect('FnInitiateAppraisal',pk=target)
-            messages.error(request, response)
-            return redirect('FnInitiateAppraisal',pk=target)
+            response = config.CLIENT.service.FnAppraisalScores(scoreScode,
+            employeeNo,score,selfAppraisal,myAction)
+
+            if quarter != '4th Quarter':
+                if selfAppraisal == True:
+                    if response == True:
+                        messages.success(request, "Success")
+                        return redirect('FnInitiateAppraisal',pk=appraisalCode)
+                    messages.error(request, "False")
+                    return redirect('FnInitiateAppraisal',pk=appraisalCode)
+                if selfAppraisal == False:
+                    if response == True:
+                        nextQuarter = config.CLIENT.service.FnMovetoNextQuarter(appraisalCode)
+                        if nextQuarter == True:
+                            messages.success(request, "Success. Moved to next quarter")
+                            return redirect('FnInitiateAppraisal',pk=appraisalCode)
+                        messages.error(request, "Success. Didn't move to next quarter, contact admin.")
+                        return redirect('FnInitiateAppraisal',pk=appraisalCode)
+                    messages.error(request, "False")
+                    return redirect('FnInitiateAppraisal',pk=appraisalCode)
+            if quarter == '4th Quarter':
+                if recommendedTraining:
+                    if response == True:
+                        training = config.CLIENT.service.FnRecommendedTrainings(appraisalCode,0,
+                        recommendedTraining,selfAppraisal,myAction)
+                        if training == True:
+                            messages.success(request, "Success.")
+                            return redirect('FnInitiateAppraisal',pk=appraisalCode)
+                        messages.info(request, "Success. Training info was not added, contact admin")
+                        return redirect('FnInitiateAppraisal',pk=appraisalCode)
+                if response == True:
+                    messages.info(request, "Success.")
+                    return redirect('FnInitiateAppraisal',pk=appraisalCode)
+                messages.error(request, "False")
+                return redirect('FnInitiateAppraisal',pk=appraisalCode)
         except Exception as e:
             messages.error(request, e)
             print(e)
-            return redirect('FnInitiateAppraisal',pk=target)
+            return redirect('FnInitiateAppraisal',pk=appraisalCode)
     return redirect('AppraisalRequests')
+
+def EmployeeAppraisalAttachment(request, pk):
+    if request.method == "POST":
+        try:
+            tableID = 52178029
+            attach = request.FILES.getlist('attachment')
+        
+            for files in attach:
+                fileName = request.FILES['attachment'].name
+                attachment = base64.b64encode(files.read())
+
+                response = config.CLIENT.service.FnUploadAttachedDocument(
+                        pk, fileName, attachment, tableID,request.session['User_ID'])
+
+                if response == True:
+                    messages.success(request, "File(s) Upload Successful")
+                    return redirect('FnInitiateAppraisal',pk=pk)
+
+                messages.error(request, "Failed, Try Again")
+                return redirect('FnInitiateAppraisal',pk=pk)
+        except Exception as e:
+            messages.error(request,e)
+            return redirect('FnInitiateAppraisal',pk=pk)
+    return redirect('AppraisalRequests')
+
+def FnsendforReview(request, pk):
+    if request.method =='POST':
+        try:
+            response = config.CLIENT.service.FnsendforReview(pk)
+            print("response:",response)
+            if response == True:
+                messages.success(request,"Submitted")
+                return redirect('AppraisalRequests')
+            messages.error(request,"Failed, contact admin")
+            return redirect('FnInitiateAppraisal',pk=pk)
+
+        except Exception as e:
+            messages.error(request,e)
+            return redirect('FnInitiateAppraisal',pk=pk)
+    return redirect('FnInitiateAppraisal',pk=pk)
+
+def FnSendforFurtherReview(request, pk):
+    if request.method =='POST':
+        try:
+            response = config.CLIENT.service.FnSendforFurtherReview(pk)
+            print("response:",response)
+            if response == True:
+                messages.success(request,"Submitted")
+                return redirect('AppraisalRequests')
+            messages.error(request,"Failed, contact admin")
+            return redirect('FnInitiateAppraisal',pk=pk)
+        except Exception as e:
+            messages.error(request,e)
+            return redirect('FnInitiateAppraisal',pk=pk)
+    return redirect('FnInitiateAppraisal',pk=pk)

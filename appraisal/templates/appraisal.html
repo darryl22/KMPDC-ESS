@@ -9,11 +9,10 @@
         <!--alert -->
         {% include 'alerts.html' %}
 
-        {% include 'users.html' %}
         {% if HOD_User == True %}
-
-        {% else %}
         {% include 'hod.html' %}
+        {% else %}
+        {% include 'users.html' %}
         <!-- Start Employee Appraisal -->
 
         {% endif %}
