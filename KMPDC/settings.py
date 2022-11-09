@@ -87,7 +87,7 @@ INSTALLED_APPS = [
     'accounts',
     'advance',
     'appraisal',
-    'getnavdata',
+    'myRequest',
 
 ]
 
