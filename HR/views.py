@@ -17,6 +17,7 @@ from requests.auth import HTTPBasicAuth
 from zeep import Client
 from zeep.transports import Transport
 from django.views import View
+from myRequest.views import UserObjectMixins
 # Create your views here.
 
 class UserObjectMixin(object):
@@ -132,15 +133,14 @@ class myLeave(UserObjectMixin,View):
             }
         return render(request,"myLeave.html",ctx)
 
-class Leave_Request(UserObjectMixin,View):
+class Leave_Request(UserObjectMixins,View):
     def get(self,request):
         try:
             UserId = request.session['User_ID']
             year = request.session['years']
             empNo =request.session['Employee_No_']
 
-            Access_Point = config.O_DATA.format(f"/QyLeaveApplications?$filter=User_ID%20eq%20%27{UserId}%27")
-            response = self.get_object(Access_Point)
+            response = self.get_filtered_data("/QyLeaveApplications","User_ID",UserId)
             openLeave = [x for x in response['value'] if x['Status'] == 'Open']
             pendingLeave = [x for x in response['value'] if x['Status'] == 'Pending Approval']
             approvedLeave = [x for x in response['value'] if x['Status'] == 'Released']

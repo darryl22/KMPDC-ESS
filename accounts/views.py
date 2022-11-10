@@ -9,6 +9,7 @@ from django.views import View
 from datetime import date
 import datetime
 import json
+
 # Create your views here.
 class UserObjectMixin(object):
     model =None

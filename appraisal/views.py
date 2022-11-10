@@ -18,47 +18,55 @@ class UserObjectMixin(object):
 
 class AppraisalRequests(UserObjectMixin,View):
     def get(self,request):
-        HOD_User = request.session['HOD_User']
-        userID = request.session['User_ID']
-        department = request.session['User_Responsibility_Center']
-        empNo = request.session['Employee_No_']
-        numberOfEmployees = '0'
-        outputTarget = '0'
-        outputCode = '0'
-        submittedAppraisals = '0'
-        empAppraisal = ''
-        submittedAppraisal = ''
-        completeAppraisal = ''
+        try:
+            HOD_User = request.session['HOD_User']
+            userID = request.session['User_ID']
+            department = request.session['User_Responsibility_Center']
+            empNo = request.session['Employee_No_']
+            numberOfEmployees = '0'
+            outputTarget = '0'
+            outputCode = '0'
+            submittedAppraisals = '0'
+            empAppraisal = ''
+            submittedAppraisal = ''
+            completeAppraisal = ''
 
-        empAppraisalEndpoint =config.O_DATA.format(f"/QyEmployeeAppraisals?$filter=DepartmentCode%20eq%20%27{department}%27")
-        empAppraisalResponse = self.get_object(empAppraisalEndpoint)
+            if "&" in department:
+                department = department.replace("&","%26")
 
-        if HOD_User == True:
-            departmentUsers = config.O_DATA.format(f"/QyUserSetup?$filter=User_Responsibility_Center%20eq%20%27{department}%27")
-            DPTResponse = self.get_object(departmentUsers)
-            numberOfEmployees = [x for x in DPTResponse['value'] if x['User_Responsibility_Center'] == department]
+                print("replaced:",department)
 
-            appraisalCode = config.O_DATA.format(f"/QyDepartmentalAppraisalPeriods?$filter=Department%20eq%20%27{department}%27")
-            CodeResponse = self.get_object(appraisalCode)
-            outputCode = [x for x in CodeResponse['value'] if x['Department'] == department]
+            empAppraisalEndpoint =config.O_DATA.format(f"/QyEmployeeAppraisals?$filter=DepartmentCode%20eq%20%27{department}%27")
+            empAppraisalResponse = self.get_object(empAppraisalEndpoint)
 
-            appraisalTargets = config.O_DATA.format(f"/QyDepartmentalAppraisalTargets?$filter=DepartmentCode%20eq%20%27{department}%27")
-            targetResponse = self.get_object(appraisalTargets)
-            outputTarget = [x for x in targetResponse['value'] if x['DepartmentCode'] == department]
+            if HOD_User == True:
+                departmentUsers = config.O_DATA.format(f"/QyUserSetup?$filter=User_Responsibility_Center%20eq%20%27{department}%27")
+                DPTResponse = self.get_object(departmentUsers)
+                numberOfEmployees = [x for x in DPTResponse['value'] if x['User_Responsibility_Center'] == department]
 
-            submittedAppraisals = [x for x in empAppraisalResponse['value'] if x['Status']=='Supervisor Appraisal']
-        if HOD_User == False:
-            empAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Self Appraisal']
-            submittedAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Supervisor Appraisal']
-            completeAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Completed']
+                appraisalCode = config.O_DATA.format(f"/QyDepartmentalAppraisalPeriods?$filter=Department%20eq%20%27{department}%27")
+                CodeResponse = self.get_object(appraisalCode)
+                outputCode = [x for x in CodeResponse['value'] if x['Department'] == department]
 
-        DPTCount = len(numberOfEmployees)
-        targetCount = len(outputTarget)
-        empAppraisalCount = len(empAppraisal)
-        submittedAppraisalCount = len(submittedAppraisal)
-        completeAppraisalCount = len(completeAppraisal)
-        submittedAppraisalsCount = len(submittedAppraisals)
+                appraisalTargets = config.O_DATA.format(f"/QyDepartmentalAppraisalTargets?$filter=DepartmentCode%20eq%20%27{department}%27")
+                targetResponse = self.get_object(appraisalTargets)
+                outputTarget = [x for x in targetResponse['value'] if x['DepartmentCode'] == department]
 
+                submittedAppraisals = [x for x in empAppraisalResponse['value'] if x['Status']=='Supervisor Appraisal']
+            if HOD_User == False:
+                empAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Self Appraisal']
+                submittedAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Supervisor Appraisal']
+                completeAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Completed']
+
+            DPTCount = len(numberOfEmployees)
+            targetCount = len(outputTarget)
+            empAppraisalCount = len(empAppraisal)
+            submittedAppraisalCount = len(submittedAppraisal)
+            completeAppraisalCount = len(completeAppraisal)
+            submittedAppraisalsCount = len(submittedAppraisals)
+        except Exception as e:
+            print (e)
+            return redirect('auth')
 
         ctx = {
             "today": self.todays_date,
