@@ -220,12 +220,12 @@
                                                     <td>{{outputEmployees.EmployeeName}}</td>
                                                     <td>{{outputEmployees.DepartmentalTarget}}</td>
                                                     <td>
-                                                        <form
-                                                            action="{% url 'HODInitiate' outputEmployees.Appraisal_Code %}"
-                                                            method="post">
+                                                        <form action="{% url 'HODInitiate' %}" method="post">
                                                             {% csrf_token %}
                                                             <input type="hidden" name="DepartmentalTarget"
                                                                 value="{{outputEmployees.DepartmentalTarget}}">
+                                                            <input type="hidden" name="empNo"
+                                                                value="{{outputEmployees.EmployeeNo}}">
                                                             <button class="btn btn-success btn-icon-text" type="submit"
                                                                 data-toggle="tooltip" data-placement="top" title="View">
                                                                 Initiate Target <i class="far fa-eye"></i>

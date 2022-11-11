@@ -170,21 +170,36 @@ class HODDetails(UserObjectMixin,View):
                 return redirect('HODDetails',pk=pk)
         return redirect('HODDetails',pk=pk)
 
-def HODInitiate(request,pk):
-    if request.method == "POST":
-        try:
-            DepartmentalTarget = request.POST.get('DepartmentalTarget')
-            response = config.CLIENT.service.FnInitiateAppraisal(pk)
-            print("response:",response)
-            if response == True:
-                messages.success(request, "Success")
+class HODInitiate(UserObjectMixin,View):
+    def post(self,request):
+        if request.method == "POST":
+            try:
+                DepartmentalTarget = request.POST.get('DepartmentalTarget')
+                empNo = request.POST.get('empNo')
+
+                Access_Point = config.O_DATA.format(f"/QyDepartmentalAppraisalTargets?$filter=Code%20eq%20%27{DepartmentalTarget}%27")
+                period_response = self.get_object(Access_Point)
+                for appraisal in period_response['value']:
+                    period = appraisal['DepartmentalAppraisalPeriod']
+
+                empAppraisalEndpoint =config.O_DATA.format(f"/QyEmployeeAppraisals?$filter=EmployeeNo%20eq%20%27{empNo}%27%20and%20DepartmentalAppraisalPeriod%20eq%20%27{period}%27")
+                empAppraisalResponse = self.get_object(empAppraisalEndpoint)
+
+                for x in empAppraisalResponse['value']:
+                    app_code = x['Code']
+
+                
+                response = config.CLIENT.service.FnInitiateAppraisal(app_code)
+                print("response:",response)
+                if response == True:
+                    messages.success(request, "Success")
+                    return redirect('HODDetails',pk=DepartmentalTarget)
+                messages.error(request, response)
                 return redirect('HODDetails',pk=DepartmentalTarget)
-            messages.error(request, response)
-            return redirect('HODDetails',pk=DepartmentalTarget)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('HODDetails',pk=DepartmentalTarget)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('HODDetails',pk=DepartmentalTarget)
 
 
 def UploadTargetAttachment(request, pk):
@@ -217,17 +232,12 @@ class FnInitiateAppraisal(UserObjectMixin,View):
         try:
             userID = request.session['User_ID']
             department = request.session['User_Responsibility_Center']
-            empNo = request.session['Employee_No_']
             HOD_User = request.session['HOD_User']
 
             Access_Point = config.O_DATA.format(f"/QyEmployeeAppraisals?$filter=Code%20eq%20%27{pk}%27%20and%20DepartmentCode%20eq%20%27{department}%27")
             response = self.get_object(Access_Point)
             for appraisal in response['value']:
                 res = appraisal
-
-            assignedEmployees = config.O_DATA.format(f"/QyAppraisalTargetEmployees?$filter=Appraisal_Code%20eq%20%27{pk}%27%20and%20EmployeeNo%20eq%20%27{empNo}%27")
-            assignedEmployeesResponse = self.get_object(assignedEmployees)
-            targets = [x for x in assignedEmployeesResponse['value']]
 
             scoresEndpoint = config.O_DATA.format(f"/QyEmployeeAppraisalScores?$filter=Appraisal_Code%20eq%20%27{pk}%27")
             scoreResponse = self.get_object(scoresEndpoint)
@@ -238,7 +248,6 @@ class FnInitiateAppraisal(UserObjectMixin,View):
             allFiles = [x for x in res_file['value']]
             ctx = {
                 "appraisal":res,"HOD_User":HOD_User,
-                "targets":targets,
                 "full":userID,
                 "scores":scores,
                 "file":allFiles
