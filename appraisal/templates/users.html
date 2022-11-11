@@ -40,6 +40,23 @@
                                     </thead>
                                     <tbody>
                                         {% for empAppraisal in empAppraisal %}
+                                        {% if empAppraisal.Status == 'Open' %}
+                                        <tr style="background: #fff1bb !important;">
+                                            <td>{{empAppraisal.Code}}</td>
+                                            <td id="rap">{{empAppraisal.Status}}</td>
+                                            <td>{{empAppraisal.AppraiserName}}</td>
+                                            <td>{{empAppraisal.FinancialYear}} </td>
+                                            <td>
+                                                <form action="{% url 'UserInitiate' empAppraisal.Code %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button class="btn btn-success btn-icon-text" type="submit">
+                                                        Initiate
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            <td>{{empAppraisal.DepartmentName}} </td>
+                                        </tr>
+                                        {% elif empAppraisal.Status == 'Self Appraisal' %}
                                         <tr>
                                             <td>{{empAppraisal.Code}}</td>
                                             <td id="rap">{{empAppraisal.Status}}</td>
@@ -54,6 +71,7 @@
                                             </td>
                                             <td>{{empAppraisal.DepartmentName}} </td>
                                         </tr>
+                                        {% endif %}
                                         {% endfor %}
                                     </tbody>
                                 </table>

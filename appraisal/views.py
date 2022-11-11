@@ -54,7 +54,7 @@ class AppraisalRequests(UserObjectMixin,View):
 
                 submittedAppraisals = [x for x in empAppraisalResponse['value'] if x['Status']=='Supervisor Appraisal']
             if HOD_User == False:
-                empAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Self Appraisal']
+                empAppraisal = [x for x in empAppraisalResponse['value'] if (x['EmployeeNo'] == empNo and x['Status']=='Self Appraisal') or (x['EmployeeNo'] == empNo and x['Status']=='Open')]
                 submittedAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Supervisor Appraisal']
                 completeAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Completed']
 
@@ -201,7 +201,21 @@ class HODInitiate(UserObjectMixin,View):
                 print(e)
                 return redirect('HODDetails',pk=DepartmentalTarget)
 
-
+class UserInitiate(UserObjectMixin,View):
+    def post(self,request,pk):
+        if request.method == "POST":
+            try:
+                response = config.CLIENT.service.FnInitiateAppraisal(pk)
+                print("response:",response)
+                if response == True:
+                    messages.success(request, "Success")
+                    return redirect('FnInitiateAppraisal',pk=pk)
+                messages.error(request, "False")
+                return redirect('AppraisalRequests')
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('AppraisalRequests')
 def UploadTargetAttachment(request, pk):
     if request.method == "POST":
         try:
