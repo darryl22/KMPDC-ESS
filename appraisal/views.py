@@ -262,7 +262,7 @@ class FnInitiateAppraisal(UserObjectMixin,View):
             allFiles = [x for x in res_file['value']]
             ctx = {
                 "appraisal":res,"HOD_User":HOD_User,
-                "full":userID,
+                "full":userID,"today": self.todays_date,
                 "scores":scores,
                 "file":allFiles
             }
@@ -288,24 +288,15 @@ def FnAppraisalScores(request):
             response = config.CLIENT.service.FnAppraisalScores(scoreScode,
             employeeNo,score,selfAppraisal,myAction)
 
-            if quarter != '4th Quarter':
-                if selfAppraisal == True:
-                    if response == True:
-                        messages.success(request, "Success")
-                        return redirect('FnInitiateAppraisal',pk=appraisalCode)
-                    messages.error(request, "False")
-                    return redirect('FnInitiateAppraisal',pk=appraisalCode)
-                if selfAppraisal == False:
-                    if response == True:
-                        nextQuarter = config.CLIENT.service.FnMovetoNextQuarter(appraisalCode)
-                        if nextQuarter == True:
-                            messages.success(request, "Success. Moved to next quarter")
-                            return redirect('FnInitiateAppraisal',pk=appraisalCode)
-                        messages.error(request, "Success. Didn't move to next quarter, contact admin.")
-                        return redirect('FnInitiateAppraisal',pk=appraisalCode)
-                    messages.error(request, "False")
-                    return redirect('FnInitiateAppraisal',pk=appraisalCode)
-            if quarter == '4th Quarter':
+            if response == False:
+                messages.error(request, "False")
+                return redirect('FnInitiateAppraisal',pk=appraisalCode)
+
+            if quarter != '4th Quarter' and response == True:
+                messages.success(request, "Success")
+                return redirect('FnInitiateAppraisal',pk=appraisalCode)
+             
+            if quarter == '4th Quarter' and response == True:
                 if recommendedTraining:
                     if response == True:
                         training = config.CLIENT.service.FnRecommendedTrainings(appraisalCode,0,
@@ -325,6 +316,17 @@ def FnAppraisalScores(request):
             print(e)
             return redirect('FnInitiateAppraisal',pk=appraisalCode)
     return redirect('AppraisalRequests')
+
+
+def FnMovetoNextQuarter(request,pk):
+    if request.method == 'POST':
+        nextQuarter = config.CLIENT.service.FnMovetoNextQuarter(pk)
+        if nextQuarter == True:
+            messages.success(request, "Success. Moved to next quarter")
+            return redirect('FnInitiateAppraisal',pk=pk)
+        messages.error(request, "Success. Didn't move to next quarter, contact admin.")
+        return redirect('FnInitiateAppraisal',pk=pk)
+    return redirect('FnInitiateAppraisal',pk=pk)
 
 def EmployeeAppraisalAttachment(request, pk):
     if request.method == "POST":

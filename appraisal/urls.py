@@ -11,5 +11,6 @@ urlpatterns = [
     path('HODInitiate',views.HODInitiate.as_view(),name='HODInitiate'),
     path('EmployeeAppraisalAttachment/<str:pk>',views.EmployeeAppraisalAttachment,name='EmployeeAppraisalAttachment'),
     path('FnsendforReview/<str:pk>',views.FnsendforReview,name='FnsendforReview'),
-    path('FnSendforFurtherReview/<str:pk>',views.FnSendforFurtherReview,name='FnSendforFurtherReview'),    
+    path('FnSendforFurtherReview/<str:pk>',views.FnSendforFurtherReview,name='FnSendforFurtherReview'),
+    path('FnMovetoNextQuarter/<str:pk>',views.FnMovetoNextQuarter,name='FnMovetoNextQuarter'),     
 ]

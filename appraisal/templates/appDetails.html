@@ -338,9 +338,38 @@
                 </div>
             </div>
         </div>
+        {% if appraisal.Status == "Supervisor Appraisal" and appraisal.CurrentQuarter != '4th Quarter' and HOD_User == True %}
         <div class="row">
             <div class="col-md-12">
-                {% if appraisal.Status == "Self Appraisal" %}
+                <div class="myForm my-3">
+                    <form action="{% url 'FnMovetoNextQuarter' appraisal.Code %}" method="POST"
+                        style="display: inline-block;">
+                        {% csrf_token %}
+                        <button class="btn btn-info" type="submit">Move to Next Quarter </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% elif appraisal.Status == "Self Appraisal" and appraisal.CurrentQuarter != '1st Quarter' and HOD_User == False %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="myForm my-3">
+                    <form action="{% url 'FnsendforReview' appraisal.Code %}" method="POST"
+                        style="display: inline-block;">
+                        {% csrf_token %}
+                        <button class="btn btn-info" type="submit">Submit For Review </button>
+                    </form>
+                    <form action="{% url 'FnSendforFurtherReview' appraisal.Code %}" method="POST" class="myForm"
+                        style="display: inline-block;">
+                        {% csrf_token %}
+                        <button class="btn btn-info" type="submit">Send For Further Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% elif appraisal.Status == "Self Appraisal" and appraisal.CurrentQuarter == '1st Quarter' and HOD_User == False %}
+        <div class="row">
+            <div class="col-md-12">
                 <div class="myForm my-3">
                     <form action="{% url 'FnsendforReview' appraisal.Code %}" method="POST"
                         style="display: inline-block;">
@@ -348,17 +377,9 @@
                         <button class="btn btn-info" type="submit">Submit For Review </button>
                     </form>
                 </div>
-                {% elif appraisal.Status == "Self Appraisal" and appraisal.CurrentQuarter != '1st Quarter' %}
-                <div class="d-grid gap-2 my-3">
-                    <form action="{% url 'FnSendforFurtherReview' appraisal.Code %}" method="POST" class="myForm"
-                        id="approvalForm">
-                        {% csrf_token %}
-                        <button class="btn btn-info" type="submit">Send For Further Review</button>
-                    </form>
-                </div>
-                {% endif %}
             </div>
         </div>
+        {% endif %}
     </div>
     </div>
 
