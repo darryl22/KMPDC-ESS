@@ -172,10 +172,10 @@
                                             <thead>
                                                 <tr id="tops">
                                                     <th>Quarter</th>
+                                                    <th>Target Description</th>
+                                                    <th>Weighted Score</th>
                                                     <th>Self Appraisal Score</th>
                                                     <th>Supervisor Score</th>
-                                                    <th>Maximum Target Score</th>
-                                                    <th>Target Description</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -183,24 +183,25 @@
                                                 {% for score in scores %}
                                                 <tr>
                                                     <td>{{score.Quarter}}</td>
+                                                    <td>{{score.TargetDescription}}</td>
+                                                    <td>{{score.MaximumTargetScore}}</td>
                                                     <td>{{score.SelfAppraisalScore}}</td>
                                                     <td>{{score.SupervisorAppraisalScore}}</td>
-                                                    <td>{{score.MaximumTargetScore}}</td>
-                                                    <td>{{score.TargetDescription}}</td>
-
                                                     <td>
                                                         {% if HOD_User == True and appraisal.Status == "Supervisor Appraisal" and score.Quarter == appraisal.CurrentQuarter %}
                                                         <button type="button" class="btn btn-success btn-icon-text"
-                                                            data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#staticBackdrop{{score.Code}}">
                                                             Add Score
                                                         </button>
                                                         {% elif HOD_User == False and appraisal.Status == "Self Appraisal" and score.Quarter == appraisal.CurrentQuarter %}
                                                         <button type="button" class="btn btn-success btn-icon-text"
-                                                            data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#staticBackdrop{{score.Code}}">
                                                             Add Score
                                                         </button>
                                                         {% endif %}
-                                                        <div class="modal fade" id="staticBackdrop"
+                                                        <div class="modal fade" id="staticBackdrop{{score.Code}}"
                                                             data-bs-backdrop="static" data-bs-keyboard="false"
                                                             tabindex="-1" aria-labelledby="staticBackdropLabel"
                                                             aria-hidden="true" style="height:auto !important">
