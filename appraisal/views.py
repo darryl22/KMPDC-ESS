@@ -5,6 +5,7 @@ from django.conf import settings as config
 import datetime as dt
 from django.contrib import messages
 import base64
+from myRequest.views import UserObjectMixins
 
 # Create your views here.
 class UserObjectMixin(object):
@@ -239,35 +240,58 @@ def UploadTargetAttachment(request, pk):
     return redirect('HODDetails', pk=pk)
 
 
-class FnInitiateAppraisal(UserObjectMixin,View):
+class FnInitiateAppraisal(UserObjectMixins,View):
     def get(self,request,pk):
         try:
             userID = request.session['User_ID']
             department = request.session['User_Responsibility_Center']
             HOD_User = request.session['HOD_User']
+            quarter = ''
 
-            Access_Point = config.O_DATA.format(f"/QyEmployeeAppraisals?$filter=Code%20eq%20%27{pk}%27%20and%20DepartmentCode%20eq%20%27{department}%27")
-            response = self.get_object(Access_Point)
-            for appraisal in response['value']:
+            response = self.double_filtered_data("/QyEmployeeAppraisals","Code","eq",pk,
+                                                "and","DepartmentCode","eq",department)
+            for appraisal in response[1]:
                 res = appraisal
+                quarter = appraisal['CurrentQuarter']
 
-            scoresEndpoint = config.O_DATA.format(f"/QyEmployeeAppraisalScores?$filter=Appraisal_Code%20eq%20%27{pk}%27")
-            scoreResponse = self.get_object(scoresEndpoint)
-            scores = [x for x in scoreResponse['value']]
+            active_targets_response = self.double_filtered_data("/QyEmployeeAppraisalScores",
+                                        "Appraisal_Code","eq",pk,"and","Quarter","eq",quarter)
 
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
-            res_file = self.get_object(Access_File)
-            allFiles = [x for x in res_file['value']]
-            ctx = {
-                "appraisal":res,"HOD_User":HOD_User,
-                "full":userID,"today": self.todays_date,
-                "scores":scores,
-                "file":allFiles
-            }
+            active_targets_count = active_targets_response[0]                      
+            active_targets = active_targets_response[1]
+            
+            other_targets_response = self.double_filtered_data("/QyEmployeeAppraisalScores",
+                                        "Appraisal_Code","eq",pk,"and","Quarter","ne",quarter)
+            other_targets_count = other_targets_response[0]
+            other_targets = other_targets_response[1]
+
+            res_file = self.one_filter("/QyDocumentAttachments","No_","eq",pk)
+            allFiles = [x for x in res_file[1]]
+            
+        except requests.exceptions.Timeout:
+            messages.error(request, "API timeout. Server didn't respond, contact admin")
+            return redirect('dashboard')
+        except requests.exceptions.ConnectionError:
+            messages.error(request, "Connection/network error,retry")
+            return redirect('dashboard') 
+        except requests.exceptions.TooManyRedirects:
+            messages.error(request, "Server busy, retry")
+            return redirect('dashboard') 
+        except KeyError as e:
+            print (e)
+            messages.error(request, "Session Expired. Please Login")
+            return redirect('auth')
         except Exception as e:
             print(e)
-            messages.error(request,e)
+            messages.info(request,e)
             return redirect('AppraisalRequests')
+        ctx = {
+                "appraisal":res,"HOD_User":HOD_User,
+                "full":userID,"today": self.todays_date,"quarter":quarter,
+                "active_targets":active_targets,"active_targets_count":active_targets_count,
+                "file":allFiles, "other_targets_response":other_targets_response,
+                "other_targets_count":other_targets_count,"other_targets":other_targets
+            }
         return render(request,"appDetails.html",ctx)
         
 
@@ -280,40 +304,56 @@ def FnAppraisalScores(request):
             selfAppraisal = eval(request.POST.get('selfAppraisal'))
             appraisalCode = request.POST.get('appraisalCode')
             myAction = request.POST.get('myAction')
-            recommendedTraining = request.POST.get('recommendedTraining')
             quarter = request.POST.get('quarter')
-
             response = config.CLIENT.service.FnAppraisalScores(scoreScode,
             employeeNo,score,selfAppraisal,myAction)
 
-            if response == False:
-                messages.error(request, "False")
-                return redirect('FnInitiateAppraisal',pk=appraisalCode)
-
-            if quarter != '4th Quarter' and response == True:
+            if response == True:
                 messages.success(request, "Success")
                 return redirect('FnInitiateAppraisal',pk=appraisalCode)
-             
-            if quarter == '4th Quarter' and response == True:
-                if recommendedTraining:
-                    if response == True:
-                        training = config.CLIENT.service.FnRecommendedTrainings(appraisalCode,0,
-                        recommendedTraining,selfAppraisal,myAction)
-                        if training == True:
-                            messages.success(request, "Success.")
-                            return redirect('FnInitiateAppraisal',pk=appraisalCode)
-                        messages.info(request, "Success. Training info was not added, contact admin")
-                        return redirect('FnInitiateAppraisal',pk=appraisalCode)
-                if response == True:
-                    messages.info(request, "Success.")
-                    return redirect('FnInitiateAppraisal',pk=appraisalCode)
-                messages.error(request, "False")
-                return redirect('FnInitiateAppraisal',pk=appraisalCode)
+            messages.error(request, "False")
+            return redirect('FnInitiateAppraisal',pk=appraisalCode)
+
+                
         except Exception as e:
             messages.error(request, e)
             print(e)
             return redirect('FnInitiateAppraisal',pk=appraisalCode)
     return redirect('AppraisalRequests')
+
+class FnRecommendedTrainings(UserObjectMixins,View):
+    def post(self, request):
+        try:
+            appraisalCode = request.POST.get('appraisalCode')
+            recommendedTraining = request.POST.get('recommendedTraining')
+            selfAppraisal = eval(request.POST.get('selfAppraisal'))
+            myAction = request.POST.get('myAction')
+
+            training = config.CLIENT.service.FnRecommendedTrainings(appraisalCode,0,
+                        recommendedTraining,selfAppraisal,myAction)
+            if training == True:
+                messages.success(request, "Success.")
+                return redirect('FnInitiateAppraisal',pk=appraisalCode)
+            messages.error(request, "Training info was not added")
+            return redirect('FnInitiateAppraisal',pk=appraisalCode)
+        except requests.exceptions.Timeout:
+            messages.error(request, "API timeout. Server didn't respond, contact admin")
+            return redirect('dashboard')
+        except requests.exceptions.ConnectionError:
+            messages.error(request, "Connection/network error,retry")
+            return redirect('dashboard') 
+        except requests.exceptions.TooManyRedirects:
+            messages.error(request, "Server busy, retry")
+            return redirect('dashboard') 
+        except KeyError as e:
+            print (e)
+            messages.error(request, "Session Expired. Please Login")
+            return redirect('auth')
+        except Exception as e:
+            print(e)
+            messages.info(request,e)
+            return redirect('AppraisalRequests')
+            
 
 
 def FnMovetoNextQuarter(request,pk):
