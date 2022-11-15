@@ -12,7 +12,10 @@
     --primary-font: 'Gelasio', serif;
     --normal-font: 'Titillium Web', sans-serif;
 }
-
+.timer{
+    margin-top: 2rem !important;
+    margin-bottom:2rem !important;
+}
 .n-login {
     height: 100vh;
     width: 100%;
@@ -66,7 +69,6 @@
     font-family: var(--normal-font);
     font-style: regular;
     font-size: 16px;
-    line-height: 10px;
     align-items: flex-end;
     text-shadow: 0 1px 0 var(--first-color);
     color: white;
@@ -131,7 +133,7 @@ label {
     color: #60606A;
 }
 
-
+.datepicker,
 .form-control,
 .form-control:focus,
 .input-group-addon {
@@ -266,7 +268,6 @@ label {
 .text-200 {
     font-size: .8rem;
     text-shadow: 0 1px 0 rgb(255, 255, 255);
-    position: fixed;
     width: auto;
     bottom: 0;
     font-family: var(--primary-font);

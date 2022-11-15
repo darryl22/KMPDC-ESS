@@ -164,7 +164,7 @@ input.invalid {
 }
 
 .general-bg {
-    background: url(../img/bg/1.jpg) !important;
+    background: url("../img/bg/1.0961cc71a115.jpg") !important;
     background-attachment: fixed !important;
 
 }
@@ -568,7 +568,7 @@ ul.tasks::after {
 
 .data-card {
     border-radius: 0.5em;
-    background: url(../img/bg/4.png);
+    background: url("../img/bg/4.f47933e1901f.png");
     padding: 2em 2em;
     box-shadow: 0 1.5em 2.5em -0.5em rgba(0, 0, 0, 0.1);
     transition: transform 0.45s ease, background 0.45s ease;
