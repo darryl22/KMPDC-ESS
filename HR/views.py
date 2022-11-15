@@ -91,23 +91,39 @@ class Leave_Planner(UserObjectMixins,View):
         return redirect('LeavePlanner')
 
 
-class PlanDetail(UserObjectMixin,View):
+class PlanDetail(UserObjectMixins,View):
     def get(self,request,pk):
         fullname = request.session['User_ID']
         year = request.session['years']
         empNo =request.session['Employee_No_']
         
         try:
-            Access_Point = config.O_DATA.format(f"/QyLeavePlannerHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27%20and%20No_%20eq%20%27{pk}%27")
-            response = self.get_object(Access_Point)
-            for plan in response['value']:
+            response = self.double_filtered_data("/QyLeavePlannerHeaders","No_","eq",pk,"and",
+                                                    "Employee_No_","eq",empNo)
+            for plan in response[1]:
                 res=plan
-            Lines_Res = config.O_DATA.format(f"/QyLeavePlannerLines?$filter=Employee_No_%20eq%20%27{empNo}%27%20and%20Document_No_%20eq%20%27{pk}%27")
-            LinesRes = self.get_object(Lines_Res)
-            openLines=[x for x in LinesRes['value'] if x['Document_No_'] == pk]
 
-        except requests.exceptions.ConnectionError as e:
+            LinesRes = self.double_filtered_data("/QyLeavePlannerLines","Document_No_","eq",pk,"and",
+                                                    "Employee_No_","eq",empNo)
+            openLines = LinesRes[1]
+
+        except requests.exceptions.Timeout:
+            messages.error(request, "Server timeout,retry,restart server.")
+            return redirect('dashboard')
+        except requests.exceptions.ConnectionError:
+            messages.error(request, "Connection/network error,retry")
+            return redirect('dashboard') 
+        except requests.exceptions.TooManyRedirects:
+            messages.error(request, "Server busy, retry")
+            return redirect('dashboard')
+        except KeyError as e:
+            messages.info(request, "Session Expired. Please Login")
             print(e)
+            return redirect('auth')
+        except Exception as e:
+            messages.info(request, e)
+            print(e)
+            return redirect('auth')
         ctx = {"today": self.todays_date, 
                 "year": year, "full": fullname,
                 "line": openLines,"res":res}
