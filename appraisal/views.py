@@ -34,8 +34,6 @@ class AppraisalRequests(UserObjectMixin,View):
             if "&" in department:
                 department = department.replace("&","%26")
 
-                print("replaced:",department)
-
             empAppraisalEndpoint =config.O_DATA.format(f"/QyEmployeeAppraisals?$filter=DepartmentCode%20eq%20%27{department}%27")
             empAppraisalResponse = self.get_object(empAppraisalEndpoint)
 

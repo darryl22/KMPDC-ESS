@@ -166,7 +166,116 @@
                             <div class="card-body">
                                 <div class="row mt-4">
                                     <div class="col-md-12">
-                                        <table id="example"
+                                        <div class="job-tab text-center">
+                                            <ul class="nav nav-tabs justify-content-center" role="tablist">
+                                                <li role="presentation" class="active">
+                                                    <a class="active show" href="#hot-jobs" aria-controls="hot-jobs"
+                                                        role="tab" data-toggle="tab" aria-selected="true">Active
+                                                        Quarter</a>
+                                                </li>
+                                                <li role="presentation"><a href="#recent-jobs"
+                                                        aria-controls="recent-jobs" role="tab" data-toggle="tab"
+                                                        class="" aria-selected="false">Recent Jobs</a></li>
+                                                <li role="presentation"><a href="#popular-jobs"
+                                                        aria-controls="popular-jobs" role="tab" data-toggle="tab"
+                                                        class="" aria-selected="false">Popular Jobs</a></li>
+                                            </ul>
+                                            <div class="tab-content text-left">
+                                                <div role="tabpanel" class="tab-pane fade active show" id="hot-jobs">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="job-item">
+                                                                <div class="item-overlay">
+                                                                    <div class="job-info">
+                                                                        <a href="#" class="btn btn-primary">Full
+                                                                            Time</a>
+                                                                        <span class="tr-title">
+                                                                            <a href="#">Project Manager</a>
+                                                                            <span><a href="#">Dig Files</a></span>
+                                                                        </span>
+                                                                        <ul class="tr-list job-meta">
+                                                                            <p>
+                                                                                We’re very proud of the path we’ve
+                                                                                taken. Explore the history that made us
+                                                                                the company we are today.
+                                                                                We’re very proud of the path we’ve
+                                                                                taken. Explore the history that made us
+                                                                                the company we are today.
+                                                                                We’re very proud of the path we’ve
+                                                                                taken. Explore the history that made us
+                                                                                the company we are today.
+                                                                                We’re very proud of the path we’ve
+                                                                                taken. Explore the history that made us
+                                                                                the company we are today.We’re very
+                                                                                proud of the path we’ve taken. Explore
+                                                                                the history that made us the company we
+                                                                                are today.
+
+                                                                            </p>
+                                                                            <li><i class="fa fa-briefcase"
+                                                                                    aria-hidden="true"></i>Mid Level
+                                                                            </li>
+                                                                            <li><i class="fa fa-money"
+                                                                                    aria-hidden="true"></i>$5,000 -
+                                                                                $6,000</li>
+                                                                        </ul>
+                                                                        <ul class="job-social tr-list">
+                                                                            <li><a href="#"><i class="fa fa-heart-o"
+                                                                                        aria-hidden="true"></i></a></li>
+                                                                            <li><a href="#"><i class="fa fa-expand"
+                                                                                        aria-hidden="true"></i></a></li>
+                                                                            <li><a href="#"><i class="fa fa-bookmark-o"
+                                                                                        aria-hidden="true"></i></a></li>
+                                                                            <li><a href="#"><i
+                                                                                        class="fa fa-long-arrow-right"
+                                                                                        aria-hidden="true"></i></a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="job-info">
+                                                                    <span class="tr-title">
+                                                                        <h4>1st Quarter</h4>
+                                                                    </span>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <ul class="tr-list job-meta">
+                                                                                <li><span><i class="fa fa-star"
+                                                                                            aria-hidden="true"></i></span>Weighted
+                                                                                    Score: <span
+                                                                                        class="text-success">12</span>
+                                                                                </li>
+                                                                                <li><span><i class="fa fa-star"
+                                                                                            aria-hidden="true"></i></span>Self
+                                                                                    Appraisal Score: <span
+                                                                                        class="text-success">12</span>
+                                                                                </li>
+                                                                                <li><span><i class="fa fa-star"
+                                                                                            aria-hidden="true"></i></span>Supervisor
+                                                                                    Score: <span
+                                                                                        class="text-success">12</span>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="time">
+                                                                        <a href="#"><span>Full Time</span></a>
+                                                                        <span class="pull-right">Posted 23 hours
+                                                                            ago</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div role="tabpanel" class="tab-pane fade in" id="recent-jobs">
+                                                    <p>None</p>
+                                                </div>
+                                                <div role="tabpanel" class="tab-pane fade in" id="popular-jobs">
+                                                    <p>None</p>
+                                                </div>
+                                            </div>
+                                        </div><!-- /.job-tab -->
+                                        <!-- <table id="example"
                                             class="display table table-striped table-bordered dt-responsive table-responsive-lg"
                                             style="width:100%">
                                             <thead>
@@ -188,20 +297,13 @@
                                                     <td>{{score.SelfAppraisalScore}}</td>
                                                     <td>{{score.SupervisorAppraisalScore}}</td>
                                                     <td>
-                                                        {% if HOD_User == True and appraisal.Status == "Supervisor Appraisal" and score.Quarter == appraisal.CurrentQuarter %}
                                                         <button type="button" class="btn btn-success btn-icon-text"
                                                             data-bs-toggle="modal"
-                                                            data-bs-target="#staticBackdrop{{score.Code}}">
+                                                            data-bs-target="#static{{score.Code}}">
                                                             Add Score
                                                         </button>
-                                                        {% elif HOD_User == False and appraisal.Status == "Self Appraisal" and score.Quarter == appraisal.CurrentQuarter %}
-                                                        <button type="button" class="btn btn-success btn-icon-text"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#staticBackdrop{{score.Code}}">
-                                                            Add Score
-                                                        </button>
-                                                        {% endif %}
-                                                        <div class="modal fade" id="staticBackdrop{{score.Code}}"
+
+                                                        <div class="modal fade" id="static{{score.Code}}"
                                                             data-bs-backdrop="static" data-bs-keyboard="false"
                                                             tabindex="-1" aria-labelledby="staticBackdropLabel"
                                                             aria-hidden="true" style="height:auto !important">
@@ -291,7 +393,7 @@
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
-                                        </table>
+                                        </table> -->
                                     </div>
                                 </div>
                             </div>
