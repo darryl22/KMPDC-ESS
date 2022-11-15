@@ -182,10 +182,10 @@ class Leave_Request(UserObjectMixins,View):
             year = request.session['years']
             empNo =request.session['Employee_No_']
 
-            response = self.get_filtered_data("/QyLeaveApplications","User_ID",UserId)
-            openLeave = [x for x in response['value'] if x['Status'] == 'Open']
-            pendingLeave = [x for x in response['value'] if x['Status'] == 'Pending Approval']
-            approvedLeave = [x for x in response['value'] if x['Status'] == 'Released']
+            response = self.one_filter("/QyLeaveApplications","User_ID","eq",UserId)
+            openLeave = [x for x in response[1] if x['Status'] == 'Open']
+            pendingLeave = [x for x in response[1] if x['Status'] == 'Pending Approval']
+            approvedLeave = [x for x in response[1] if x['Status'] == 'Released']
 
             LeaveTypes = config.O_DATA.format("/QyLeaveTypes")
             res_types = self.get_object(LeaveTypes)
