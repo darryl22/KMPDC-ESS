@@ -2,6 +2,7 @@
 {% load bootstrap5 %}
 {% load static %}
 {% block main %}
+<script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
         <div class="d-xl-flex justify-content-between align-items-start">
@@ -423,7 +424,7 @@
                 direction: -1,
                 format: 'd-m-Y',
                 show_week_number: 'Wk',
-               
+
             });
         }, 100);
         var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '-');

@@ -2,7 +2,7 @@
 {% load bootstrap5 %}
 {% load static %}
 {% block main %}
-<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
     <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
         <div class="row" id="proBanner">
@@ -349,12 +349,12 @@
     </div>
 </section>
 <script>
-    $(document).ready(function(){
+    $(document).ready(function () {
         window.setTimeout(function () {
             $('.datepicker').Zebra_DatePicker({
                 format: 'd-m-Y',
                 show_week_number: 'Wk',
-               
+
             });
         }, 100);
     })

@@ -172,13 +172,6 @@
     display: none
 }
 
-.Zebra_DatePicker .dp_icon {
-    height: 16px;
-    background-repeat: no-repeat;
-    text-indent: -9999px;
-    *text-indent: 0
-}
-
 .Zebra_DatePicker .dp_icon.dp_confirm {
     background-position: center -123px
 }
@@ -191,17 +184,7 @@
     background-position: center -59px
 }
 
-button.Zebra_DatePicker_Icon {
-    border: none;
-    cursor: pointer;
-    display: block;
-    height: 16px;
-    line-height: 0;
-    padding: 0;
-    position: absolute;
-    text-indent: -9000px;
-    width: 16px
-}
+/* Zebra */
 
 button.Zebra_DatePicker_Icon.Zebra_DatePicker_Icon_Disabled {
     background-position: center -32px;

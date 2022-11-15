@@ -67,10 +67,12 @@ class Leave_Planner(UserObjectMixins,View):
 
             response = config.CLIENT.service.FnLeavePlannerHeader(
                 plannerNo, empNo, myAction)
-            if response == True:
+            if response:
                 messages.success(request, "Success")
                 print(response)
-                return redirect('LeavePlanner')
+                return redirect('PlanDetail',pk=response)
+            messages.success(request, "Failed")
+            return redirect('LeavePlanner')   
         except requests.exceptions.Timeout:
             messages.error(request, "Server timeout,retry,restart server.")
             return redirect('dashboard')

@@ -1057,3 +1057,22 @@ ul.tasks::after {
     padding: 0;
     list-style: none;
 }
+
+.Zebra_DatePicker .dp_icon {
+    height: 16px;
+    background-repeat: no-repeat;
+    text-indent: -9999px;
+    *text-indent: 0
+}
+button.Zebra_DatePicker_Icon {
+    background:url(../../static/icons/t1.png) center top no-repeat;
+    border: none;
+    cursor: pointer;
+    display: block;
+    height: 16px;
+    line-height: 0;
+    padding: 0;
+    position: absolute;
+    text-indent: -9000px;
+    width: 16px
+}
