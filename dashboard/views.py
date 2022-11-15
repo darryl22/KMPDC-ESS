@@ -5,80 +5,69 @@ from django.conf import settings as config
 import datetime
 from django.contrib import messages
 from django.views import View
+from myRequest.views import UserObjectMixins
 # Create your views here.
 
-class UserObjectMixin(object):
-    model =None
-    session = requests.Session()
-    session.auth = config.AUTHS
-    def get_object(self,endpoint):
-        response = self.session.get(endpoint, timeout=10).json()
-        return response
-
-
-class Dashboard(UserObjectMixin,View):
+class Dashboard(UserObjectMixins,View):
 
     def get(self,request):
         userId =  request.session['User_ID']
         empNo = request.session['Employee_No_']
-        todays_date = datetime.datetime.now().strftime("%b. %d, %Y %A")
         try:
             
-            Access_Leave = config.O_DATA.format(f"/QyLeaveApplications?$filter=User_ID%20eq%20%27{userId}%27%20")
-            Leave = self.get_object(Access_Leave)
-            open_leave_list = len([x for x in Leave['value'] if x['Status'] == 'Open'])
-            app_leave_list = len([x for x in Leave['value'] if x['Status'] == 'Released'])
-            pendLeave = len([x for x in Leave['value'] if x['Status'] == 'Pending Approval'])
+            Leave = self.one_filter("/QyLeaveApplications","User_ID","eq",userId)
+            open_leave_list = len([x for x in Leave[1] if x['Status'] == 'Open'])
+            app_leave_list = len([x for x in Leave[1]  if x['Status'] == 'Released'])
+            pendLeave = len([x for x in Leave[1]  if x['Status'] == 'Pending Approval'])
 
-            Access_Train = config.O_DATA.format(f"/QyTrainingRequests?$filter=Employee_No%20eq%20%27{empNo}%27")
-            Training = self.get_object(Access_Train)
-            open_train_list = len([x for x in Training['value'] if x['Status'] == 'Open'])
-            app_train_list = len([x for x in Training['value'] if x['Status'] == 'Released'])
-            pendTrain = len([x for x in Training['value'] if x['Status'] == 'Pending Approval'])
+            Training = self.one_filter("/QyTrainingRequests","Employee_No","eq",empNo)
+            open_train_list = len([x for x in Training[1]  if x['Status'] == 'Open'])
+            app_train_list = len([x for x in Training[1]  if x['Status'] == 'Released'])
+            pendTrain = len([x for x in Training[1]  if x['Status'] == 'Pending Approval'])
 
-            Access_Imprest = config.O_DATA.format(f"/Imprests?$filter=User_Id%20eq%20%27{userId}%27%20")
-            myImprest = self.get_object(Access_Imprest)
-            open_imp_list = len([x for x in myImprest['value'] if x['Status'] == 'Open'])
-            app_imp_list = len([x for x in myImprest['value'] if x['Status'] == 'Released'])
-            pendImp = len([x for x in myImprest['value'] if x['Status'] == 'Pending Approval'])
+            myImprest = self.one_filter("/Imprests","User_Id","eq",userId)
+            open_imp_list = len([x for x in myImprest[1] if x['Status'] == 'Open'])
+            app_imp_list = len([x for x in myImprest[1] if x['Status'] == 'Released'])
+            pendImp = len([x for x in myImprest[1] if x['Status'] == 'Pending Approval'])
 
-            Access_Surrender = config.O_DATA.format(f"/QyImprestSurrenders?$filter=User_Id%20eq%20%27{userId}%27")
-            Surrender = self.get_object(Access_Surrender)
-            open_surrender_list = len([x for x in Surrender['value'] if x['Status'] == 'Open'])
-            app_surrender_list = len([x for x in Surrender['value'] if x['Status'] == 'Released'])
-            pendSurrender = len([x for x in Surrender['value'] if x['Status'] == 'Pending Approval'])
+            Surrender = self.one_filter("/QyImprestSurrenders","User_Id","eq",userId)
+            open_surrender_list = len([x for x in Surrender[1]  if x['Status'] == 'Open'])
+            app_surrender_list = len([x for x in Surrender[1]  if x['Status'] == 'Released'])
+            pendSurrender = len([x for x in Surrender[1]  if x['Status'] == 'Pending Approval'])
 
-            Access_Claim = config.O_DATA.format(f"/QyStaffClaims?$filter=User_Id%20eq%20%27{userId}%27")
-            Claim = self.get_object(Access_Claim)
-            open_claim_list = len([x for x in Claim['value'] if x['Status'] == 'Open'])
-            app_claim_list = len([x for x in Claim['value'] if x['Status'] == 'Released'])
-            pendClaim = len([x for x in Claim['value'] if x['Status'] == 'Pending Approval'])
+            Claim = self.one_filter("/QyStaffClaims","User_Id","eq",userId)
+            open_claim_list = len([x for x in Claim[1]  if x['Status'] == 'Open'])
+            app_claim_list = len([x for x in Claim[1]  if x['Status'] == 'Released'])
+            pendClaim = len([x for x in Claim[1]  if x['Status'] == 'Pending Approval'])
 
-            Access_purchase = config.O_DATA.format(f"/QyPurchaseRequisitionHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27")
-            Purchase = self.get_object(Access_purchase)
-            open_purchase_list = len([x for x in Purchase['value'] if x['Status'] == 'Open'])
-            app_purchase_list = len([x for x in Purchase['value'] if x['Status'] == 'Released'])
-            pendPurchase = len([x for x in Purchase['value'] if x['Status'] == 'Pending Approval'])
+            Purchase = self.one_filter("/QyPurchaseRequisitionHeaders","Employee_No_","eq",empNo)
+            open_purchase_list = len([x for x in Purchase[1]  if x['Status'] == 'Open'])
+            app_purchase_list = len([x for x in Purchase[1]  if x['Status'] == 'Released'])
+            pendPurchase = len([x for x in Purchase[1]  if x['Status'] == 'Pending Approval'])
 
-            Access_Repair = config.O_DATA.format(f"/QyRepairRequisitionHeaders?$filter=Requested_By%20eq%20%27{userId}%27")
-            Repair = self.get_object(Access_Repair)
-            open_repair_list = len([x for x in Repair['value'] if x['Status'] == 'Open'])
-            app_repair_list = len([x for x in Repair['value'] if x['Status'] == 'Released'])
-            pendRepair = len([x for x in Repair['value'] if x['Status'] == 'Pending Approval'])
+            Repair = self.one_filter("/QyRepairRequisitionHeaders","Requested_By","eq",userId)
+            open_repair_list = len([x for x in Repair[1] if x['Status'] == 'Open'])
+            app_repair_list = len([x for x in Repair[1] if x['Status'] == 'Released'])
+            pendRepair = len([x for x in Repair[1] if x['Status'] == 'Pending Approval'])
 
-            Access_Store = config.O_DATA.format(f"/QyStoreRequisitionHeaders?$filter=Requested_By%20eq%20%27{userId}%27")
-            Store = self.get_object(Access_Store)
-            open_store_list = len([x for x in Store['value'] if x['Status'] == 'Open'])
-            app_store_list = len([x for x in Store['value'] if x['Status'] == 'Released'])
-            pendStore = len([x for x in Store['value'] if x['Status'] == 'Pending Approval'])
-            
-        except requests.exceptions.ConnectionError as e:
-                print(e)
+            Store = self.one_filter("/QyStoreRequisitionHeaders","Requested_By","eq",userId)
+            open_store_list = len([x for x in Store[1] if x['Status'] == 'Open'])
+            app_store_list = len([x for x in Store[1] if x['Status'] == 'Released'])
+            pendStore = len([x for x in Store[1] if x['Status'] == 'Pending Approval'])
+        except requests.exceptions.Timeout:
+            messages.error(request, "API timeout. Server didn't respond, contact admin")
+            return redirect('auth')
+        except requests.exceptions.ConnectionError:
+            messages.error(request, "Connection/network error,retry")
+            return redirect('auth') 
+        except requests.exceptions.TooManyRedirects:
+            messages.error(request, "Server busy, retry")
+            return redirect('auth') 
         except KeyError as e:
             print (e)
             messages.success(request, "Session Expired. Please Login")
             return redirect('auth')
-        ctx = {"today": todays_date,
+        ctx = {"today": self.todays_date,
                 "res": open, "full": userId,
                 "imprest_open": open_imp_list,"pendImp":pendImp, "imprest_app": app_imp_list,
                 "open_train": open_train_list,"pendTrain":pendTrain,"app_train": app_train_list,

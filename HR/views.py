@@ -29,39 +29,65 @@ class UserObjectMixin(object):
         response = self.session.get(endpoint, timeout=10).json()
         return response
 
-class Leave_Planner(UserObjectMixin,View):
+class Leave_Planner(UserObjectMixins,View):
     def get(self,request):
         try:
             userId = request.session['User_ID']
             year = request.session['years']
             empNo =request.session['Employee_No_']
 
-            Access_Point = config.O_DATA.format(f"/QyLeavePlannerHeaders?$filter=Employee_No_%20eq%20%27{empNo}%27")
-            response = self.get_object(Access_Point)
-            Plans = [x for x in response['value']]
+            response = self.one_filter("/QyLeavePlannerHeaders","Employee_No_","eq",empNo)
+            Plans = response[1]
+        except requests.exceptions.Timeout:
+            messages.error(request, "Server timeout,retry,restart server.")
+            return redirect('dashboard')
+        except requests.exceptions.ConnectionError:
+            messages.error(request, "Connection/network error,retry")
+            return redirect('dashboard') 
+        except requests.exceptions.TooManyRedirects:
+            messages.error(request, "Server busy, retry")
+            return redirect('dashboard')
         except KeyError as e:
             messages.info(request, "Session Expired. Please Login")
             print(e)
             return redirect('auth')
-        except requests.exceptions.ConnectionError as e:
-                print(e)
+        except Exception as e:
+            print(e)
+            messages.info(request, e)
+            return redirect('auth')
         ctx = {"today": self.todays_date, "res": Plans,
                 "year": year, "full": userId}
         return render(request, 'planner.html', ctx)
+
     def post(self,request):
-        plannerNo = ""
-        empNo = request.session['Employee_No_']
-        myAction = request.POST.get('myAction')
         try:
+            plannerNo = ""
+            empNo = request.session['Employee_No_']
+            myAction = request.POST.get('myAction')
+
             response = config.CLIENT.service.FnLeavePlannerHeader(
                 plannerNo, empNo, myAction)
             if response == True:
-                messages.success(request, "Request Successful")
+                messages.success(request, "Success")
                 print(response)
                 return redirect('LeavePlanner')
-        except Exception as e:
-            messages.error(request, e)
+        except requests.exceptions.Timeout:
+            messages.error(request, "Server timeout,retry,restart server.")
+            return redirect('dashboard')
+        except requests.exceptions.ConnectionError:
+            messages.error(request, "Connection/network error,retry")
+            return redirect('dashboard') 
+        except requests.exceptions.TooManyRedirects:
+            messages.error(request, "Server busy, retry")
+            return redirect('dashboard')
+        except KeyError as e:
+            messages.info(request, "Session Expired. Please Login")
             print(e)
+            return redirect('auth')
+        except Exception as e:
+            messages.info(request, e)
+            print(e)
+            return redirect('auth')
         return redirect('LeavePlanner')
 
 

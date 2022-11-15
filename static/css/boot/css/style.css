@@ -2864,14 +2864,6 @@ input[type="button"].btn-block {
   color: rgba(0, 0, 0, 0.9);
 }
 
-.navbar-dark .navbar-brand {
-  color: #fff;
-}
-
-.navbar-dark .navbar-brand:hover,
-.navbar-dark .navbar-brand:focus {
-  color: #fff;
-}
 
 .navbar-dark .navbar-nav .nav-link {
   color: rgba(255, 255, 255, 0.5);
@@ -8907,17 +8899,6 @@ button.bg-dark:focus {
   font-style: italic !important;
 }
 
-.text-white,
-.navbar.navbar-primary .navbar-menu-wrapper .nav-profile-text p,
-.navbar.navbar-secondary .navbar-menu-wrapper .nav-profile-text p,
-.navbar.navbar-success .navbar-menu-wrapper .nav-profile-text p,
-.navbar.navbar-info .navbar-menu-wrapper .nav-profile-text p,
-.navbar.navbar-warning .navbar-menu-wrapper .nav-profile-text p,
-.navbar.navbar-danger .navbar-menu-wrapper .nav-profile-text p,
-.navbar.navbar-light .navbar-menu-wrapper .nav-profile-text p,
-.navbar.navbar-dark .navbar-menu-wrapper .nav-profile-text p {
-  color: #ffffff !important;
-}
 
 .text-primary {
   color: #0062ff !important;

@@ -8,9 +8,10 @@ class UserObjectMixins(object):
     model =None
     session = requests.Session()
     session.auth = config.AUTHS
-
+    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    
     def get_object(self,endpoint):
-        response = self.session.get(endpoint, timeout=10).json()
+        response = self.session.get(endpoint).json()
         return response
     
     def one_filter(self,endpoint,property,filter,field_name):
