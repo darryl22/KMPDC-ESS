@@ -63,8 +63,22 @@ class AppraisalRequests(UserObjectMixin,View):
             submittedAppraisalCount = len(submittedAppraisal)
             completeAppraisalCount = len(completeAppraisal)
             submittedAppraisalsCount = len(submittedAppraisals)
+        except requests.exceptions.Timeout:
+            messages.error(request, "API timeout. Server didn't respond, contact admin")
+            return redirect('dashboard')
+        except requests.exceptions.ConnectionError:
+            messages.error(request, "Connection/network error,retry")
+            return redirect('dashboard') 
+        except requests.exceptions.TooManyRedirects:
+            messages.error(request, "Server busy, retry")
+            return redirect('dashboard') 
+        except KeyError as e:
+            print (e)
+            messages.error(request, "Session Expired. Please Login")
+            return redirect('auth')
         except Exception as e:
             print (e)
+            messages.info(request, e)
             return redirect('auth')
 
         ctx = {
