@@ -94,37 +94,50 @@ class AppraisalRequests(UserObjectMixin,View):
         return render(request,"appraisal.html",ctx)
     def post(self,request):
         if request.method == "POST":
-            applicationCode = request.POST.get('applicationCode')
-            departmentalAppraisalCode = request.POST.get('departmentalAppraisalCode')
-            weightedScore = int(request.POST.get('weightedScore'))
-            description = request.POST.get('description')
-            Quarter1 = request.POST.get('Quarter1')
-            Quarter2 = request.POST.get('Quarter2')
-            Quarter3 = request.POST.get('Quarter3')
-            Quarter4 = request.POST.get('Quarter4')
-            myAction = request.POST.get('myAction')  
-      
-            if not Quarter1:
-                Quarter1 = 'False'
-            if not Quarter2:
-                Quarter2 = 'False'
-
-            if not Quarter3:
-                Quarter3 = 'False'
-            if not Quarter4:
-                Quarter4 = 'False'
             try:
+                applicationCode = request.POST.get('applicationCode')
+                departmentalAppraisalCode = request.POST.get('departmentalAppraisalCode')
+                weightedScore = int(request.POST.get('weightedScore'))
+                description = request.POST.get('description')
+                Quarter1 = request.POST.get('Quarter1')
+                Quarter2 = request.POST.get('Quarter2')
+                Quarter3 = request.POST.get('Quarter3')
+                Quarter4 = request.POST.get('Quarter4')
+                myAction = request.POST.get('myAction')  
+      
+                if not Quarter1:
+                    Quarter1 = 'False'
+                if not Quarter2:
+                    Quarter2 = 'False'
+
+                if not Quarter3:
+                    Quarter3 = 'False'
+                if not Quarter4:
+                    Quarter4 = 'False'
                 response = config.CLIENT.service.FnDepartmentalAppraisalTarget(
                         applicationCode,departmentalAppraisalCode, description, 
                         weightedScore,eval(Quarter1),eval(Quarter2),eval(Quarter3),
                         eval(Quarter4),myAction)
-                print("response:",response)
                 if response:
                     messages.success(request, "Request Successful")
                     return redirect('HODDetails',pk=response)
+            except requests.exceptions.Timeout:
+                messages.error(request, "API timeout. Server didn't respond, contact admin")
+                return redirect('dashboard')
+            except requests.exceptions.ConnectionError:
+                messages.error(request, "Connection/network error,retry")
+                return redirect('dashboard') 
+            except requests.exceptions.TooManyRedirects:
+                messages.error(request, "Server busy, retry")
+                return redirect('dashboard') 
+            except KeyError as e:
+                print (e)
+                messages.error(request, "Session Expired. Please Login")
+                return redirect('auth')
             except Exception as e:
-                messages.error(request, e)
-                print(e)
+                print (e)
+                messages.info(request, e)
+                return redirect('auth')
         return redirect('AppraisalRequests')
 
 class HODDetails(UserObjectMixin,View):
