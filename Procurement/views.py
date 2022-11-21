@@ -84,8 +84,9 @@ class PurchaseRequisition(UserObjectMixin,View):
             try:
                 response = config.CLIENT.service.FnPurchaseRequisitionHeader(
                     requisitionNo, orderDate, employeeNo, myUserId, myAction)
-                messages.success(request, "Request Successful")
-                print(response)
+                if response:
+                    messages.success(request, "Success")
+                    return redirect('PurchaseDetail', pk=response)
             except Exception as e:
                 messages.info(request, e)
                 print(e)
@@ -391,8 +392,9 @@ class RepairRequest(UserObjectMixin,View):
             try:
                 response = config.CLIENT.service.FnRepairRequisitionHeader(
                     requisitionNo, orderDate, employeeNo, reason, myUserId, myAction)
-                messages.success(request, "Request Successful")
-                print(response)
+                if response:
+                    messages.success(request, "Success")
+                    return redirect('RepairDetail', pk=response)
             except Exception as e:
                 messages.error(request, e)
                 print(e)

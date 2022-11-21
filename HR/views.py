@@ -1,8 +1,6 @@
 import base64
-from curses.ascii import isdigit
 from django.shortcuts import render, redirect
 from datetime import datetime
-from isodate import date_isoformat
 import requests
 from requests import Session
 import json
@@ -214,6 +212,7 @@ class Leave_Request(UserObjectMixins,View):
             "pending": pendingLeave, "year": year,
             "full": UserId}
         return render(request, 'leave.html', ctx)
+        
     def post(self, request):
         if request.method == 'POST':
             dimension3 = ''
@@ -231,8 +230,9 @@ class Leave_Request(UserObjectMixins,View):
             try:
                 response = config.CLIENT.service.FnLeaveApplication(
                     applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
-                messages.success(request, "Request Successful")
-                print(response)
+                if response:
+                    messages.success(request, "Success")
+                    return redirect('LeaveDetail', pk=response)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -425,7 +425,9 @@ class Training_Request(UserObjectMixin,View):
             try:
                 response = CLIENT.service.FnTrainingRequest(
                     requestNo, employeeNo, usersId, isAdhoc, trainingNeed, myAction)
-                messages.success(request, "Successfully Added!!")
+                if response:
+                    messages.success(request, "Successfully Added!!")
+                    return redirect('TrainingDetail', pk=response)
                 print(response)
             except Exception as e:
                 messages.error(request, e)

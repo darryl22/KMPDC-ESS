@@ -441,15 +441,14 @@ class SurrenderDetails(UserObjectMixin, View):
             try:
                 lineNo = int(request.POST.get('lineNo'))
                 actualSpent = float(request.POST.get('actualSpent'))
-            except ValueError:
-                messages.error(request, "Missing Input")
-                return redirect('IMPDetails', pk=pk)
-            try:
+
+                print(lineNo)
+
                 response = config.CLIENT.service.FnImprestSurrenderLine(
                     lineNo, pk, actualSpent)
-                messages.success(request, "Request Successful")
-                print(response)
-                return redirect('IMPSurrender', pk=pk)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('IMPSurrender', pk=pk)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
