@@ -256,15 +256,6 @@
                                 {% for data in file %}
                                 <div class="col-lg-4 col-xl-3">
                                     <div class="file-man-box">
-                                        {% if res.Status == 'Open' %}
-                                        <form action="{% url 'DeletePurchaseAttachment' data.No_  %}" method="POST">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
-                                            <input type="hidden" name="tableID" value="{{data.Table_ID}}">
-                                            <button class="file-close" id="file-close"><i
-                                                    class="fa fa-times-circle"></i></button>
-                                        </form>
-                                        {% endif %}
                                         <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon">
                                         </div>
                                         <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
@@ -282,9 +273,15 @@
                                     </div>
                                 </div>
                                 {% empty %}
-                                <p class="text-danger p-4">
-                                    You have not uploaded any attachments <i class="las la-file-download"></i>
-                                </p>
+                                <div class="row mx-auto text-center">
+                                    <div class="col-md-12">
+                                        <p class="text-danger p-4">
+                                            You have no attachments
+                                        </p>
+                                        <img src="../../static/icons/empty-box.png" class="img-fluid" height="150px"
+                                            width="150px">
+                                    </div>
+                                </div>
                                 {% endfor %}
                             </div>
                         </div>

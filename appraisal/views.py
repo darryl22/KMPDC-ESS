@@ -162,10 +162,14 @@ class HODDetails(UserObjectMixin,View):
             employeesResponse = self.get_object(employees)
             availableEmployees = [x for x in employeesResponse['value'] if x['Employee_No_'] not in empAssignedList]
 
+            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27%20and%20Table_ID%20eq%2052178028")
+            res_file = self.get_object(Access_File)
+            allFiles = [x for x in res_file['value']]
+
             ctx = {
                 "target":res,"today": self.todays_date,
                 "full":userID,"outputEmployees":outputEmployees,
-                "availableEmployees":availableEmployees
+                "availableEmployees":availableEmployees,"file":allFiles
                 }
         except Exception as e:
             messages.error(request,e)
