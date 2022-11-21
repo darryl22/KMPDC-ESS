@@ -294,6 +294,9 @@ class FnInitiateAppraisal(UserObjectMixins,View):
 
             res_file = self.one_filter("/QyDocumentAttachments","No_","eq",pk)
             allFiles = [x for x in res_file[1]]
+
+            training_response = self.one_filter("/QyAppraisalTrainingRecommendations","AppraisalNo","eq",pk)
+            trainings = training_response[1]
             
         except requests.exceptions.Timeout:
             messages.error(request, "API timeout. Server didn't respond, contact admin")
@@ -317,7 +320,8 @@ class FnInitiateAppraisal(UserObjectMixins,View):
                 "full":userID,"today": self.todays_date,"quarter":quarter,
                 "active_targets":active_targets,"active_targets_count":active_targets_count,
                 "file":allFiles, "other_targets_response":other_targets_response,
-                "other_targets_count":other_targets_count,"other_targets":other_targets
+                "other_targets_count":other_targets_count,"other_targets":other_targets,
+                "trainings":trainings
             }
         return render(request,"appDetails.html",ctx)
         

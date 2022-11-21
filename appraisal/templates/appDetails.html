@@ -208,13 +208,21 @@
                                                             <div class="job-item">
                                                                 <div class="item-overlay">
                                                                     <div class="job-info">
-                                                                        <a href="#" class="btn btn-primary">Target
-                                                                            Description</a>
                                                                         <ul class="tr-list job-meta">
                                                                             <div class="my-2 targetContent">
+                                                                                <a href="#"
+                                                                                    class="btn btn-primary my-2">Target
+                                                                                    Description</a>
                                                                                 <p>
                                                                                     {{active.TargetDescription}}
                                                                                 </p>
+                                                                                {% if appraisal.Status == "Self Appraisal" and appraisal.CurrentQuarter == '4th Quarter' and HOD_User == False %}
+                                                                                <a href="#"
+                                                                                    class="btn btn-primary my-2">{{active.Category}}</a>
+                                                                                <p>
+                                                                                    {{active.CoreAttributeDescription}}
+                                                                                </p>
+                                                                                {% endif %}
                                                                             </div>
                                                                         </ul>
                                                                         <ul class="job-social tr-list">
@@ -374,12 +382,23 @@
                                                             <div class="job-item">
                                                                 <div class="item-overlay">
                                                                     <div class="job-info">
-                                                                        <a href="#" class="btn btn-primary">Target
-                                                                            Description</a>
                                                                         <ul class="tr-list job-meta">
-                                                                            <p class="my-2 targetContent">
-                                                                                {{other.TargetDescription}}
-                                                                            </p>
+                                                                            <div class="my-2 targetContent">
+                                                                                <a href="#"
+                                                                                    class="btn btn-primary">Target
+                                                                                    Description</a>
+                                                                                <p>
+
+                                                                                    {{other.TargetDescription}}
+                                                                                </p>
+                                                                                {% if appraisal.Status == "Self Appraisal" and appraisal.CurrentQuarter == '4th Quarter' and HOD_User == False %}
+                                                                                <a href="#"
+                                                                                    class="btn btn-primary my-2">{{other.Category}}</a>
+                                                                                <p>
+                                                                                    {{other.CoreAttributeDescription}}
+                                                                                </p>
+                                                                                {% endif %}
+                                                                            </div>
                                                                         </ul>
                                                                         <!-- <ul class="job-social tr-list">
 
@@ -456,6 +475,46 @@
                             </div>
                         </div>
                     </div>
+                    {% if appraisal.CurrentQuarter == '4th Quarter' %}
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingFive">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFive" aria-expanded="false"
+                                    aria-controls="collapseFive">Training Recommendations</button>
+                            </h5>
+                        </div>
+                        <div id="collapseFive" class="collapse" aria-labelledby="headingFive"
+                            data-bs-parent="#accordion">
+                            <div class="row m-2">
+                                <div class="col-md-12">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Line No</th>
+                                                <th>Recommended Training By Appraisee</th>
+                                                <th>Recommended Training By Appraiser</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for training in trainings %}
+                                            <tr>
+                                                <td>{{training.LineNo}}</td>
+                                                <td>{{training.RecommendedTrainingByAppraisee}}</td>
+                                                <td>
+                                                    {{training.RecommendedTrainingByAppraiser}}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                     <div class="card mb-3">
                         <div class="card-header" id="headingFour">
                             <h5 class="mb-0">
@@ -613,13 +672,14 @@
 </div>
 <script>
     $(document).ready(function () {
+        $(".Pager .PageItem").slice(3).hide();
         $('#pagination').pagination({
             items: '{{active_targets_count}}',
             itemsOnPage: 3,
             cssStyle: 'compact-theme',
 
             onPageClick: function (noofele) {
-                $(".otherPager .otherPageItem").hide()
+                $(".Pager .PageItem").hide()
                     .slice(3 * (noofele - 1),
                         3 + 3 * (noofele - 1)).show();
             },
