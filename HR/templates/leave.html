@@ -71,7 +71,8 @@
                                                 <td>
                                                     <button class="btn btn-primary" data-toggle="tooltip"
                                                         data-placement="top" title="edit" data-bs-toggle="modal"
-                                                        data-bs-target="#editLeave">Edit <i class="fas fa-edit"></i>
+                                                        data-bs-target="#editLeave{{res.Application_No}}">Edit <i
+                                                            class="fas fa-edit"></i>
                                                     </button>
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "
                                                         class="btn btn-success btn-icon-text" type="button"
@@ -79,8 +80,8 @@
                                                             class="far fa-eye"></i>
                                                     </a>
                                                     <!-- Modal Edit Leave -->
-                                                    <div class="modal fade" id="editLeave" data-bs-backdrop="static"
-                                                        data-bs-keyboard="false" tabindex="-1"
+                                                    <div class="modal fade" id="editLeave{{res.Application_No}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div
                                                             class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -232,7 +233,8 @@
                                                 <td>
                                                     <button class="btn btn-primary" data-toggle="tooltip"
                                                         data-placement="top" title="edit" data-bs-toggle="modal"
-                                                        data-bs-target="#editLeave">Edit <i class="fas fa-edit"></i>
+                                                        data-bs-target="#editLeaves{{res.Application_No}}">Edit <i
+                                                            class="fas fa-edit"></i>
                                                     </button>
                                                     <a href="{% url 'LeaveDetail' res.Application_No %} "
                                                         class="btn btn-success btn-icon-text" type="button"
@@ -240,8 +242,8 @@
                                                             class="far fa-eye"></i>
                                                     </a>
                                                     <!-- Modal Edit Leave -->
-                                                    <div class="modal fade" id="editLeave" data-bs-backdrop="static"
-                                                        data-bs-keyboard="false" tabindex="-1"
+                                                    <div class="modal fade" id="editLeaves{{res.Application_No}}"
+                                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div
                                                             class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -261,7 +263,7 @@
                                                                     <form class="myForm" action="{% url 'leave' %}"
                                                                         method="post" novalidate>
                                                                         {% csrf_token %}
-                                                                        <div class="mb-2 myForm">
+                                                                        <div class="mb-2">
 
                                                                             <input type="hidden" name="myAction"
                                                                                 value="modify">
@@ -327,8 +329,11 @@
                                                                                     <label for=""
                                                                                         class="form-label">Leave Start
                                                                                         Date:</label>
-                                                                                    <input type="date"
-                                                                                        class="form-control EditLeaveStartDate"
+
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <input type="text"
+                                                                                        class="datepicker datepickers EditLeaveStartDate"
                                                                                         name="plannerStartDate"
                                                                                         disabled>
                                                                                 </div>
