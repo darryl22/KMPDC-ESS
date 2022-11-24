@@ -41,7 +41,6 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="home">
-                                <h4 class="mt-2 text-dark">Open Purchase Requests</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -64,7 +63,7 @@
                                                 <td>{{res.Requested_By}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
+                                                        data-bs-target="#trainedits{{res.No_}}" data-toggle="tooltip"
                                                         data-placement="top" title="edit">Edit <i
                                                             class="fas fa-edit"></i>
                                                     </button>
@@ -74,7 +73,7 @@
                                                         title="Click to View"> View <i class="far fa-eye"></i>
                                                     </a>
                                                     <!-- Modal -->
-                                                    <div class="modal fade" id="trainedit{{res.No_}}"
+                                                    <div class="modal fade" id="trainedits{{res.No_}}"
                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div class="modal-dialog  modal-dialog-scrollable">
@@ -82,7 +81,7 @@
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         <i class="las la-edit"></i> Edit Purchase
-                                                                        Request
+                                                                        No
                                                                         <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
                                                                     <button type="button"
@@ -114,7 +113,9 @@
                                                                                         class="form-label">Order
                                                                                         Date</label>
                                                                                     <input type="date" name="orderDate"
-                                                                                        class="form-control" required>
+                                                                                        class="form-control"
+                                                                                        value="{{res.Order_Date}}"
+                                                                                        required>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -154,7 +155,7 @@
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
                                                                         <i class="las la-edit"></i> Edit Purchase
-                                                                        Request
+                                                                        No
                                                                         <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
                                                                     <button type="button"
@@ -186,11 +187,10 @@
                                                                                     <label for=""
                                                                                         class="form-label">Order
                                                                                         Date</label>
-
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                    <input type="text" name="orderDate"
-                                                                                        class="datepicker" required>
+                                                                                    <input type="date" name="orderDate"
+                                                                                        class="form-control"
+                                                                                        value="{{res.Order_Date}}"
+                                                                                        required>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -210,7 +210,6 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="profile">
-                                <h4 class="mt-2">Approved Purchase Requests</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -245,7 +244,6 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="pending">
-                                <h4 class="mt-2">Pending Approval Purchase Requests</h4>
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -314,7 +312,7 @@
                                 <div class="col-md-12">
                                     <label for="" class="form-label">Order Date <span
                                             class="text-danger">*</span></label>
-                                    <input type="text" name="orderDate" class="datepicker" required>
+                                    <input type="date" name="orderDate" class="form-control" required>
                                 </div>
                             </div>
                         </div>
@@ -325,16 +323,4 @@
         </div>
     </div>
 </section>
-<script>
-    $(document).ready(function () {
-        window.setTimeout(function () {
-            $('.datepicker').Zebra_DatePicker({
-                format: 'd-m-Y',
-                show_week_number: 'Wk',
-
-            });
-        }, 100);
-    })
-</script>
-
 {% endblock %}

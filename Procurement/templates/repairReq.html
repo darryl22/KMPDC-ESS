@@ -64,7 +64,7 @@
                                                 <td>{{res.Requested_By}}</td>
                                                 <td>
                                                     <button class="btn btn-primary" data-bs-toggle="modal"
-                                                        data-bs-target="#trainedit{{res.No_}}" data-toggle="tooltip"
+                                                        data-bs-target="#trainedits{{res.No_}}" data-toggle="tooltip"
                                                         data-placement="top" title="edit">Edit <i
                                                             class="fas fa-edit"></i>
                                                     </button>
@@ -75,15 +75,14 @@
                                                     </a>
 
                                                     <!-- Modal -->
-                                                    <div class="modal fade" id="trainedit{{res.No_}}"
+                                                    <div class="modal fade" id="trainedits{{res.No_}}"
                                                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-scrollable">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Repair Request
-                                                                        and Maintenance
+                                                                        <i class="las la-edit"></i> Edit Repair No
                                                                         <span class="editSpan">{{res.No_}}</span>
 
                                                                     </h5>
@@ -117,7 +116,9 @@
                                                                                         class="form-label">Order
                                                                                         Date:</label>
                                                                                     <input type="date" name="orderDate"
-                                                                                        class="form-control" required>
+                                                                                        class="form-control"
+                                                                                        value="{{res.Order_Date}}"
+                                                                                        required>
 
                                                                                 </div>
                                                                             </div>
@@ -128,7 +129,7 @@
                                                                                         class="form-label">Detail</label>
                                                                                     <textarea class="form-control"
                                                                                         name="reason" rows="3"
-                                                                                        required></textarea>
+                                                                                        required>{{res.Reason_Description}}</textarea>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -168,8 +169,7 @@
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title" id="staticBackdropLabel">
-                                                                        <i class="las la-edit"></i> Edit Repair Request
-                                                                        and Maintenance
+                                                                        <i class="las la-edit"></i> Edit Repair No
                                                                         <span class="editSpan">{{res.No_}}</span>
                                                                     </h5>
                                                                     <button type="button"
@@ -200,10 +200,9 @@
                                                                                     <label for=""
                                                                                         class="form-label">Order
                                                                                         Date:</label>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                    <input type="text" name="orderDate"
-                                                                                        class="datepicker" required>
+                                                                                    <input type="date" name="orderDate"
+                                                                                        value="{{res.Order_Date}}"
+                                                                                        class="form-control" required>
                                                                                 </div>
                                                                             </div>
 
@@ -213,7 +212,7 @@
                                                                                         class="form-label">Detail</label>
                                                                                     <textarea class="form-control"
                                                                                         name="reason" rows="3"
-                                                                                        required></textarea>
+                                                                                        required>{{res.Reason_Description}}</textarea>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -338,7 +337,7 @@
                                 <div class="col-md-12">
                                     <label for="" class="form-label">Order Date <span
                                             class="text-danger">*</span></label>
-                                    <input type="text" name="orderDate" class="datepicker" required>
+                                    <input type="date" name="orderDate" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row">

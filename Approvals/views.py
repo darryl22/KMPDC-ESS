@@ -3,8 +3,6 @@ from django.shortcuts import render, redirect
 from datetime import date
 import requests
 from requests import Session
-from requests_ntlm import HttpNtlmAuth
-import json
 from django.conf import settings as config
 import datetime as dt
 from django.contrib import messages
@@ -15,6 +13,7 @@ from zeep import Client
 from zeep.transports import Transport
 from requests.auth import HTTPBasicAuth
 from django.views import View
+from myRequest.views import UserObjectMixins
 
 
 # Create your views here.
@@ -107,123 +106,106 @@ class Approve(UserObjectMixin,View):
         return render(request, 'Approve.html', ctx)
 
 
-class ApproveDetails(UserObjectMixin, View):
+class ApproveDetails(UserObjectMixins, View):
     def get(self, request,pk):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
   
-            Access_Point = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27%20and%20Approver_ID%20eq%20%27{userID}%27")
-            response = self.get_object(Access_Point)
-            for approve in response['value']:
+            response = self.double_filtered_data("/QyApprovalEntries","Document_No_","eq",pk,"and",
+                                            "Approver_ID","eq",userID)
+            for approve in response[1]:
                 res = approve
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
-            res_file = self.get_object(Access_File)
-            allFiles = [x for x in res_file['value']]
 
-            Imprest = config.O_DATA.format(f"/Imprests?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
-            ImprestResponse = self.get_object(Imprest)
-            for imprest in ImprestResponse['value']:
+            res_file = self.one_filter("/QyDocumentAttachments","No_","eq",pk)
+            allFiles = [x for x in res_file[1]]
+
+            ImprestResponse = self.one_filter("/Imprests","No_","eq",pk)
+            for imprest in ImprestResponse[1]:
                 data = imprest
                 state = 1
+            ResponseImprestLine = self.one_filter("/QyImprestLines","AuxiliaryIndex1","eq",pk)
+            ImprestLine = [x for x in ResponseImprestLine[1] if x['AuxiliaryIndex1'] == pk]
 
-            Leave_Request = config.O_DATA.format(f"/QyLeaveApplications?$filter=Application_No%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
-            LeaveResponse = self.get_object(Leave_Request)
-            for leave in LeaveResponse['value']:
+            LeaveResponse = self.one_filter("/QyLeaveApplications","Application_No","eq",pk)
+            for leave in LeaveResponse[1]:
                 data = leave
                 state = 2
 
-            TrainingRequest = config.O_DATA.format(f"/QyTrainingRequests?$filter=Request_No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
-            TrainResponse = self.get_object(TrainingRequest)
-            for train in TrainResponse['value']:
+            TrainResponse = self.one_filter("/QyTrainingRequests","Request_No_","eq",pk)
+            for train in TrainResponse[1]:
                 data = train
                 state = 3
 
-            SurrenderRequest = config.O_DATA.format(f"/QyImprestSurrenders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
-            SurrenderResponse = self.get_object(SurrenderRequest)
-            for imprest in SurrenderResponse['value']:
+            TrainLineResponse = self.one_filter("/QyTrainingNeedsRequest","Source_Document_No","eq",pk)
+            TrainLine = [x for x in TrainLineResponse[1] if x['Source_Document_No'] == pk]
+
+            SurrenderResponse = self.one_filter("/QyImprestSurrenders","No_","eq",pk)
+            for imprest in SurrenderResponse[1]:
                 data = imprest
                 state = 4
-            Lines_Surrender = config.O_DATA.format(f"/QyImprestSurrenderLines?$filter=No%20eq%20%27{pk}%27")
-            ResponseSurrenderLines = self.get_object(Lines_Surrender)
-            SurrenderLines = [x for x in ResponseSurrenderLines['value'] if x['No'] == pk]
 
-            ClaimRequest = config.O_DATA.format(f"/QyStaffClaims?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
-            ClaimResponse = self.get_object(ClaimRequest)
-            for claim in ClaimResponse['value']:
+            ResponseSurrenderLines = self.one_filter("/QyImprestSurrenderLines","No","eq",pk)
+            SurrenderLines = [x for x in ResponseSurrenderLines[1] if x['No'] == pk]
+
+            ClaimResponse = self.one_filter("/QyStaffClaims","No_","eq",pk)
+            for claim in ClaimResponse[1]:
                 data = claim
                 state = 5
-            Lines_Claim = config.O_DATA.format(f"/QyStaffClaimLines?$filter=No%20eq%20%27{pk}%27")
-            ClaimLineResponse = self.get_object(Lines_Claim)
-            ClaimLines = [x for x in ClaimLineResponse['value'] if x['No'] == pk]
+ 
+            ClaimLineResponse = self.one_filter("/QyStaffClaimLines","No","eq",pk)
+            ClaimLines = [x for x in ClaimLineResponse[1] if x['No'] == pk]
 
-            PurchaseRequest = config.O_DATA.format(f"/QyPurchaseRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
-            PurchaseResponse = self.get_object(PurchaseRequest)
-            for purchase in PurchaseResponse['value']:
+            PurchaseResponse = self.one_filter("/QyPurchaseRequisitionHeaders","No_","eq",pk)
+            for purchase in PurchaseResponse[1]:
                 data = purchase
                 state = 6
-            Lines_Purchase = config.O_DATA.format(f"/QyPurchaseRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
-            PurchaseLineResponse = self.get_object(Lines_Purchase)
-            PurchaseLines = [x for x in PurchaseLineResponse['value'] if x['AuxiliaryIndex1'] == pk]
+
+            PurchaseLineResponse = self.one_filter("/QyPurchaseRequisitionLines","AuxiliaryIndex1","eq",pk)
+            PurchaseLines = [x for x in PurchaseLineResponse[1] if x['AuxiliaryIndex1'] == pk]
             
-
-            ImprestLineRequest=config.O_DATA.format(f"/QyImprestLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
-            ResponseImprestLine = self.get_object(ImprestLineRequest)
-            ImprestLine = [x for x in ResponseImprestLine['value'] if x['AuxiliaryIndex1'] == pk]
-
-
-            TrainingLineRequest=config.O_DATA.format(f"/QyTrainingNeedsRequest?$filter=Source_Document_No%20eq%20%27{pk}%27")
-            TrainLineResponse = self.get_object(TrainingLineRequest)
-            TrainLine = [x for x in TrainLineResponse['value'] if x['Source_Document_No'] == pk]
-
-            RepairRequest = config.O_DATA.format(f"/QyRepairRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
-            RepairResponse = self.get_object(RepairRequest)
-            for repair in RepairResponse['value']:
+            RepairResponse = self.one_filter("/QyRepairRequisitionHeaders","No_","eq",pk)
+            for repair in RepairResponse[1]:
                 data = repair
                 state = 7
-            Lines_Repair = config.O_DATA.format(f"/QyRepairRequisitionLines?$filter=AuxiliaryIndex1%20eq%20%27{pk}%27")
-            RepairLineResponse = self.get_object(Lines_Repair)
-            RepairLines = [x for x in RepairLineResponse['value'] if x['AuxiliaryIndex1'] == pk]
 
-            StoreRequest = config.O_DATA.format(f"/QyStoreRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
-            StoreResponse = self.get_object(StoreRequest)
-            for store in StoreResponse['value']:
+            RepairLineResponse = self.one_filter("/QyRepairRequisitionLines","AuxiliaryIndex1","eq",pk)
+            RepairLines = [x for x in RepairLineResponse[1] if x['AuxiliaryIndex1'] == pk]
+
+            StoreResponse = self.one_filter("/QyStoreRequisitionHeaders","No_","eq",pk)
+            for store in StoreResponse[1]:
                 data = store
                 state = 8 
-            Lines_Store = config.O_DATA.format(f"/QyStoreRequisitionLines?$filter=AuxiliaryIndex1%20%20eq%20%27{pk}%27")
-            StoreLineResponse = self.get_object(Lines_Store)
-            StoreLines =  [x for x in StoreLineResponse['value'] if x['AuxiliaryIndex1'] == pk]
 
-            VoucherRequest = config.O_DATA.format(f"/QyPaymentVoucherHeaders?$filter=No_%20eq%20%27{pk}%27")
-            VoucherResponse = self.get_object(VoucherRequest)
-            for voucher in VoucherResponse['value']:
+            StoreLineResponse = self.one_filter("/QyStoreRequisitionLines","AuxiliaryIndex1","eq",pk)
+            StoreLines =  [x for x in StoreLineResponse[1] if x['AuxiliaryIndex1'] == pk]
+
+            VoucherResponse = self.one_filter("/QyPaymentVoucherHeaders","No_","eq",pk)
+            for voucher in VoucherResponse[1]:
                 data = voucher
                 state = "voucher"
-            Lines_Voucher = config.O_DATA.format(f"/QyPaymentVoucherLines?$filter=No%20eq%20%27{pk}%27")
-            VoucherLineResponse = self.get_object(Lines_Voucher)
-            VoucherLines = [x for x in VoucherLineResponse['value'] if x['No'] == pk]
 
-            PettyRequest = config.O_DATA.format(f"/QyPettyCashHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
-            PettyResponse = self.get_object(PettyRequest)
-            for petty in PettyResponse['value']:
+            VoucherLineResponse = self.one_filter("/QyPaymentVoucherLines","No","eq",pk)
+            VoucherLines = [x for x in VoucherLineResponse[1] if x['No'] == pk]
+
+            PettyResponse = self.one_filter("/QyPettyCashHeaders","No_","eq",pk)
+            for petty in PettyResponse[1]:
                 data = petty
                 state = "petty cash"
-            Lines_Petty = config.O_DATA.format("/QyPettyCashLines")
-            PettyLineResponse = self.get_object(Lines_Petty)
-            PettyLines = [x for x in PettyLineResponse['value'] if x['No'] == pk]
+  
+            PettyLineResponse = self.one_filter("/QyPettyCashLines","No","eq",pk)
+            PettyLines = [x for x in PettyLineResponse[1] if x['No'] == pk]
 
-            PettySurrenderRequest = config.O_DATA.format(f"/QyPettyCashSurrenderHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Status%20eq%20%27Pending%20Approval%27")
-            PettySurrenderResponse = self.get_object(PettySurrenderRequest)
-            for pettySurrender in PettySurrenderResponse['value']:
+            PettySurrenderResponse = self.one_filter("/QyPettyCashSurrenderHeaders","No_","eq",pk)
+            for pettySurrender in PettySurrenderResponse[1]:
                 data = pettySurrender
                 state = "petty cash surrender"
-            Lines_PettySurrender = config.O_DATA.format(f"/QyPettyCashSurrenderLines?$filter=No%20eq%20%27{pk}%27")
-            PettySurrenderLineResponse = self.get_object(Lines_PettySurrender)
-            PettySurrenderLines = [x for x in PettySurrenderLineResponse['value'] if x['No'] == pk]
 
-            advanceRequest = config.O_DATA.format(f"/QySalaryAdvances?$filter=Loan_No%20eq%20%27{pk}%27")
-            advanceResponse = self.get_object(advanceRequest)
-            for advance in advanceResponse['value']:
+            PettySurrenderLineResponse = self.one_filter("/QyPettyCashSurrenderLines","No","eq",pk)
+            PettySurrenderLines = [x for x in PettySurrenderLineResponse[1] if x['No'] == pk]
+
+            advanceResponse = self.one_filter("/QySalaryAdvances","Loan_No","eq",pk)
+            for advance in advanceResponse[1]:
                 data = advance
                 state = "advance"               
                 
@@ -239,12 +221,21 @@ class ApproveDetails(UserObjectMixin, View):
         except Exception as e:
             messages.info(request,e)
             return redirect('auth')
+        ctx = {
+            "today": self.todays_date,"full": userID, "year": year,
+             "res": res,"file":allFiles,"data":data,"state":state,
+             "SurrenderLines":SurrenderLines,"ClaimLines":ClaimLines,
+             "PurchaseLines":PurchaseLines,"ImpLine":ImprestLine,
+             "TrainLine":TrainLine,"RepairLines":RepairLines,
+             "StoreLines":StoreLines,"VoucherLines":VoucherLines,
+             "PettyLines":PettyLines,"PettySurrenderLines":PettySurrenderLines
+        }
 
-        ctx = {"today": self.todays_date, "res": res, "full": userID, "year": year,
-        "file":allFiles,"data":data,"state":state,"ImpLine":ImprestLine,"TrainLine":TrainLine,
-        "SurrenderLines":SurrenderLines,"ClaimLines":ClaimLines,"PurchaseLines":PurchaseLines,
-        "RepairLines":RepairLines,"StoreLines":StoreLines,"VoucherLines":VoucherLines,
-        "PettyLines":PettyLines,"PettySurrenderLines":PettySurrenderLines}
+        # ctx = {"today": self.todays_date, "full": userID, "year": year,
+        # 
+        # 
+        # 
+        # }
         return render(request, 'approveDetails.html', ctx)
 
 
