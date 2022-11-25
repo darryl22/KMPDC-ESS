@@ -332,7 +332,7 @@ def LeaveApproval(request, pk):
             if response == True:
                 messages.success(request, "Request Successful")
                 return redirect('LeaveDetail', pk=pk)
-            messages.success(request, f"{response}")
+            messages.error(request, f"{response}")
             return redirect('LeaveDetail', pk=pk)
     except Exception as e:
         messages.error(request, e)
