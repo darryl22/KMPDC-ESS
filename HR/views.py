@@ -316,28 +316,28 @@ def DeleteLeaveAttachment(request,pk):
     return redirect('LeaveDetail', pk=pk)
 
 def LeaveApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    applicationNo = ""
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    if request.method == 'POST':
-        try:
-            applicationNo = request.POST.get('applicationNo')
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('LeaveDetail', pk=pk)
     try:
-        response = CLIENT.service.FnRequestLeaveApproval(
-            employeeNo, applicationNo)
-        messages.success(request, "Approval Request Successfully Sent!!")
-        print(response)
-        return redirect('LeaveDetail', pk=pk)
+        employeeNo = request.session['Employee_No_']
+        applicationNo = ""
+        Username = request.session['User_ID']
+        Password = request.session['password']
+        AUTHS = Session()
+        AUTHS.auth = HTTPBasicAuth(Username, Password)
+        CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+        if request.method == 'POST':
+            applicationNo = request.POST.get('applicationNo')
+
+            response = CLIENT.service.FnRequestLeaveApproval(
+                employeeNo, applicationNo)
+            if response == True:
+                messages.success(request, "Request Successful")
+                return redirect('LeaveDetail', pk=pk)
+            messages.success(request, f"{response}")
+            return redirect('LeaveDetail', pk=pk)
     except Exception as e:
         messages.error(request, e)
         print(e)
+        return redirect('LeaveDetail', pk=pk)
     return redirect('LeaveDetail', pk=pk)
 
 
