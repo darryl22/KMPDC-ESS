@@ -17,7 +17,7 @@ class UserObjectMixin(object):
         response = self.session.get(endpoint, timeout=10).json()
         return response
 
-class AppraisalRequests(UserObjectMixin,View):
+class AppraisalRequests(UserObjectMixins,View):
     def get(self,request):
         try:
             HOD_User = request.session['HOD_User']
@@ -25,18 +25,13 @@ class AppraisalRequests(UserObjectMixin,View):
             department = request.session['User_Responsibility_Center']
             empNo = request.session['Employee_No_']
             numberOfEmployees = '0'
-            outputTarget = '0'
             outputCode = '0'
-            submittedAppraisals = '0'
             empAppraisal = ''
             submittedAppraisal = ''
             completeAppraisal = ''
+            outputFinancialYear = ''
 
-            if "&" in department:
-                department = department.replace("&","%26")
-
-            empAppraisalEndpoint =config.O_DATA.format(f"/QyEmployeeAppraisals?$filter=DepartmentCode%20eq%20%27{department}%27")
-            empAppraisalResponse = self.get_object(empAppraisalEndpoint)
+            empAppraisalResponse = self.one_filter("/QyEmployeeAppraisals","DepartmentalAppraisalPeriod","eq","DPAP00001")
 
             if HOD_User == True:
                 departmentUsers = config.O_DATA.format(f"/QyUserSetup?$filter=User_Responsibility_Center%20eq%20%27{department}%27")
@@ -47,22 +42,22 @@ class AppraisalRequests(UserObjectMixin,View):
                 CodeResponse = self.get_object(appraisalCode)
                 outputCode = [x for x in CodeResponse['value'] if x['Department'] == department]
 
-                appraisalTargets = config.O_DATA.format(f"/QyDepartmentalAppraisalTargets?$filter=DepartmentCode%20eq%20%27{department}%27")
-                targetResponse = self.get_object(appraisalTargets)
-                outputTarget = [x for x in targetResponse['value'] if x['DepartmentCode'] == department]
+                
 
-                submittedAppraisals = [x for x in empAppraisalResponse['value'] if x['Status']=='Supervisor Appraisal']
+                financialYearRequest = config.O_DATA.format(f"/QyFinancialYears")
+                financialYearResponse = self.get_object(financialYearRequest)
+                outputFinancialYear = [x for x in financialYearResponse['value']]
+
             if HOD_User == False:
                 empAppraisal = [x for x in empAppraisalResponse['value'] if (x['EmployeeNo'] == empNo and x['Status']=='Self Appraisal') or (x['EmployeeNo'] == empNo and x['Status']=='Open')]
                 submittedAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Supervisor Appraisal']
                 completeAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Completed']
 
             DPTCount = len(numberOfEmployees)
-            targetCount = len(outputTarget)
+            
             empAppraisalCount = len(empAppraisal)
             submittedAppraisalCount = len(submittedAppraisal)
             completeAppraisalCount = len(completeAppraisal)
-            submittedAppraisalsCount = len(submittedAppraisals)
         except requests.exceptions.Timeout:
             messages.error(request, "API timeout. Server didn't respond, contact admin")
             return redirect('dashboard')
@@ -85,18 +80,72 @@ class AppraisalRequests(UserObjectMixin,View):
             "today": self.todays_date,
             "HOD_User":HOD_User,"department":department,
             'DPTCount':DPTCount,"full": userID,"appraisalCode":outputCode,
-            "targetCount":targetCount, "outputTarget":outputTarget,
             "empAppraisalCount":empAppraisalCount,"empAppraisal":empAppraisal,
             "submittedAppraisalCount":submittedAppraisalCount,"completeAppraisalCount":completeAppraisalCount,
             "submittedAppraisal":submittedAppraisal,"completeAppraisal":completeAppraisal,
-            "submittedAppraisalsCount":submittedAppraisalsCount,"submittedAppraisals":submittedAppraisals,
+            "outputFinancialYear":outputFinancialYear
             }
         return render(request,"appraisal.html",ctx)
-    def post(self,request):
+    
+
+class HODAppraisalRequests(UserObjectMixins,View):
+    def get(self,request,pk):
+        try:
+            userID = request.session['User_ID']
+            department = request.session['User_Responsibility_Center']
+            HOD_User = request.session['HOD_User']
+            dpt_code = '0'
+            outputTarget = '0'
+            submittedAppraisals = '0'
+
+            financialYearResponse = self.one_filter("/QyFinancialYears","Code","eq",pk)
+
+            for x in financialYearResponse[1]:
+                outputFinancialYear = x
+            dpt_appraisal_period = self.one_filter("/QyDepartmentalAppraisalPeriods","FinancialYear","eq",pk)
+            for code in dpt_appraisal_period[1]:
+                if code['Department'] == department:
+                    dpt_code = code['Code']
+
+            targetResponse = self.one_filter("/QyDepartmentalAppraisalTargets","DepartmentalAppraisalPeriod","eq",dpt_code)
+            outputTarget = [x for x in targetResponse[1] if x['DepartmentCode']]
+            targetCount = len(outputTarget)
+
+            empAppraisalResponse = self.one_filter("/QyEmployeeAppraisals","DepartmentalAppraisalPeriod","eq",dpt_code)
+            submittedAppraisals = [x for x in empAppraisalResponse[1] if x['Status']=='Supervisor Appraisal' and x['DepartmentCode'] == department]
+            submittedAppraisalsCount = len(submittedAppraisals)
+
+            
+        except requests.exceptions.Timeout:
+            messages.error(request, "API timeout. Server didn't respond, contact admin")
+            return redirect('dashboard')
+        except requests.exceptions.ConnectionError:
+            messages.error(request, "Connection/network error,retry")
+            return redirect('dashboard') 
+        except requests.exceptions.TooManyRedirects:
+            messages.error(request, "Server busy, retry")
+            return redirect('dashboard') 
+        except KeyError as e:
+            print (e)
+            messages.error(request, "Session Expired. Please Login")
+            return redirect('auth')
+        except Exception as e:
+            print(e)
+            messages.info(request,e)
+            return redirect('AppraisalRequests')
+        ctx = {
+                "HOD_User":HOD_User,"full":userID,"today": self.todays_date,
+                "department":department,"outputFinancialYear":outputFinancialYear,
+                "targetCount":targetCount,"submittedAppraisalsCount":submittedAppraisalsCount,
+                "outputTarget":outputTarget,"submittedAppraisals":submittedAppraisals,
+
+            }
+        return render(request,"hod_appraisal.html",ctx)
+    def post(self,request,pk):
         if request.method == "POST":
             try:
                 applicationCode = request.POST.get('applicationCode')
-                departmentalAppraisalCode = request.POST.get('departmentalAppraisalCode')
+                departmentalAppraisalCode = pk
                 weightedScore = int(request.POST.get('weightedScore'))
                 description = request.POST.get('description')
                 Quarter1 = request.POST.get('Quarter1')
@@ -138,7 +187,7 @@ class AppraisalRequests(UserObjectMixin,View):
                 print (e)
                 messages.info(request, e)
                 return redirect('auth')
-        return redirect('AppraisalRequests')
+        return redirect('HODAppraisalRequests')
 
 class HODDetails(UserObjectMixin,View):
     def get(self,request,pk):
@@ -150,6 +199,8 @@ class HODDetails(UserObjectMixin,View):
             response = self.get_object(Access_Point)
             for appraisal in response['value']:
                 res = appraisal
+                period = appraisal['DepartmentalAppraisalPeriod']
+            
             assignedEmployees = config.O_DATA.format(f"/QyAppraisalTargetEmployees?$filter=DepartmentalTarget%20eq%20%27{pk}%27")
             assignedEmployeesResponse = self.get_object(assignedEmployees)
             outputEmployees = [x for x in assignedEmployeesResponse['value'] if x['DepartmentalTarget'] == pk]

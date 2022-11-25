@@ -122,12 +122,16 @@
                                                                                     <select
                                                                                         class="form-select EditLeaveType"
                                                                                         name="leaveType" required>
+
                                                                                         <option selected
                                                                                             value="{{res.Leave_Code}}">
                                                                                             {{res.Leave_Code}}</option>
-                                                                                        {% for res in leave %}
-                                                                                        <option value="{{res.Code}}">
-                                                                                            {{res.Description}}</option>
+                                                                                        {% for type in leave %}
+                                                                                        {% if type.Leave_Code != res.Leave_Code %}
+                                                                                        <option value="{{type.Code}}">
+                                                                                            {{type.Description}}
+                                                                                        </option>
+                                                                                        {% endif %}
                                                                                         {% endfor %}
                                                                                     </select>
                                                                                 </div>
@@ -175,11 +179,8 @@
                                                                                     <label for=""
                                                                                         class="form-label">Leave Start
                                                                                         Date:</label>
-                                                                                </div>
-                                                                                <div class="col-md-12">
-
-                                                                                    <input type="text"
-                                                                                        class="datepicker datepickers EditLeaveStartDate"
+                                                                                    <input type="date"
+                                                                                        class="form-control EditLeaveStartDate"
                                                                                         name="plannerStartDate"
                                                                                         disabled>
                                                                                 </div>
@@ -279,9 +280,12 @@
                                                                                         <option selected
                                                                                             value="{{res.Leave_Code}}">
                                                                                             {{res.Leave_Code}}</option>
-                                                                                        {% for res in leave %}
-                                                                                        <option value="{{res.Code}}">
-                                                                                            {{res.Description}}</option>
+                                                                                        {% for type in leave %}
+                                                                                        {% if type.Leave_Code != res.Leave_Code %}
+                                                                                        <option value="{{type.Code}}">
+                                                                                            {{type.Description}}
+                                                                                        </option>
+                                                                                        {% endif %}
                                                                                         {% endfor %}
                                                                                     </select>
                                                                                 </div>
@@ -329,13 +333,11 @@
                                                                                     <label for=""
                                                                                         class="form-label">Leave Start
                                                                                         Date:</label>
-
-                                                                                </div>
-                                                                                <div class="col-md-12">
-                                                                                    <input type="text"
-                                                                                        class="datepicker datepickers EditLeaveStartDate"
+                                                                                    <input type="date"
+                                                                                        class="form-control EditLeaveStartDate"
                                                                                         name="plannerStartDate"
                                                                                         disabled>
+
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
@@ -514,8 +516,8 @@
                             <div class="row" id="LeaveStartDateRow" style="display:none">
                                 <div class="col-md-12">
                                     <label for="" class="form-label">Leave Start Date:</label>
-                                    <input type="text" class="datepicker datepickers" name="plannerStartDate"
-                                        id="LeaveStartDate" disabled>
+                                    <input type="date" class="form-control" name="plannerStartDate" id="LeaveStartDate"
+                                        disabled>
                                 </div>
                             </div>
                             <div class="row">
@@ -549,13 +551,6 @@
     });
 
     $(document).ready(function () {
-        window.setTimeout(function () {
-            $('.datepickers').Zebra_DatePicker({
-                format: 'd-m-Y',
-                show_week_number: 'Wk',
-
-            });
-        }, 100);
         // Return Same Day on change to display and hide planner start date
         $('#isReturnSameDay').on('change', function () {
             if (this.value == "False") {

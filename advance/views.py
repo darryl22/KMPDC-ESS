@@ -151,9 +151,12 @@ def FnRequestSalaryAdvanceApproval(request,pk):
             if response == True:
                 messages.success(request, "Approval Request Sent Successfully ")
                 return redirect('advance')
+            messages.error(request, response)
+            return redirect('advanceDetail', pk=pk)
         except Exception as e:
             messages.error(request, e)
-            print(e)        
+            print(e) 
+            return redirect('advanceDetail', pk=pk)       
     return redirect('advanceDetail', pk=pk)
 
 def FnCancelSalaryAdvanceApproval(request,pk):

@@ -42,207 +42,29 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row my-4">
                         <div class="col-md-12">
-                            <div class="">
-                                <ul class="nav nav-tabs d-flex" id="myTab">
-                                    <li class="nav-item flex-fill">
-                                        <a href="#home" class="nav-link active text-secondary"
-                                            data-bs-toggle="tab">{{department}}
-                                            Department Appraisal
-                                            Targets
-                                            ({{targetCount}})</a>
-                                    </li>
-                                    <li class="nav-item flex-fill">
-                                        <a href="#pending" class="nav-link" data-bs-toggle="tab">Supervisor Scores
-                                            ({{submittedAppraisalsCount}})</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div class="tab-pane fade show active" id="home">
-                                        <div class="card-body">
-                                            <table id="example"
-                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                                style="width:100%">
-                                                <thead>
-                                                    <tr id="tops">
-                                                        <th id="long">Appraisal No</th>
-                                                        <th>Maximum Score</th>
-                                                        <th>Quarter 1</th>
-                                                        <th>Quarter 2</th>
-                                                        <th>Quarter 3</th>
-                                                        <th>Quarter 4</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for outputTarget in outputTarget %}
-                                                    <tr>
-                                                        <td>{{outputTarget.Code}}</td>
-                                                        <td id="rap">{{outputTarget.MaximumScore}}</td>
-                                                        <td>
-                                                            {% if outputTarget.Quarter1 == True %}
-                                                            <img src="../../static/icons/check-mark.png" alt="">
-                                                            {% else %}
-                                                            <img src="../../static/icons/close.png" alt="" srcset="">
-                                                            {% endif %}
-                                                        </td>
-                                                        <td>
-                                                            {% if outputTarget.Quarter2 == True %}
-                                                            <img src="../../static/icons/check-mark.png" alt="">
-                                                            {% else %}
-                                                            <img src="../../static/icons/close.png" alt="" srcset="">
-                                                            {% endif %}
-                                                        </td>
-                                                        <td>
-                                                            {% if outputTarget.Quarter3 == True %}
-                                                            <img src="../../static/icons/check-mark.png" alt="">
-                                                            {% else %}
-                                                            <img src="../../static/icons/close.png" alt="" srcset="">
-                                                            {% endif %}
-                                                        </td>
-                                                        <td>
-                                                            {% if outputTarget.Quarter4 == True %}
-                                                            <img src="../../static/icons/check-mark.png" alt="">
-                                                            {% else %}
-                                                            <img src="../../static/icons/close.png" alt="" srcset="">
-                                                            {% endif %}
-                                                        </td>
-                                                        <td>
-                                                            <a href="{% url 'HODDetails' outputTarget.Code %}"
-                                                                class="btn btn-success btn-icon-text" type="button"
-                                                                data-toggle="tooltip" data-placement="top" title="View">
-                                                                View Details..<i class="far fa-eye"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
+                            <div class="timeline-steps aos-init aos-animate" data-aos="fade-up">
+                                {% for financialYear in outputFinancialYear%}
+                                <div class="timeline-step mb-0">
+                                    <a href="{% url 'HODAppraisalRequests' financialYear.Code %}"
+                                        style="text-decoration: none;">
+                                        <div class="timeline-content" data-toggle="popover" data-trigger="hover"
+                                            data-placement="top" title=""
+                                            data-content="And here's some amazing content. It's very engaging. Right?"
+                                            data-original-title="2020">
+                                            <div class="inner-circle"></div>
+                                            <p class="h6 mt-3 mb-1 timeline_steps">{{department}}</p>
+                                            <p class="h6 text-secondary mb-0 mb-lg-0 timeline_steps">
+                                                {{financialYear.Description}} Year</p>
                                         </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="pending">
-                                        <div class="card-body">
-                                            <table id="example"
-                                                class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                                style="width:100%">
-                                                <thead>
-                                                    <tr id="tops">
-                                                        <th id="long">Appraisal Code</th>
-                                                        <th>Status</th>
-                                                        <th>Appraiser Name</th>
-                                                        <th>Financial Year</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for submittedAppraisal in submittedAppraisals %}
-                                                    <tr>
-                                                        <td>{{submittedAppraisal.Code}}</td>
-                                                        <td id="rap">{{submittedAppraisal.Status}}</td>
-                                                        <td>{{submittedAppraisal.AppraiserName}}</td>
-                                                        <td>{{submittedAppraisal.FinancialYear}} </td>
-                                                        <td>
-                                                            <a href="{% url 'FnInitiateAppraisal' submittedAppraisal.Code %} "
-                                                                class="btn btn-success btn-icon-text" type="button"
-                                                                data-toggle="tooltip" data-placement="top" title="View">
-                                                                View <i class="far fa-eye"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                                    </a>
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal for targets -->
-<div class="modal fade" id="staticBackdropForTargets" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">
-                    Set Departmental Targets ( <span class="text-small">{{department}} Department</span> )
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form class="myForm" action="{% url 'AppraisalRequests' %}" method="post" novalidate>
-                    {% csrf_token %}
-                    <div class="mb-2">
-                        <input type="hidden" name="myAction" value="insert">
-                        <input type="hidden" name="applicationCode" value="">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="form-label">Department Financial Year<span
-                                        class="text-danger">*</span></label>
-                                <select class="form-select" name="departmentalAppraisalCode" required>
-                                    <option selected disabled value="">--Select--</option>
-                                    {% for appraisalCode in appraisalCode %}
-                                    <option value="{{appraisalCode.Code}}"><span class="text-success">Financial
-                                            Year</span> <span
-                                            class="text-primary">({{appraisalCode.FinancialYear}})</span></option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row my-2">
-                            <div class="col-md-12">
-                                <label for="" class="form-label">Description</label>
-                                <textarea class="form-control" name="description" rows="3" required></textarea>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="form-label">
-                                    Weighted
-                                    Score</label>
-                                <input type="number" class="form-control" name="weightedScore" placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="form-label my-2">Check
-                                    Quarter for the
-                                    weighted
-                                    Score</label>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <input class="form-check-input" type="checkbox" name="Quarter1" value="True">
-                                        <label class="form-check-label mt-1">Quarter
-                                            1</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input class="form-check-input" type="checkbox" name="Quarter2" value="True">
-                                        <label class="form-check-label mt-1">Quarter
-                                            2</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input class="form-check-input" type="checkbox" name="Quarter3" value="True">
-                                        <label class="form-check-label mt-1">Quarter
-                                            3</label>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input class="form-check-input" type="checkbox" name="Quarter4" value="True">
-                                        <label class="form-check-label mt-1">Quarter
-                                            4</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" id="sasa" class="btn btn-success my-3 w-100">Submit</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>

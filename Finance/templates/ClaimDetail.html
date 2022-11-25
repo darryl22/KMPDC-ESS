@@ -391,7 +391,7 @@
                             <div class="col-md-6">
                                 <label for="" class="form-label">Expenditure Date <span
                                         class="text-danger">*</span></label>
-                                <input type="text" class="LargeDatepicker" id="Expenditure" min="1980-01-01" max=""
+                                <input type="date" class="form-control" id="Expenditure" min="1980-01-01" max=""
                                     name="expenditureDate" required>
                             </div>
                             <div class="col-md-6">
@@ -419,14 +419,6 @@
 <!-- Modal -->
 <script>
     $(document).ready(function () {
-        window.setTimeout(function () {
-            $('.LargeDatepicker').Zebra_DatePicker({
-                direction: -1,
-                format: 'd-m-Y',
-                show_week_number: 'Wk',
-
-            });
-        }, 100);
         var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
         var x = document.getElementById("Expenditure").max = utc;
         var text = document.getElementById("Expenditure").getAttribute("max");

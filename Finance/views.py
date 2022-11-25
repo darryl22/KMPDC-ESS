@@ -667,36 +667,26 @@ class ClaimDetails(UserObjectMixin, View):
 
 
 def CreateClaimLines(request, pk):
-    lineNo = ""
-    claimNo = pk
-    claimType = ""
-    
-    amount = ""
-    claimReceiptNo = ""
-    dimension3 = ''
-    expenditureDate = ""
-    expenditureDescription = ""
-    myAction = ''
     if request.method == 'POST':
         try:
+            claimNo = pk
             accountNo = request.session['Customer_No_']
             lineNo = int(request.POST.get('lineNo'))
             claimType = request.POST.get('claimType')
             amount = float(request.POST.get('amount'))
             expenditureDate = datetime.strptime(
-                request.POST.get('expenditureDate'), '%d-%m-%Y').date()
+                request.POST.get('expenditureDate'), '%Y-%m-%d').date()
             expenditureDescription = request.POST.get('expenditureDescription')
             attach = request.FILES.getlist('attachment')
             myAction = request.POST.get('myAction')
             tableID = 52177431
-        except Exception as e:
-            messages.error(request, "Invalid Input.")
-            return redirect('ClaimDetail', pk=pk)
+            claimReceiptNo = ""
+            dimension3 = ''
+            expenditureDate = ""
 
-        try:
             response = config.CLIENT.service.FnStaffClaimLine(
                 lineNo, claimNo, claimType, accountNo, amount, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
-            print(response)
+
             if response != 0:
                 for files in attach:
                     fileName = request.FILES['attachment'].name

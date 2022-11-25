@@ -226,7 +226,7 @@ class Leave_Request(UserObjectMixins,View):
             myAction = request.POST.get('myAction')
             if not daysApplied:
                 daysApplied = 0
-            plannerStartDate =  datetime.strptime(plannerStartDate, '%d-%m-%Y').date()
+            plannerStartDate =  datetime.strptime(plannerStartDate, '%Y-%m-%d').date()
             try:
                 response = config.CLIENT.service.FnLeaveApplication(
                     applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
@@ -500,8 +500,8 @@ class TrainingDetail(UserObjectMixin, View):
                 employeeNo = request.session['Employee_No_']
                 myAction = "insert"
                 trainingName = request.POST.get('trainingName')
-                startDate = datetime.strptime((request.POST.get('startDate')), '%d-%m-%Y').date()
-                endDate = datetime.strptime((request.POST.get('endDate')), '%d-%m-%Y').date()
+                startDate = datetime.strptime((request.POST.get('startDate')), '%Y-%m-%d').date()
+                endDate = datetime.strptime((request.POST.get('endDate')), '%Y-%m-%d').date()
                 trainingArea = request.POST.get('trainingArea')
                 trainingObjectives = request.POST.get('trainingObjectives')
                 venue = request.POST.get('venue')
@@ -511,24 +511,22 @@ class TrainingDetail(UserObjectMixin, View):
                 provider = request.POST.get('provider')
                 trainingCost = float(request.POST.get('trainingCost'))
 
-            except ValueError as e:
-                messages.error(request, e)
-                return redirect('TrainingDetail', pk=pk)
-            if not sponsor:
-                sponsor = 0
-            sponsor = int(sponsor)
+          
+                if not sponsor:
+                    sponsor = 0
+                sponsor = int(sponsor)
 
-            if not destination:
-                destination = 'none'
-            
-            if not venue:
-                venue = "Online"
+                if not destination:
+                    destination = 'none'
+                
+                if not venue:
+                    venue = "Online"
 
-            if OtherDestinationName:
-                destination = OtherDestinationName
-            if not trainingCost:
-                trainingCost = 0
-            try:
+                if OtherDestinationName:
+                    destination = OtherDestinationName
+                if not trainingCost:
+                    trainingCost = 0
+  
                 response = CLIENT.service.FnAdhocTrainingNeedRequest(
                     requestNo,no, employeeNo, trainingName, trainingArea, trainingObjectives,
                      venue, provider, myAction,sponsor,startDate,endDate,destination,trainingCost)

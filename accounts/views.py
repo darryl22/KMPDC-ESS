@@ -59,6 +59,7 @@ class Login(UserObjectMixin,View):
                     output_json2 = json.dumps(emp)
                     loadedData2= json.loads(output_json2)
                     request.session['Department'] = loadedData2['Department_Code']
+                messages.success(request,f"Success. Logged in as {request.session['User_ID']}")
                 return redirect('dashboard')
         except requests.exceptions.RequestException as e:
             print(e)
