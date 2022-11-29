@@ -31,17 +31,12 @@ class AppraisalRequests(UserObjectMixins,View):
             completeAppraisal = ''
             outputFinancialYear = ''
 
-            empAppraisalResponse = self.one_filter("/QyEmployeeAppraisals","DepartmentalAppraisalPeriod","eq","DPAP00001")
+            
 
             if HOD_User == True:
                 departmentUsers = config.O_DATA.format(f"/QyUserSetup?$filter=User_Responsibility_Center%20eq%20%27{department}%27")
                 DPTResponse = self.get_object(departmentUsers)
                 numberOfEmployees = [x for x in DPTResponse['value'] if x['User_Responsibility_Center'] == department]
-
-                appraisalCode = config.O_DATA.format(f"/QyDepartmentalAppraisalPeriods?$filter=Department%20eq%20%27{department}%27")
-                CodeResponse = self.get_object(appraisalCode)
-                outputCode = [x for x in CodeResponse['value'] if x['Department'] == department]
-
                 
 
                 financialYearRequest = config.O_DATA.format(f"/QyFinancialYears")
@@ -49,9 +44,10 @@ class AppraisalRequests(UserObjectMixins,View):
                 outputFinancialYear = [x for x in financialYearResponse['value']]
 
             if HOD_User == False:
-                empAppraisal = [x for x in empAppraisalResponse['value'] if (x['EmployeeNo'] == empNo and x['Status']=='Self Appraisal') or (x['EmployeeNo'] == empNo and x['Status']=='Open')]
-                submittedAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Supervisor Appraisal']
-                completeAppraisal = [x for x in empAppraisalResponse['value'] if x['EmployeeNo'] == empNo and x['Status']=='Completed']
+                empAppraisalResponse = self.one_filter("/QyEmployeeAppraisals","EmployeeNo","eq",empNo)
+                empAppraisal = [x for x in empAppraisalResponse[1] if (x['Status']=='Self Appraisal') or (x['EmployeeNo'] == empNo and x['Status']=='Open')]
+                submittedAppraisal = [x for x in empAppraisalResponse[1] if x['Status']=='Supervisor Appraisal']
+                completeAppraisal = [x for x in empAppraisalResponse[1] if x['Status']=='Completed']
 
             DPTCount = len(numberOfEmployees)
             
@@ -115,7 +111,12 @@ class HODAppraisalRequests(UserObjectMixins,View):
             submittedAppraisals = [x for x in empAppraisalResponse[1] if x['Status']=='Supervisor Appraisal' and x['DepartmentCode'] == department]
             submittedAppraisalsCount = len(submittedAppraisals)
 
+            res_file = self.one_filter("/QyDocumentAttachments","No_","eq",pk)
             
+            for x in res_file[1]:
+                if x['Table_ID'] == 52178028:
+                    allFiles = x 
+                      
         except requests.exceptions.Timeout:
             messages.error(request, "API timeout. Server didn't respond, contact admin")
             return redirect('dashboard')
@@ -138,6 +139,7 @@ class HODAppraisalRequests(UserObjectMixins,View):
                 "department":department,"outputFinancialYear":outputFinancialYear,
                 "targetCount":targetCount,"submittedAppraisalsCount":submittedAppraisalsCount,
                 "outputTarget":outputTarget,"submittedAppraisals":submittedAppraisals,
+                "file":allFiles
 
             }
         return render(request,"hod_appraisal.html",ctx)
@@ -213,14 +215,11 @@ class HODDetails(UserObjectMixin,View):
             employeesResponse = self.get_object(employees)
             availableEmployees = [x for x in employeesResponse['value'] if x['Employee_No_'] not in empAssignedList]
 
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=Table_ID%20eq%2052178028")
-            res_file = self.get_object(Access_File)
-            allFiles = [x for x in res_file['value']]
 
             ctx = {
                 "target":res,"today": self.todays_date,
                 "full":userID,"outputEmployees":outputEmployees,
-                "availableEmployees":availableEmployees,"file":allFiles
+                "availableEmployees":availableEmployees
                 }
         except Exception as e:
             messages.error(request,e)
@@ -414,8 +413,9 @@ class FnRecommendedTrainings(UserObjectMixins,View):
             recommendedTraining = request.POST.get('recommendedTraining')
             selfAppraisal = eval(request.POST.get('selfAppraisal'))
             myAction = request.POST.get('myAction')
+            LineNo = int(request.POST.get('LineNo'))
 
-            training = config.CLIENT.service.FnRecommendedTrainings(appraisalCode,0,
+            training = config.CLIENT.service.FnRecommendedTrainings(appraisalCode,LineNo,
                         recommendedTraining,selfAppraisal,myAction)
             if training == True:
                 messages.success(request, "Success.")

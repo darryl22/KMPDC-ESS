@@ -75,23 +75,22 @@ class ImprestRequisition(UserObjectMixin,View):
                 isDsa = eval(request.POST.get('isDsa'))
                 myAction = request.POST.get('myAction')
                 imprestNo = request.POST.get('imprestNo')
-            except ValueError:
-                messages.error(request, "Missing Input")
+
+                if isImprest == False and isDsa == False:
+                    messages.info(request,"Both DSA and Imprest cannot be empty.")
+                    return redirect('imprestReq')
+
+                response = config.CLIENT.service.FnImprestHeader(
+                    imprestNo, accountNo, responsibilityCenter, travelType, purpose,
+                     usersId, personalNo, isImprest, isDsa, myAction)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('imprestReq')
+                messages.error(request, f"{response}")
                 return redirect('imprestReq')
             except KeyError:
                 messages.info(request, "Session Expired. Please Login")
                 return redirect('auth')
-            if not imprestNo:
-                imprestNo = ""
-            if isImprest == False and isDsa == False:
-                messages.info(request,"Both DSA and Imprest cannot be empty.")
-                return redirect('imprestReq')
-            print(travelType)
-            try:
-                response = config.CLIENT.service.FnImprestHeader(
-                    imprestNo, accountNo, responsibilityCenter, travelType, purpose, usersId, personalNo, isImprest, isDsa, myAction)
-                messages.success(request, "Request Successful")
-                print(response)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -288,33 +287,33 @@ def CreateImprestLines(request, pk):
             requisitionType = request.POST.get('requisitionType')
             DSAType= request.POST.get('DSAType')
             travelDate = datetime.strptime(
-                request.POST.get('travel'), '%d-%m-%Y').date()
+                request.POST.get('travel'), '%Y-%m-%d').date()
             amount = float(request.POST.get("amount"))
             returnDate = datetime.strptime(
-                request.POST.get('returnDate'), '%d-%m-%Y').date()
+                request.POST.get('returnDate'), '%Y-%m-%d').date()
             myAction = request.POST.get('myAction')
-        except ValueError:
-            messages.error(request, "Missing Input")
-            return redirect('IMPDetails', pk=pk)
 
-        class Data(enum.Enum):
-            values = imprestTypes
-        imprestType = (Data.values).value
+            class Data(enum.Enum):
+                values = imprestTypes
+            imprestType = (Data.values).value
 
-        if not amount:
-            amount = 0
+            if not amount:
+                amount = 0
         
-        if not imprestType:
-            messages.info(request,"Both Imprest and DSA can't be empty.")
-            return redirect('IMPDetails', pk=pk)
+            if not imprestType:
+                messages.info(request,"Both Imprest and DSA can't be empty.")
+                return redirect('IMPDetails', pk=pk)
 
-        if DSAType:
-            requisitionType = DSAType
-        try:
+            if DSAType:
+                requisitionType = DSAType
+
             response = config.CLIENT.service.FnImprestLine(
-                lineNo, pk, imprestType, destination, travelDate, returnDate, requisitionType, float(amount), myAction)
-            messages.success(request, "Request Successful")
-            print(response)
+                lineNo, pk, imprestType, destination, travelDate, returnDate, requisitionType,
+                 float(amount), myAction)
+            if response == True:
+                messages.success(request, "Request Successful")
+                return redirect('IMPDetails', pk=pk)
+            messages.error(request, f"{response}")
             return redirect('IMPDetails', pk=pk)
         except Exception as e:
             messages.error(request, e)

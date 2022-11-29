@@ -18,12 +18,7 @@
                         style="font-size:15px;"></i> Upload Attachment
                 </button>
                 {% endif %}
-                {% if appraisal.Status == "Supervisor Appraisal" and appraisal.CurrentQuarter == '4th Quarter' and HOD_User == True %}
-                <button class="btn btn-successs p-3 d-flex align-items-center mx-2" data-bs-toggle="modal"
-                    data-bs-target="#trainingModal" type="button"> <i class="las la-plus text-white"
-                        style="font-size:15px;"></i>Any Required Training ?
-                </button>
-                {% elif appraisal.Status == "Self Appraisal" and appraisal.CurrentQuarter == '4th Quarter' and HOD_User == False %}
+                {% if appraisal.Status == "Self Appraisal" and appraisal.CurrentQuarter == '4th Quarter' and HOD_User == False %}
                 <button class="btn btn-successs p-3 d-flex align-items-center mx-2" data-bs-toggle="modal"
                     data-bs-target="#trainingModal" type="button"> <i class="las la-plus text-white"
                         style="font-size:15px;"></i>Any Required Training ?
@@ -243,6 +238,16 @@
                                                                                 </a>
 
                                                                             </li>
+                                                                            <!-- <li>
+                                                                                <a href="#" data-toggle="tooltip"
+                                                                                    data-placement="top"
+                                                                                    title="Add Core-Attribute Score"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#exampleModal{{active.Code}}">
+                                                                                    <i class="las la-star-half-alt"></i>
+                                                                                </a>
+
+                                                                            </li> -->
                                                                             {% endif %}
                                                                         </ul>
                                                                     </div>
@@ -489,6 +494,7 @@
                                                 <th id="long">Line No</th>
                                                 <th>Recommended Training By Appraisee</th>
                                                 <th>Recommended Training By Appraiser</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -498,6 +504,74 @@
                                                 <td>{{training.RecommendedTrainingByAppraisee}}</td>
                                                 <td>
                                                     {{training.RecommendedTrainingByAppraiser}}
+                                                </td>
+                                                <td>
+                                                    {% if appraisal.Status == "Supervisor Appraisal" and appraisal.CurrentQuarter == '4th Quarter' and HOD_User == True %}
+                                                    <button class="btn btn-success btn-icon-text" data-bs-toggle="modal"
+                                                        data-bs-target="#trainingModal{{training.LineNo}}"
+                                                        type="button">
+                                                        Add Training..<i class="far fa-eye"></i>
+                                                    </button>
+                                                    {% endif %}
+                                                    <!-- Modal -->
+                                                    <div class="modal fade" id="trainingModal{{training.LineNo}}"
+                                                        tabindex="-1" aria-labelledby="exampleModalLabel"
+                                                        aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="exampleModalLabel">HOD
+                                                                        Training Recommendations ( <span
+                                                                            class="text-small text-secondary">Line
+                                                                            No. {{training.LineNo}}</span>
+                                                                        )</h5>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="myForm"
+                                                                        action="{% url 'FnRecommendedTrainings' %}"
+                                                                        method="post" novalidate>
+                                                                        {% csrf_token %}
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <input type="hidden" name="myAction"
+                                                                                    value="modify">
+                                                                                <input type="hidden" name="LineNo"
+                                                                                    value="{{training.LineNo}}">
+                                                                                <input type="hidden"
+                                                                                    name="selfAppraisal" value="False">
+
+                                                                                <input type="hidden"
+                                                                                    name="appraisalCode"
+                                                                                    value="{{appraisal.Code}}">
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <label class="form-label">Any
+                                                                                    Recommend
+                                                                                    Training
+                                                                                    ?</label>
+                                                                                <textarea class="form-control"
+                                                                                    name="recommendedTraining"
+                                                                                    rows="3"></textarea>
+                                                                                <div class="form-text">
+                                                                                    Add any
+                                                                                    recommended
+                                                                                    training
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-success my-3 w-100">Submit</button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -634,6 +708,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <input type="hidden" name="myAction" value="insert">
+                            <input type="hidden" name="LineNo" value="0">
                             {% if appraisal.Status == 'Self Appraisal' %}
                             <input type="hidden" name="selfAppraisal" value="True">
                             {% elif appraisal.Status == 'Supervisor Appraisal' %}
@@ -663,6 +738,7 @@
         </div>
     </div>
 </div>
+
 <script>
     $(document).ready(function () {
         $(".Pager .PageItem").slice(3).hide();

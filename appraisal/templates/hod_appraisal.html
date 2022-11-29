@@ -10,7 +10,7 @@
             <div class="col-md-12">
                 <div class="card card-body data-card">
                     <h1 class="heading display-5 pb-3"><img src="../../../static/img/logo/fav.png" width="70px"
-                            class="img-fluid"> Appraisals<span>
+                            class="img-fluid"> Appraisals Targets<span>
                             <button class="btn btn-success align-items-center" style="float: right;">{{today}} <span
                                     id="timer"></span></button></span>
                     </h1>
@@ -21,11 +21,15 @@
                                 <i class="las la-plus text-white"></i> New
                                 Departmental
                                 Targets</button>
-                            <button href="#" class="btn btn-secondary">
-                                New
-                                Departmental
-                                Targets <i class="las la-download"></i></button>
                             <a href="#" class="btn btn-primary">{{outputFinancialYear.Description}}</a>
+                            <form action="{% url 'getDocs' file.No_ file.Table_ID %}" class="" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="attachmentID" value="{{file.AuxiliaryIndex2}}">
+                                <input type="hidden" name="File_Name" value="{{file.File_Name}}">
+                                <input type="hidden" name="File_Extension" value="{{file.File_Extension}}">
+                                <button type="submit" class="btn w-100 btn-secondary">
+                                    {{file.File_Name}}.{{file.File_Extension}}<i class="las la-download"></i></button>
+                            </form>
                         </div>
                     </div>
                     <div class="row">
@@ -52,7 +56,7 @@
                                                 style="width:100%">
                                                 <thead>
                                                     <tr id="tops">
-                                                        <th id="long">Appraisal No</th>
+                                                        <th id="long">Target Code</th>
                                                         <th>Maximum Score</th>
                                                         <th>Quarter 1</th>
                                                         <th>Quarter 2</th>
@@ -68,30 +72,38 @@
                                                         <td id="rap">{{outputTarget.MaximumScore}}</td>
                                                         <td>
                                                             {% if outputTarget.Quarter1 == True %}
-                                                            <img src="../../static/icons/check-mark.png" alt="">
+                                                            <img src="../../static/icons/check-mark.png" height="10px"
+                                                                width="10px" class="img-fluid" alt="">
                                                             {% else %}
-                                                            <img src="../../static/icons/close.png" alt="" srcset="">
+                                                            <img src="../../static/icons/close.png" height="10px"
+                                                                width="10px" class="img-fluid" alt="" srcset="">
                                                             {% endif %}
                                                         </td>
                                                         <td>
                                                             {% if outputTarget.Quarter2 == True %}
-                                                            <img src="../../static/icons/check-mark.png" alt="">
+                                                            <img src="../../static/icons/check-mark.png" height="10px"
+                                                                width="10px" class="img-fluid" alt="">
                                                             {% else %}
-                                                            <img src="../../static/icons/close.png" alt="" srcset="">
+                                                            <img src="../../static/icons/close.png" height="10px"
+                                                                width="10px" class="img-fluid" alt="" srcset="">
                                                             {% endif %}
                                                         </td>
                                                         <td>
                                                             {% if outputTarget.Quarter3 == True %}
-                                                            <img src="../../static/icons/check-mark.png" alt="">
+                                                            <img src="../../static/icons/check-mark.png" height="10px"
+                                                                width="10px" class="img-fluid" alt="">
                                                             {% else %}
-                                                            <img src="../../static/icons/close.png" alt="" srcset="">
+                                                            <img src="../../static/icons/close.png" height="10px"
+                                                                width="10px" class="img-fluid" alt="" srcset="">
                                                             {% endif %}
                                                         </td>
                                                         <td>
                                                             {% if outputTarget.Quarter4 == True %}
-                                                            <img src="../../static/icons/check-mark.png" alt="">
+                                                            <img src="../../static/icons/check-mark.png" height="10px"
+                                                                width="10px" class="img-fluid" alt="">
                                                             {% else %}
-                                                            <img src="../../static/icons/close.png" alt="" srcset="">
+                                                            <img src="../../static/icons/close.png" height="10px"
+                                                                width="10px" class="img-fluid" alt="" srcset="">
                                                             {% endif %}
                                                         </td>
                                                         <td>
@@ -118,6 +130,7 @@
                                                         <th>Status</th>
                                                         <th>Appraiser Name</th>
                                                         <th>Financial Year</th>
+                                                        <th>Employee Name</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -128,6 +141,7 @@
                                                         <td id="rap">{{submittedAppraisal.Status}}</td>
                                                         <td>{{submittedAppraisal.AppraiserName}}</td>
                                                         <td>{{submittedAppraisal.FinancialYear}} </td>
+                                                        <td>{{submittedAppraisal.EmployeeName}} </td>
                                                         <td>
                                                             <a href="{% url 'FnInitiateAppraisal' submittedAppraisal.Code %} "
                                                                 class="btn btn-success btn-icon-text" type="button"

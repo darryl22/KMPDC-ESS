@@ -242,50 +242,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card mb-3">
-                        <div class="card-header" id="headingFour">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                    Attachments</button>
-                            </h5>
-                        </div>
-                        <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
-                            data-bs-parent="#accordion">
-                            <div class="row my-2">
-                                {% for data in file %}
-                                <div class="col-lg-4 col-xl-3">
-                                    <div class="file-man-box">
-                                        <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon">
-                                        </div>
-                                        <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
-                                            <input type="hidden" name="File_Name" value="{{data.File_Name}}">
-                                            <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
-                                            <button class="file-download mx-1"><i
-                                                    class="fa fa-download text-success"></i></button>
-                                        </form>
-                                        <div class="file-man-title">
-                                            <h5 class="mb-0 text-overflow">
-                                                {{data.File_Name}}.{{data.File_Extension}}</h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <div class="row mx-auto text-center">
-                                    <div class="col-md-12">
-                                        <p class="text-danger p-4">
-                                            You have no attachments
-                                        </p>
-                                        <img src="../../static/icons/empty-box.png" class="img-fluid" height="150px"
-                                            width="150px">
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
