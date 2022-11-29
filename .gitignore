@@ -3,3 +3,42 @@ venv/
 tests.py
 notes.txt
 test.html
+virtual/
+.env
+notes.txt
+
+__pycache__/
+*.py[cod]
+
+build/
+dist/
+sdist/
+.eggs/
+*.egg-info/
+web.config
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+*.db
+
+# Sphinx documentation
+docs/_build/
+
+# Environment variables configuration
+.env
+
+# File based database
+*.sqlite3
+.vscode
