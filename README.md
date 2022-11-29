@@ -1,4 +1,3 @@
-[![codebeat badge](https://codebeat.co/badges/7bbb17b5-2cde-4108-aac0-eefcd439cf9f)](https://codebeat.co/projects/github-com-enockabere-insta-master)
 # KMPDC EMPLOYEE SELF SERVICE PORTAL
 ## Project Description
 ESS portal empowers employees to access, manage, and request their HR-related tasks such as requesting PTO, updating their personal information, managing their benefits, and much more.
