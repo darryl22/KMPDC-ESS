@@ -4,10 +4,10 @@ ESS portal empowers employees to access, manage, and request their HR-related ta
 
 ##### By Enock Abere 
 
-![views](static/images/2.png)
+![views](static/img/1.png)
 
 ### Live link
-Visit the application on https://enock-rating.herokuapp.com/
+Visit the application on http://20.121.189.145:88/
 ### Setup & Run Instructions
 - Create and activate a virtual environment
 - Install the dependencies listed in the requirements.txt
