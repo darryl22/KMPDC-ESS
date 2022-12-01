@@ -45,7 +45,7 @@ class AppraisalRequests(UserObjectMixins,View):
 
             if HOD_User == False:
                 empAppraisalResponse = self.one_filter("/QyEmployeeAppraisals","EmployeeNo","eq",empNo)
-                empAppraisal = [x for x in empAppraisalResponse[1] if (x['Status']=='Self Appraisal') or (x['EmployeeNo'] == empNo and x['Status']=='Open')]
+                empAppraisal = [x for x in empAppraisalResponse[1] if (x['Status']=='Self Appraisal') or (x['Status']=='Open')]
                 submittedAppraisal = [x for x in empAppraisalResponse[1] if x['Status']=='Supervisor Appraisal']
                 completeAppraisal = [x for x in empAppraisalResponse[1] if x['Status']=='Completed']
 
@@ -139,7 +139,7 @@ class HODAppraisalRequests(UserObjectMixins,View):
                 "department":department,"outputFinancialYear":outputFinancialYear,
                 "targetCount":targetCount,"submittedAppraisalsCount":submittedAppraisalsCount,
                 "outputTarget":outputTarget,"submittedAppraisals":submittedAppraisals,
-                "file":allFiles
+                "file":allFiles,"dpt_code":dpt_code
 
             }
         return render(request,"hod_appraisal.html",ctx)
@@ -147,7 +147,7 @@ class HODAppraisalRequests(UserObjectMixins,View):
         if request.method == "POST":
             try:
                 applicationCode = request.POST.get('applicationCode')
-                departmentalAppraisalCode = pk
+                departmentalAppraisalCode = request.POST.get('departmentalAppraisalCode')
                 weightedScore = int(request.POST.get('weightedScore'))
                 description = request.POST.get('description')
                 Quarter1 = request.POST.get('Quarter1')
@@ -327,24 +327,29 @@ class FnInitiateAppraisal(UserObjectMixins,View):
             userID = request.session['User_ID']
             department = request.session['User_Responsibility_Center']
             HOD_User = request.session['HOD_User']
-            quarter = ''
+            current_quarter = ''
+            quarters = ['1st Quarter','1st Quarter','1st Quarter','1st Quarter']
+            prev_quarters =  []
 
-            response = self.double_filtered_data("/QyEmployeeAppraisals","Code","eq",pk,
-                                                "and","DepartmentCode","eq",department)
+            response = self.one_filter("/QyEmployeeAppraisals","Code","eq",pk)
             for appraisal in response[1]:
-                res = appraisal
-                quarter = appraisal['CurrentQuarter']
+                if appraisal['DepartmentCode'] == department:
+                    res = appraisal
+                    current_quarter = appraisal['CurrentQuarter']
 
             active_targets_response = self.double_filtered_data("/QyEmployeeAppraisalScores",
-                                        "Appraisal_Code","eq",pk,"and","Quarter","eq",quarter)
-
-            active_targets_count = active_targets_response[0]                      
-            active_targets = active_targets_response[1]
+                                        "Appraisal_Code","eq",pk,"and","Quarter","eq",current_quarter)
+                     
+            active_targets = [x for x in active_targets_response[1] if x['Category'] == "Target"]
+            core_attributes = [x for x in active_targets_response[1] if x['Category'] == "Core Attribute"]
             
             other_targets_response = self.double_filtered_data("/QyEmployeeAppraisalScores",
-                                        "Appraisal_Code","eq",pk,"and","Quarter","ne",quarter)
-            other_targets_count = other_targets_response[0]
+                                        "Appraisal_Code","eq",pk,"and","Quarter","ne",current_quarter)
+
             other_targets = other_targets_response[1]
+            for x in quarters:
+                if current_quarter not in x:
+                    prev_quarters.append(x)
 
             res_file = self.one_filter("/QyDocumentAttachments","No_","eq",pk)
             allFiles = [x for x in res_file[1]]
@@ -371,10 +376,10 @@ class FnInitiateAppraisal(UserObjectMixins,View):
             return redirect('AppraisalRequests')
         ctx = {
                 "appraisal":res,"HOD_User":HOD_User,
-                "full":userID,"today": self.todays_date,"quarter":quarter,
-                "active_targets":active_targets,"active_targets_count":active_targets_count,
+                "full":userID,"today": self.todays_date,"quarter":current_quarter,
+                "active_targets":active_targets,"core_attributes":core_attributes,
                 "file":allFiles, "other_targets_response":other_targets_response,
-                "other_targets_count":other_targets_count,"other_targets":other_targets,
+                "other_targets":other_targets,
                 "trainings":trainings
             }
         return render(request,"appDetails.html",ctx)
@@ -400,6 +405,30 @@ def FnAppraisalScores(request):
             return redirect('FnInitiateAppraisal',pk=appraisalCode)
 
                 
+        except Exception as e:
+            messages.error(request, e)
+            print(e)
+            return redirect('FnInitiateAppraisal',pk=appraisalCode)
+    return redirect('AppraisalRequests')
+def FnCoreAttributesAppraisalScores(request):
+    if request.method == "POST":
+        try:
+            depAppraisalPeriod = request.POST.get('depAppraisalPeriod')
+            employeeNo = request.POST.get('employeeNo')
+            attributeCode = request.POST.get('attributeCode')
+            score = float(request.POST.get('score'))
+            selfAppraisal = eval(request.POST.get('selfAppraisal'))
+            myAction = request.POST.get('myAction')
+            appraisalCode = request.POST.get('appraisalCode')
+
+            response = config.CLIENT.service.FnCoreAttributesAppraisalScores(depAppraisalPeriod,
+            employeeNo,attributeCode,score,selfAppraisal,myAction)
+
+            if response == True:
+                messages.success(request, "Success")
+                return redirect('FnInitiateAppraisal',pk=appraisalCode)
+            messages.error(request, "False")
+            return redirect('FnInitiateAppraisal',pk=appraisalCode)   
         except Exception as e:
             messages.error(request, e)
             print(e)

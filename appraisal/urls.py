@@ -8,6 +8,7 @@ urlpatterns = [
     path('appraisal/attachment/<str:pk>',views.UploadTargetAttachment,name='UploadTargetAttachment'),
     path('FnInitiateAppraisal/<str:pk>',views.FnInitiateAppraisal.as_view(),name='FnInitiateAppraisal'),
     path('FnAppraisalScores',views.FnAppraisalScores,name='FnAppraisalScores'),
+    path('FnCoreAttributesAppraisalScores',views.FnCoreAttributesAppraisalScores,name='FnCoreAttributesAppraisalScores'),
     path('HODInitiate',views.HODInitiate.as_view(),name='HODInitiate'),
     path('EmployeeAppraisalAttachment/<str:pk>',views.EmployeeAppraisalAttachment,name='EmployeeAppraisalAttachment'),
     path('FnsendforReview/<str:pk>',views.FnsendforReview,name='FnsendforReview'),

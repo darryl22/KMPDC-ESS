@@ -10,9 +10,17 @@
             <div class="col-md-12">
                 <div class="card card-body data-card">
                     <h1 class="heading display-5 pb-3"><img src="../../../static/img/logo/fav.png" width="70px"
-                            class="img-fluid"> Appraisals Targets<span>
-                            <button class="btn btn-success align-items-center" style="float: right;">{{today}} <span
-                                    id="timer"></span></button></span>
+                            class="img-fluid"> Appraisals Targets
+                        <form action="{% url 'getDocs' file.No_ file.Table_ID %}" method="post" style="float: right;">
+                            {% csrf_token %}
+                            <input type="hidden" name="attachmentID" value="{{file.AuxiliaryIndex2}}">
+                            <input type="hidden" name="File_Name" value="{{file.File_Name}}">
+                            <input type="hidden" name="File_Extension" value="{{file.File_Extension}}">
+                            <div class="vn-green" style="text-align: center;">
+                                <button type="submit"
+                                    class="btn-wrap">{{file.File_Name}}.{{file.File_Extension}}</button>
+                            </div>
+                        </form>
                     </h1>
                     <div class="row my-2">
                         <div class="btn-group btn-group-justified pb-2">
@@ -22,14 +30,6 @@
                                 Departmental
                                 Targets</button>
                             <a href="#" class="btn btn-primary">{{outputFinancialYear.Description}}</a>
-                            <form action="{% url 'getDocs' file.No_ file.Table_ID %}" class="" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="attachmentID" value="{{file.AuxiliaryIndex2}}">
-                                <input type="hidden" name="File_Name" value="{{file.File_Name}}">
-                                <input type="hidden" name="File_Extension" value="{{file.File_Extension}}">
-                                <button type="submit" class="btn w-100 btn-secondary">
-                                    {{file.File_Name}}.{{file.File_Extension}}<i class="las la-download"></i></button>
-                            </form>
                         </div>
                     </div>
                     <div class="row">
@@ -181,6 +181,7 @@
                             <div class="mb-2">
                                 <input type="hidden" name="myAction" value="insert">
                                 <input type="hidden" name="applicationCode" value="">
+                                <input type="hidden" name="departmentalAppraisalCode" value="{{dpt_code}}">
 
                                 <div class="row my-2">
                                     <div class="col-md-12">

@@ -5,17 +5,6 @@
                     class="img-fluid"> Appraisals<span><button class="btn btn-success align-items-center"
                         style="float: right;">{{today}} <span id="timer"></span></button></span>
             </h1>
-            <div class="row my-2">
-                <div class="btn-group btn-group-justified pb-2">
-                    <button href="#" class="btn btn-successs" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdropForTargets">
-                        <i class="las la-plus text-white"></i> New
-                        Departmental
-                        Targets</button>
-                    <a href="#" class="btn btn-primary">Appraisal Responses <i class="las la-history text-white"></i>
-                        ({{submittedAppraisalsCount}})</a>
-                </div>
-            </div>
             <div class="row gy-2 top-part">
                 <div class="col-md-12">
                     <div class="row g-2">
@@ -44,6 +33,7 @@
                     </div>
                     <div class="row my-4">
                         <div class="col-md-12">
+                            <h5 class="pb-3 text-muted">Select Financial Year</h5>
                             <div class="timeline-steps aos-init aos-animate" data-aos="fade-up">
                                 {% for financialYear in outputFinancialYear%}
                                 <div class="timeline-step mb-0">
