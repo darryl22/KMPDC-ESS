@@ -1181,3 +1181,14 @@ button.Zebra_DatePicker_Icon {
 .vn-green button:hover {
     background: #2c3e50
 }
+.inner-breadcrumb {
+    position: relative;
+    z-index: 1;
+    background-color: transparent;
+    border: none !important; 
+
+}
+
+.breadcrumb-item a {
+    text-decoration: none !important;
+}

@@ -43,6 +43,7 @@ class AppraisalRequests(UserObjectMixins,View):
                 financialYearResponse = self.get_object(financialYearRequest)
                 outputFinancialYear = [x for x in financialYearResponse['value']]
 
+
             if HOD_User == False:
                 empAppraisalResponse = self.one_filter("/QyEmployeeAppraisals","EmployeeNo","eq",empNo)
                 empAppraisal = [x for x in empAppraisalResponse[1] if (x['Status']=='Self Appraisal') or (x['Status']=='Open')]
@@ -105,11 +106,10 @@ class HODAppraisalRequests(UserObjectMixins,View):
 
             targetResponse = self.one_filter("/QyDepartmentalAppraisalTargets","DepartmentalAppraisalPeriod","eq",dpt_code)
             outputTarget = [x for x in targetResponse[1] if x['DepartmentCode']]
-            targetCount = len(outputTarget)
 
             empAppraisalResponse = self.one_filter("/QyEmployeeAppraisals","DepartmentalAppraisalPeriod","eq",dpt_code)
             submittedAppraisals = [x for x in empAppraisalResponse[1] if x['Status']=='Supervisor Appraisal' and x['DepartmentCode'] == department]
-            submittedAppraisalsCount = len(submittedAppraisals)
+
 
             res_file = self.one_filter("/QyDocumentAttachments","No_","eq",pk)
             
@@ -137,7 +137,6 @@ class HODAppraisalRequests(UserObjectMixins,View):
         ctx = {
                 "HOD_User":HOD_User,"full":userID,"today": self.todays_date,
                 "department":department,"outputFinancialYear":outputFinancialYear,
-                "targetCount":targetCount,"submittedAppraisalsCount":submittedAppraisalsCount,
                 "outputTarget":outputTarget,"submittedAppraisals":submittedAppraisals,
                 "file":allFiles,"dpt_code":dpt_code
 
@@ -191,35 +190,41 @@ class HODAppraisalRequests(UserObjectMixins,View):
                 return redirect('auth')
         return redirect('HODAppraisalRequests')
 
-class HODDetails(UserObjectMixin,View):
+class HODDetails(UserObjectMixins,View):
     def get(self,request,pk):
         try:
             userID = request.session['User_ID']
             department = request.session['User_Responsibility_Center']
+            financial_year = '0'
 
-            Access_Point = config.O_DATA.format(f"/QyDepartmentalAppraisalTargets?$filter=Code%20eq%20%27{pk}%27")
-            response = self.get_object(Access_Point)
-            for appraisal in response['value']:
+            if "&" in department:
+                department = department.replace("&", "%26" )
+
+            response = self.one_filter("/QyDepartmentalAppraisalTargets","Code","eq",pk)
+            for appraisal in response[1]:
                 res = appraisal
                 period = appraisal['DepartmentalAppraisalPeriod']
-            
-            assignedEmployees = config.O_DATA.format(f"/QyAppraisalTargetEmployees?$filter=DepartmentalTarget%20eq%20%27{pk}%27")
-            assignedEmployeesResponse = self.get_object(assignedEmployees)
-            outputEmployees = [x for x in assignedEmployeesResponse['value'] if x['DepartmentalTarget'] == pk]
+
+            dpt_appraisal_period = self.one_filter("/QyDepartmentalAppraisalPeriods","Code","eq",period)
+            for code in dpt_appraisal_period[1]:
+                if code['Department'] == department:
+                    financial_year = code['FinancialYear']
+                  
+            assignedEmployeesResponse = self.one_filter("/QyAppraisalTargetEmployees","DepartmentalTarget","eq",pk)
+            outputEmployees = [x for x in assignedEmployeesResponse[1] if x['DepartmentalTarget'] == pk]
             
             empAssignedList = []
-            for assigned in assignedEmployeesResponse['value']:
+            for assigned in assignedEmployeesResponse[1]:
                 empAssignedList.append(assigned['EmployeeNo'])
             
-            employees = config.O_DATA.format(f"/QyUserSetup?$filter=User_Responsibility_Center%20eq%20%27{department}%27")
-            employeesResponse = self.get_object(employees)
-            availableEmployees = [x for x in employeesResponse['value'] if x['Employee_No_'] not in empAssignedList]
+            employeesResponse = self.one_filter("/QyUserSetup","User_Responsibility_Center","eq",department)
+            availableEmployees = [x for x in employeesResponse[1] if x['Employee_No_'] not in empAssignedList]
 
 
             ctx = {
                 "target":res,"today": self.todays_date,
                 "full":userID,"outputEmployees":outputEmployees,
-                "availableEmployees":availableEmployees
+                "availableEmployees":availableEmployees,"financial_year":financial_year
                 }
         except Exception as e:
             messages.error(request,e)

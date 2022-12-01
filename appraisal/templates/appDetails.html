@@ -7,10 +7,34 @@
 <link rel="stylesheet" href="../../static/plugins/flaviusmatis-simplePagination.js-da97104/simplePagination.css">
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
-        <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Appraisal Details
-            </h2>
-
+        <div class="row">
+            <div class="col-md-12">
+                <ol class="breadcrumb shadow-lg  d-flex justify-content-start inner-breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'dashboard' %}" class="breadcrumbs text-danger">
+                            <i class="fa fa-home"></i>
+                            Home</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a href="{% url 'AppraisalRequests' %}" class="breadcrumbs text-dark">
+                            Appraisal
+                        </a>
+                    </li>
+                    {% if HOD_User == True %}
+                    <li class="breadcrumb-item ">
+                        <a href="{% url 'HODAppraisalRequests' appraisal.FinancialYear %}"
+                            class="breadcrumbs text-dark">
+                            Appraisal List
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="breadcrumb-item "><span class="breadcrumbs text-muted">
+                            Appraisal {{appraisal.Code}}
+                        </span></li>
+                </ol>
+            </div>
+        </div>
+        <div class="d-xl-flex justify-content-end align-items-start">
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 {% if appraisal.Status == 'Self Appraisal' and HOD_User == False %}
                 <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
@@ -388,19 +412,19 @@
                                                                         <div class="col-md-6">
                                                                             <ul class="tr-list job-meta mt-2">
                                                                                 <li><span><i class="fa fa-star"
-                                                                                            aria-hidden="true"></i></span>Weighted
+                                                                                            aria-hidden="true"></i></span>Maximum
                                                                                     Score: <span
-                                                                                        class="text-success">5</span>
+                                                                                        class="text-success">Excellent</span>
                                                                                 </li>
                                                                                 <li><span><i class="fa fa-star"
                                                                                             aria-hidden="true"></i></span>Self
                                                                                     Appraisal Score: <span
-                                                                                        class="text-success">{{active.SelfAppraisalScore}}</span>
+                                                                                        class="text-success">{{attribute.Self_Appraisal_Rating}}</span>
                                                                                 </li>
                                                                                 <li><span><i class="fa fa-star"
                                                                                             aria-hidden="true"></i></span>Supervisor
                                                                                     Score: <span
-                                                                                        class="text-success">{{active.SupervisorAppraisalScore}}</span>
+                                                                                        class="text-success">{{attribute.Supervisor_Appraisal_Rating}}</span>
                                                                                 </li>
                                                                             </ul>
                                                                         </div>
@@ -473,12 +497,24 @@
                                                                             </div>
                                                                             <div class="row">
                                                                                 <div class="col-md-12">
-                                                                                    <label class="form-label">Score
-                                                                                        (1-5)<span
+                                                                                    <label class="form-label">Score<span
                                                                                             class="text-danger">*</span></label>
-                                                                                    <input type="text" name="score"
-                                                                                        placeholder="0"
-                                                                                        class="form-control">
+                                                                                    <select class="form-select"
+                                                                                        name="score"
+                                                                                        aria-label="Default select"
+                                                                                        required>
+                                                                                        <option selected disabled
+                                                                                            value="0">--select--
+                                                                                        </option>
+                                                                                        <option value="1">Poor</option>
+                                                                                        <option value="2">Fair</option>
+                                                                                        <option value="3">Good</option>
+                                                                                        <option value="4">Very Good
+                                                                                        </option>
+                                                                                        <option value="5">Excellent
+                                                                                        </option>
+                                                                                    </select>
+
                                                                                 </div>
                                                                             </div>
                                                                             <button type="submit"
@@ -873,17 +909,25 @@
 
         });
 
-        window.setTimeout(function () {
-            $('.LargeDatepicker').Zebra_DatePicker({
-                direction: -1,
-                format: 'd-m-Y',
-                show_week_number: 'Wk',
+        var fixmeTop = $('.inner-breadcrumb').offset().top;
 
-            });
-        }, 100);
-        var utc = new Date().toJSON().slice(0, 10).replace(/-/g, '-');
-        var x = document.getElementById("Expenditure").max = utc;
-        var text = document.getElementById("Expenditure").getAttribute("max");
+        $(window).scroll(function () {
+
+            var currentScroll = $(window).scrollTop();
+
+            if (currentScroll >= fixmeTop) {
+                $('.inner-breadcrumb').css({
+                    position: 'fixed',
+                    top: '0',
+                    left: '0'
+                });
+            } else {
+                $('.inner-breadcrumb').css({
+                    position: 'static'
+                });
+            }
+
+        });
     })
 </script>
 

@@ -5,15 +5,33 @@
 <script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
-        <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2">Target Details
-            </h2>
-
+        <div class="row">
+            <div class="col-md-12">
+                <ol class="breadcrumb shadow-lg  d-flex justify-content-start inner-breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'dashboard' %}" class="breadcrumbs text-danger">
+                            <i class="fa fa-home"></i>
+                            Home</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a href="{% url 'AppraisalRequests' %}" class="breadcrumbs text-dark">
+                            Appraisal
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a href="{% url 'HODAppraisalRequests' financial_year %}" class="breadcrumbs text-dark">
+                            Appraisal Targets
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item "><span class="breadcrumbs text-muted">
+                            Targets {{target.Code}}
+                        </span></li>
+                </ol>
+            </div>
+        </div>
+        <div class="d-xl-flex justify-content-end align-items-start">
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
-                <!-- <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
-                    data-bs-target="#Attachment" type="button"> <i class="las la-plus text-white"
-                        style="font-size:15px;"></i> Upload Attachment
-                </button> -->
+
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
                     <button class="btn btn-successs p-3 d-flex align-items-center" type="button" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop"> <i class="las la-plus"></i> Assign Targets
@@ -95,52 +113,6 @@
             </div>
         </div>
 
-        <!-- <div class="row my-2 py-3">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">
-                            Attachments
-                        </h4>
-                        <div class="row">
-                            {% for data in file %}
-                            <div class="col-lg-4 col-xl-3">
-                                <div class="file-man-box">
-                                    {% if res.Status == 'Open' %}
-                                    <form action="{% url 'DeleteClaimAttachment' data.No_  %}" method="POST">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
-                                        <input type="hidden" name="tableID" value="{{data.Table_ID}}">
-                                        <button class="file-close" id="file-close"><i
-                                                class="fa fa-times-circle"></i></button>
-                                    </form>
-                                    {% endif %}
-                                    <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
-                                    <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
-                                        <input type="hidden" name="File_Name" value="{{data.File_Name}}">
-                                        <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
-                                        <button class="file-download mx-1"><i
-                                                class="fa fa-download text-success"></i></button>
-                                    </form>
-                                    <div class="file-man-title">
-                                        <h5 class="mb-0 text-overflow">
-                                            {{data.File_Name}}.{{data.File_Extension}}</h5>
-                                    </div>
-                                </div>
-                            </div>
-                            {% empty %}
-                            <p class="text-danger">
-                                You have not uploaded any attachments <i class="las la-file-download"></i>
-                            </p>
-                            {% endfor %}
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div> -->
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div id="accordion" class="accordion-style">
