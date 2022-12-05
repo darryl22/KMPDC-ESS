@@ -238,6 +238,7 @@
                                                                             </div>
                                                                         </ul>
                                                                         <ul class="job-social tr-list">
+                                                                            {% if appraisal.Status == "Self Appraisal" and HOD_User == False %}
                                                                             <li>
                                                                                 <a href="#" data-toggle="tooltip"
                                                                                     data-placement="top"
@@ -247,9 +248,19 @@
                                                                                     <i class="fa fa-long-arrow-right"
                                                                                         aria-hidden="true"></i>
                                                                                 </a>
-
                                                                             </li>
-
+                                                                            {% elif appraisal.Status == "Supervisor Appraisal" and HOD_User == True %}
+                                                                            <li>
+                                                                                <a href="#" data-toggle="tooltip"
+                                                                                    data-placement="top"
+                                                                                    title="Add Score"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#exampleModal{{active.Code}}">
+                                                                                    <i class="fa fa-long-arrow-right"
+                                                                                        aria-hidden="true"></i>
+                                                                                </a>
+                                                                            </li>
+                                                                            {% endif %}
                                                                         </ul>
                                                                     </div>
                                                                 </div>
@@ -388,6 +399,7 @@
                                                                             </div>
                                                                         </ul>
                                                                         <ul class="job-social tr-list">
+                                                                            {% if appraisal.Status == "Self Appraisal" and HOD_User == False %}
                                                                             <li>
                                                                                 <a href="#" data-toggle="tooltip"
                                                                                     data-placement="top"
@@ -397,8 +409,19 @@
                                                                                     <i class="fa fa-long-arrow-right"
                                                                                         aria-hidden="true"></i>
                                                                                 </a>
-
                                                                             </li>
+                                                                            {% elif appraisal.Status == "Supervisor Appraisal" and HOD_User == True %}
+                                                                            <li>
+                                                                                <a href="#" data-toggle="tooltip"
+                                                                                    data-placement="top"
+                                                                                    title="Add Score"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#attributeModal{{attribute.CoreAttribute}}">
+                                                                                    <i class="fa fa-long-arrow-right"
+                                                                                        aria-hidden="true"></i>
+                                                                                </a>
+                                                                            </li>
+                                                                            {% endif %}
                                                                         </ul>
                                                                     </div>
                                                                 </div>
