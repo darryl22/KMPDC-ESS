@@ -2,7 +2,10 @@ from django.shortcuts import render
 import requests
 from django.conf import settings as config
 import datetime as dt
-
+from requests.auth import HTTPBasicAuth
+from zeep import Client
+from zeep.transports import Transport
+from requests import Session
 # Create your views here.
 class UserObjectMixins(object):
     model =None
@@ -34,3 +37,11 @@ class UserObjectMixins(object):
         response = self.get_object(Access_Point)['value']
         count=len(response)
         return count,response
+
+    def zeep_client(self,request):
+        Username = request.session['User_ID']
+        Password = request.session['password']
+        AUTHS = Session()
+        AUTHS.auth = HTTPBasicAuth(Username, Password)
+        CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
+        return CLIENT

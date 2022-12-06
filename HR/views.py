@@ -2,7 +2,6 @@ import base64
 from django.shortcuts import render, redirect
 from datetime import datetime
 import requests
-from requests import Session
 import json
 from django.conf import settings as config
 import datetime as dt
@@ -11,21 +10,9 @@ from django.http import HttpResponse
 import io as BytesIO
 import secrets
 import string
-from requests.auth import HTTPBasicAuth
-from zeep import Client
-from zeep.transports import Transport
 from django.views import View
 from myRequest.views import UserObjectMixins
 # Create your views here.
-
-class UserObjectMixin(object):
-    model =None
-    session = requests.Session()
-    session.auth = config.AUTHS
-    todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    def get_object(self,endpoint):
-        response = self.session.get(endpoint, timeout=10).json()
-        return response
 
 class Leave_Planner(UserObjectMixins,View):
     def get(self,request):
@@ -59,17 +46,16 @@ class Leave_Planner(UserObjectMixins,View):
 
     def post(self,request):
         try:
-            plannerNo = ""
+            plannerNo = request.POST.get('plannerNo')
             empNo = request.session['Employee_No_']
             myAction = request.POST.get('myAction')
 
-            response = config.CLIENT.service.FnLeavePlannerHeader(
+            response = self.zeep_client(request).service.FnLeavePlannerHeader(
                 plannerNo, empNo, myAction)
-            if response:
+            if response !=False:
                 messages.success(request, "Success")
-                print(response)
                 return redirect('PlanDetail',pk=response)
-            messages.success(request, "Failed")
+            messages.error(request, response)
             return redirect('LeavePlanner')   
         except requests.exceptions.Timeout:
             messages.error(request, "Server timeout,retry,restart server.")
@@ -133,17 +119,19 @@ class PlanDetail(UserObjectMixins,View):
         try:
             plannerNo = pk
             lineNo = int(request.POST.get('lineNo'))
-            startDate = datetime.strptime((request.POST.get('startDate')), '%d-%m-%Y').date()
-            endDate = datetime.strptime((request.POST.get('endDate')), '%d-%m-%Y').date()
+            startDate = datetime.strptime((request.POST.get('startDate')), '%Y-%m-%d').date()
+            endDate = datetime.strptime((request.POST.get('endDate')), '%Y-%m-%d').date()
             myAction = request.POST.get('myAction')
 
-            response = config.CLIENT.service.FnLeavePlannerLine(
+            response = self.zeep_client(request).service.FnLeavePlannerLine(
             lineNo, plannerNo, startDate, endDate, myAction)
+            print(response)
 
             if response == True:
                 messages.success(request, "Request Successful")
-                print(response)
                 return redirect('PlanDetail', pk=pk)
+            messages.success(request, response)
+            return redirect('PlanDetail', pk=pk)
         except Exception as e:
             messages.error(request, e)
             print(e)
@@ -151,21 +139,29 @@ class PlanDetail(UserObjectMixins,View):
         
 
 
-def FnDeleteLeavePlannerLine(request, pk):
-    if request.method == 'POST':
-        lineNo = int(request.POST.get('lineNo'))
-        try:
-            response = config.CLIENT.service.FnDeleteLeavePlannerLine(pk,lineNo)
-            if response == True:
-                messages.success(request, "Successfully  Deleted!!")
-                print(response)
+class FnDeleteLeavePlannerLine(UserObjectMixins, View):
+    def post(self,request, pk):
+        if request.method == 'POST':
+            try:
+                lineNo = int(request.POST.get('lineNo'))
+                response = self.zeep_client(request).service.FnDeleteLeavePlannerLine(pk,lineNo)
+                if response == True:
+                    messages.success(request, "Successfully  Deleted")
+                    return redirect('PlanDetail', pk=pk)
+                messages.error(request, response)
                 return redirect('PlanDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('PlanDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('PlanDetail', pk=pk)
+       
+class myLeave(UserObjectMixins,View):
+    """View not implemented
 
-class myLeave(UserObjectMixin,View):
+        Returns:
+            _type_: Detailed info for user when making
+            leave applications
+    """
     def get(self, request):
         fullname = request.session['User_ID']
         year = request.session['years']
@@ -191,13 +187,8 @@ class Leave_Request(UserObjectMixins,View):
             res_types = self.get_object(LeaveTypes)
             Leave = [x for x in res_types['value']]
 
-            LeavePlanner = config.O_DATA.format(f"/QyLeavePlannerLines?$filter=Employee_No_%20eq%20%27{empNo}%27")
-            res_planner = self.get_object(LeavePlanner)
-            Plan = [x for x in res_planner['value']]
-
-            counts = len(openLeave)
-            pend = len(pendingLeave)
-            counter = len(approvedLeave)
+            res_planner = self.one_filter("/QyLeavePlannerLines","Employee_No_","eq",empNo)
+            Plan = [x for x in res_planner[1]]
 
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
@@ -205,34 +196,38 @@ class Leave_Request(UserObjectMixins,View):
         except requests.exceptions.ConnectionError as e:
             print(e)
         
-        ctx = {"today": self.todays_date, "res": openLeave,
-            "count": counts, "response": approvedLeave,
-            "counter": counter,'leave': Leave,
-            "plan": Plan, "pend": pend,
-            "pending": pendingLeave, "year": year,
-            "full": UserId}
+        ctx = {
+            "today": self.todays_date, "res": openLeave,
+            "response": approvedLeave,'leave': Leave,
+            "plan": Plan,"pending": pendingLeave, "year": year,
+            "full": UserId
+            }
         return render(request, 'leave.html', ctx)
         
     def post(self, request):
         if request.method == 'POST':
-            dimension3 = ''
-            employeeNo = request.session['Employee_No_']
-            usersId = request.session['User_ID']
-            applicationNo = request.POST.get('applicationNo')
-            leaveType = request.POST.get('leaveType')
-            plannerStartDate = request.POST.get('plannerStartDate')
-            daysApplied = request.POST.get('daysApplied')
-            isReturnSameDay = eval(request.POST.get('isReturnSameDay'))
-            myAction = request.POST.get('myAction')
-            if not daysApplied:
-                daysApplied = 0
-            plannerStartDate =  datetime.strptime(plannerStartDate, '%Y-%m-%d').date()
             try:
-                response = config.CLIENT.service.FnLeaveApplication(
-                    applicationNo, employeeNo, usersId, dimension3, leaveType, plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
-                if response:
+                dimension3 = ''
+                employeeNo = request.session['Employee_No_']
+                usersId = request.session['User_ID']
+                applicationNo = request.POST.get('applicationNo')
+                leaveType = request.POST.get('leaveType')
+                plannerStartDate = request.POST.get('plannerStartDate')
+                daysApplied = request.POST.get('daysApplied')
+                isReturnSameDay = eval(request.POST.get('isReturnSameDay'))
+                myAction = request.POST.get('myAction')
+                if not daysApplied:
+                    daysApplied = 0
+                plannerStartDate =  datetime.strptime(plannerStartDate, '%Y-%m-%d').date()
+            
+                response = self.zeep_client(request).service.FnLeaveApplication(
+                    applicationNo, employeeNo, usersId, dimension3, leaveType,
+                     plannerStartDate, int(daysApplied), isReturnSameDay, myAction)
+                if response !=False:
                     messages.success(request, "Success")
                     return redirect('LeaveDetail', pk=response)
+                messages.error(request, response)
+                return redirect('leave')
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -240,27 +235,25 @@ class Leave_Request(UserObjectMixins,View):
 
 
 
-class LeaveDetail(UserObjectMixin,View):
+class LeaveDetail(UserObjectMixins,View):
     def get(self,request,pk):
         try:
             userId = request.session['User_ID']
             year = request.session['years']
 
-            Access_Point = config.O_DATA.format(f"/QyLeaveApplications?$filter=User_ID%20eq%20%27{userId}%27%20and%20Application_No%20eq%20%27{pk}%27")
-            response = self.get_object(Access_Point)
-            for leave in response['value']:
+            response = self.double_filtered_data("/QyLeaveApplications","Application_No","eq",pk,
+                                        "and","User_ID","eq",userId)
+            for leave in response[1]:
                 res=leave
-            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
-            res_approver = self.get_object(Approver)
-            Approvers = [x for x in res_approver['value']]
 
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
-            res_file = self.get_object(Access_File)
-            allFiles = [x for x in res_file['value']]
+            res_approver = self.one_filter("/QyApprovalEntries","Document_No_","eq",pk)
+            Approvers = [x for x in res_approver[1]]
 
-            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
-            RejectedResponse = self.get_object(RejectComments)
-            Comments = [x for x in RejectedResponse['value']]
+            res_file = self.one_filter("/QyDocumentAttachments","No_","eq",pk)
+            allFiles = [x for x in res_file[1]]
+
+            RejectedResponse = self.one_filter("/QyApprovalCommentLines","Document_No_","eq",pk)
+            Comments = [x for x in RejectedResponse[1]]
         except KeyError:
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
@@ -269,9 +262,11 @@ class LeaveDetail(UserObjectMixin,View):
                 messages.error(request,"500 Server Error, Try Again")
                 return redirect('leave')
 
-        ctx = {"today": self.todays_date, "res": res,
-                "Approvers": Approvers, "year": year,
-                "full": userId,"file":allFiles,"Comments":Comments}
+        ctx = {
+            "today": self.todays_date, "res": res,
+            "Approvers": Approvers, "year": year,
+            "full": userId,"file":allFiles,"Comments":Comments
+            }
         return render(request, 'leaveDetail.html', ctx)
 
     def post(self,request,pk):
@@ -284,104 +279,93 @@ class LeaveDetail(UserObjectMixin,View):
                     fileName = request.FILES['attachment'].name
                     attachment = base64.b64encode(files.read())
 
-                    response = config.CLIENT.service.FnUploadAttachedDocument(
+                    response = self.zeep_client(request).service.FnUploadAttachedDocument(
                             docNo, fileName, attachment, tableID,request.session['User_ID'])
                 if response == True:
                     messages.success(request, "Uploaded successfully")
                     return redirect('LeaveDetail', pk=pk)
-                else:
-                    messages.error(request, "Upload Not Successful")
-                    return redirect('LeaveDetail', pk=pk)
-                        
+                messages.error(request, response)
+                return redirect('LeaveDetail', pk=pk)    
             except Exception as e:
                 messages.error(request, e)
                 print(e)
         return redirect('LeaveDetail', pk=pk)
     
     
-def DeleteLeaveAttachment(request,pk):
-    if request.method == "POST":
-        docID = int(request.POST.get('docID'))
-        tableID= int(request.POST.get('tableID'))
+class DeleteLeaveAttachment(UserObjectMixins,View):
+    def post(self,request,pk):
+        if request.method == "POST":
+            try:
+                docID = int(request.POST.get('docID'))
+                tableID= int(request.POST.get('tableID'))
+                response = self.zeep_client(request).service.FnDeleteDocumentAttachment(
+                    pk,docID,tableID)
+                if response == True:
+                    messages.success(request, "Deleted Successfully")
+                    return redirect('LeaveDetail', pk=pk)
+                messages.error(request, response)
+                return redirect('LeaveDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('LeaveDetail', pk=pk)
+
+class LeaveApproval(UserObjectMixins, View):
+    def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                employeeNo = request.session['Employee_No_']
+                applicationNo = request.POST.get('applicationNo')
+
+                response = self.zeep_client(request).service.FnRequestLeaveApproval(
+                        employeeNo, applicationNo)
+                if response == True:
+                    messages.success(request, "Request Successful")
+                    return redirect('LeaveDetail', pk=pk)
+                messages.error(request, response)
+                return redirect('LeaveDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('LeaveDetail', pk=pk)
+
+
+class LeaveCancelApproval(UserObjectMixins, View):
+    def post(self,request,pk):
         try:
-            response = config.CLIENT.service.FnDeleteDocumentAttachment(
-                pk,docID,tableID)
+            if request.method == 'POST':
+                employeeNo = request.session['Employee_No_']
+                applicationNo = request.POST.get('applicationNo')
+
+            response = self.zeep_client(request).service.FnCancelLeaveApproval(
+                    employeeNo, applicationNo)
             print(response)
             if response == True:
-                messages.success(request, "Deleted Successfully ")
+                messages.success(request, "Success")
                 return redirect('LeaveDetail', pk=pk)
+            messages.error(request, response)
+            return redirect('LeaveDetail', pk=pk)
         except Exception as e:
             messages.error(request, e)
             print(e)
-    return redirect('LeaveDetail', pk=pk)
-
-def LeaveApproval(request, pk):
-    try:
-        employeeNo = request.session['Employee_No_']
-        applicationNo = ""
-        Username = request.session['User_ID']
-        Password = request.session['password']
-        AUTHS = Session()
-        AUTHS.auth = HTTPBasicAuth(Username, Password)
-        CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-        if request.method == 'POST':
-            applicationNo = request.POST.get('applicationNo')
-
-            response = CLIENT.service.FnRequestLeaveApproval(
-                employeeNo, applicationNo)
-            if response == True:
-                messages.success(request, "Request Successful")
-                return redirect('LeaveDetail', pk=pk)
-            messages.error(request, f"{response}")
             return redirect('LeaveDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-        return redirect('LeaveDetail', pk=pk)
-    return redirect('LeaveDetail', pk=pk)
 
 
-def LeaveCancelApproval(request, pk):
-    employeeNo = request.session['Employee_No_']
-    applicationNo = ""
-    if request.method == 'POST':
-        try:
-            applicationNo = request.POST.get('applicationNo')
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('LeaveDetail', pk=pk)
-    try:
-        response = config.CLIENT.service.FnCancelLeaveApproval(
-            employeeNo, applicationNo)
-        messages.success(request, "Cancel Approval Request Successful !!")
-        print(response)
-        return redirect('LeaveDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('LeaveDetail', pk=pk)
-
-
-class Training_Request(UserObjectMixin,View):
+class Training_Request(UserObjectMixins,View):
     def get(self, request):
         try:
             userId = request.session['User_ID']
             year = request.session['years']
             empNo = request.session['Employee_No_']
 
-            Access_Point = config.O_DATA.format(f"/QyTrainingRequests?$filter=Employee_No%20eq%20%27{empNo}%27")
-            response = self.get_object(Access_Point)
-            openTraining = [x for x in response['value'] if x['Status'] == 'Open']
-            pendingTraining = [x for x in response['value'] if x['Status'] == 'Pending Approval']
-            approvedTraining = [x for x in response['value'] if x['Status'] == 'Released']
+            response = self.one_filter("/QyTrainingRequests","Employee_No","eq",empNo)
+            openTraining = [x for x in response[1] if x['Status'] == 'Open']
+            pendingTraining = [x for x in response[1] if x['Status'] == 'Pending Approval']
+            approvedTraining = [x for x in response[1] if x['Status'] == 'Released']
 
             trainingNeed = config.O_DATA.format("/QyTrainingNeeds")
             res_train = self.get_object(trainingNeed)
             trains = [x for x in res_train['value']]
-
-            counts = len(openTraining)
-            counter = len(approvedTraining)
-            pend = len(pendingTraining)
 
         except KeyError as e:
             print(e)
@@ -392,21 +376,15 @@ class Training_Request(UserObjectMixin,View):
             messages.error(request,"500 Server Error")
             return redirect('dashboard')
 
-        ctx = {"today": self.todays_date, "res": openTraining,
-                "count": counts, "response": approvedTraining,
-                "counter": counter,
-                "train": trains,
-                "pend": pend, "pending": pendingTraining,
-                "year": year, "full": userId}
+        ctx = {
+            "today": self.todays_date, "res": openTraining,
+            "response": approvedTraining,
+            "train": trains,"pending": pendingTraining,
+            "year": year, "full": userId
+                }
         return render(request, 'training.html', ctx)
     def post(self,request):
-        Username = request.session['User_ID']
-        Password = request.session['password']
-        AUTHS = Session()
-        AUTHS.auth = HTTPBasicAuth(Username, Password)
-        CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
         if request.method == 'POST':
-            
             try:
                 employeeNo = request.session['Employee_No_']
                 usersId = request.session['User_ID']
@@ -414,21 +392,17 @@ class Training_Request(UserObjectMixin,View):
                 isAdhoc = eval(request.POST.get('isAdhoc'))
                 trainingNeed = request.POST.get('trainingNeed')
                 myAction = request.POST.get('myAction')
-            except ValueError:
-                messages.error(request, "Not sent. Invalid Input, Try Again!!")
-                return redirect('training_request')
-            if not requestNo:
-                requestNo = ""
             
-            if not trainingNeed:
-                trainingNeed = ''
-            try:
-                response = CLIENT.service.FnTrainingRequest(
+                if not trainingNeed:
+                    trainingNeed = ''
+
+                response = self.zeep_client(request).service.FnTrainingRequest(
                     requestNo, employeeNo, usersId, isAdhoc, trainingNeed, myAction)
-                if response:
-                    messages.success(request, "Successfully Added!!")
+                if response != False:
+                    messages.success(request, "Success")
                     return redirect('TrainingDetail', pk=response)
-                print(response)
+                messages.error(request, response)
+                return redirect('training_request')
             except Exception as e:
                 messages.error(request, e)
                 print(e)
@@ -436,38 +410,35 @@ class Training_Request(UserObjectMixin,View):
         return redirect('training_request')
 
 
-class TrainingDetail(UserObjectMixin, View):
+class TrainingDetail(UserObjectMixins, View):
     def get(self,request,pk):
         try:
             userID = request.session['User_ID']
             year = request.session['years']
             empNo = request.session['Employee_No_'] 
 
-            Access_Point = config.O_DATA.format(f"/QyTrainingRequests?$filter=Employee_No%20eq%20%27{empNo}%27%20and%20Request_No_%20eq%20%27{pk}%27")
-            response = self.get_object(Access_Point)
-            for training in response['value']:
+            response = self.double_filtered_data("/QyTrainingRequests","Request_No_","eq",pk,
+                                    "and","Employee_No","eq",empNo)
+            for training in response[1]:
                 res = training
 
-            Approver = config.O_DATA.format(f"/QyApprovalEntries?$filter=Document_No_%20eq%20%27{pk}%27")
-            res_approver = self.get_object(Approver)
-            Approvers = [x for x in res_approver['value']]
+            res_approver = self.one_filter("/QyApprovalEntries","Document_No_","eq",pk)
+            Approvers = [x for x in res_approver[1]]
 
             destination = config.O_DATA.format("/QyDestinations")
             res_destination = self.get_object(destination)
             Local = [x for x in res_destination['value'] if x['Destination_Type'] == 'Local']
             Foreign = [x for x in res_destination['value'] if x['Destination_Type'] == 'Foreign']
 
-            RejectComments = config.O_DATA.format(f"/QyApprovalCommentLines?$filter=Document_No_%20eq%20%27{pk}%27")
-            RejectedResponse = self.get_object(RejectComments)
-            Comments = [x for x in RejectedResponse['value']]
+            RejectedResponse = self.one_filter("/QyApprovalCommentLines","Document_No_","eq",pk)
+            Comments = [x for x in RejectedResponse[1]]
 
-            Lines_Res = config.O_DATA.format(f"/QyTrainingNeedsRequest?$filter=Source_Document_No%20eq%20%27{pk}%27%20and%20Employee_No%20eq%20%27{empNo}%27")
-            responseNeeds = self.get_object(Lines_Res)
-            openLines = [x for x in responseNeeds['value']]
+            responseNeeds = self.double_filtered_data("/QyTrainingNeedsRequest","Source_Document_No","eq",pk,
+                                                "and","Employee_No","eq",empNo)
+            openLines = [x for x in responseNeeds[1]]
 
-            Access_File = config.O_DATA.format(f"/QyDocumentAttachments?$filter=No_%20eq%20%27{pk}%27")
-            res_file = self.get_object(Access_File)
-            allFiles = [x for x in res_file['value']]
+            res_file = self.one_filter("/QyDocumentAttachments","No_","eq",pk)
+            allFiles = [x for x in res_file[1]]
 
 
         except requests.exceptions.ConnectionError as e:
@@ -483,16 +454,13 @@ class TrainingDetail(UserObjectMixin, View):
             print(e)
             return redirect('training_request')
 
-        ctx = {"today": self.todays_date, "res": res,
+        ctx = {
+            "today": self.todays_date, "res": res,
             "Approvers": Approvers,"year": year, "full": userID,"file":allFiles,
-            "line": openLines,"local":Local,"foreign":Foreign,"Comments":Comments}
+            "line": openLines,"local":Local,"foreign":Foreign,"Comments":Comments
+            }
         return render(request, 'trainingDetail.html', ctx)
     def post(self,request,pk):
-        Username = request.session['User_ID']
-        Password = request.session['password']
-        AUTHS = Session()
-        AUTHS.auth = HTTPBasicAuth(Username, Password)
-        CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
         if request.method == 'POST':
             try:
                 requestNo = pk
@@ -527,119 +495,102 @@ class TrainingDetail(UserObjectMixin, View):
                 if not trainingCost:
                     trainingCost = 0
   
-                response = CLIENT.service.FnAdhocTrainingNeedRequest(
+                response = self.zeep_client(request).service.FnAdhocTrainingNeedRequest(
                     requestNo,no, employeeNo, trainingName, trainingArea, trainingObjectives,
                      venue, provider, myAction,sponsor,startDate,endDate,destination,trainingCost)
-                messages.success(request, "Successfully Added")
-                print(response)
+                if response == True:
+                    messages.success(request, "Success")
+                    return redirect('TrainingDetail', pk=pk)
+                messages.error(request, response)
                 return redirect('TrainingDetail', pk=pk)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
         return redirect('TrainingDetail', pk=pk)
    
-def UploadTrainingAttachment(request, pk):
-    docNo = pk
-    response = ""
-    fileName = ""
-    attachment = ""
-    tableID = 52177501
-
-    if request.method == "POST":
-        try:
-            attach = request.FILES.getlist('attachment')
-        except Exception as e:
-            return redirect('TrainingDetail', pk=pk)
-        for files in attach:
-            fileName = request.FILES['attachment'].name
-            attachment = base64.b64encode(files.read())
+class UploadTrainingAttachment(UserObjectMixins, View):
+    def post(self,request,pk):
+        if request.method == "POST":
             try:
-                response = config.CLIENT.service.FnUploadAttachedDocument(
-                    docNo, fileName, attachment, tableID,request.session['User_ID'])
+                attach = request.FILES.getlist('attachment')
+                tableID = 52177501
+                for files in attach:
+                    fileName = request.FILES['attachment'].name
+                    attachment = base64.b64encode(files.read())
+                    response = self.zeep_client(request).service.FnUploadAttachedDocument(
+                            pk, fileName, attachment, tableID,request.session['User_ID'])
+
+                if response == True:
+                    messages.success(request, "Successfully Sent !!")
+                    return redirect('TrainingDetail', pk=pk)
+                messages.error(request, "Not Sent")
+                return redirect('TrainingDetail', pk=pk)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
-        if response == True:
-            messages.success(request, "Successfully Sent !!")
-
-            return redirect('TrainingDetail', pk=pk)
-        else:
-            messages.error(request, "Not Sent !!")
-            return redirect('TrainingDetail', pk=pk)
-
-    return redirect('TrainingDetail', pk=pk)
-
-def FnAdhocLineDelete(request, pk):
-    requestNo = pk
-    needNo = ''
-    if request.method == 'POST':
-        try:
-            needNo = request.POST.get('needNo')
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('TrainingDetail', pk=pk)
-        print("requestNo", requestNo)
-        print("needno", needNo)
-        try:
-            response = config.CLIENT.service.FnDeleteAdhocTrainingNeedRequest(
-                needNo,requestNo)
-            messages.success(request, "Successfully Deleted!!")
-            print(response)
-            return redirect('TrainingDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('TrainingDetail', pk=pk)
-
-
-def TrainingApproval(request, pk):
-    myUserID = request.session['User_ID']
-    trainingNo = ""
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    if request.method == 'POST':
-        try:
-            trainingNo = request.POST.get('trainingNo')
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('TrainingDetail', pk=pk)
-        try:
-            response = CLIENT.service.FnRequestTrainingApproval(
-                myUserID, trainingNo)
-            messages.success(request, "Approval Request Successfully Sent!!")
-            print(response)
-            return redirect('TrainingDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('TrainingDetail', pk=pk)
-
-
-def TrainingCancelApproval(request, pk):
-    myUserID = request.session['User_ID']
-    trainingNo = ""
-    if request.method == 'POST':
-        try:
-            trainingNo = request.POST.get('trainingNo')
-        except ValueError as e:
-            messages.error(request, "Not sent. Invalid Input, Try Again!!")
-            return redirect('TrainingDetail', pk=pk)
-    try:
-        response = config.CLIENT.service.FnCancelTrainingApproval(
-            myUserID, trainingNo)
-        messages.success(request, "Cancel Approval Request Successful !!")
-        print(response)
         return redirect('TrainingDetail', pk=pk)
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('TrainingDetail', pk=pk)
+
+class FnAdhocLineDelete(UserObjectMixins, View):
+    def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                requestNo = pk
+                needNo = request.POST.get('needNo')
+
+                response = self.zeep_client(request).service.FnDeleteAdhocTrainingNeedRequest(
+                    needNo,requestNo)
+                if response == True:
+                    messages.success(request, "Successfully Deleted")
+                    return redirect('TrainingDetail', pk=pk)
+                messages.success(request, response)
+                return redirect('TrainingDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('TrainingDetail', pk=pk)
 
 
-class PNineRequest(UserObjectMixin,View):
+class TrainingApproval(UserObjectMixins, View):
+    def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                myUserID = request.session['User_ID']
+                trainingNo = request.POST.get('trainingNo')
+
+                response = self.zeep_client(request).service.FnRequestTrainingApproval(
+                    myUserID, trainingNo)
+                if response == True:
+                    messages.success(request, "Approval Request Successfully Sent")
+                    return redirect('TrainingDetail', pk=pk)
+                messages.error(request, response)
+                return redirect('TrainingDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('TrainingDetail', pk=pk)
+
+
+class TrainingCancelApproval(UserObjectMixins, View):
+    def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                myUserID = request.session['User_ID']
+                trainingNo = request.POST.get('trainingNo')
+
+                response = self.zeep_client(request).service.FnCancelTrainingApproval(
+                myUserID, trainingNo)
+                if response == True:
+                    messages.success(request, "Cancel Approval Request Successful")
+                    return redirect('TrainingDetail', pk=pk)
+                messages.error(request, response)
+                return redirect('TrainingDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+            return redirect('TrainingDetail', pk=pk)
+
+
+class PNineRequest(UserObjectMixins,View):
     def get(self,request):
         try:
             userID = request.session['User_ID']
@@ -667,13 +618,11 @@ class PNineRequest(UserObjectMixin,View):
                     employeeNo = request.session['Employee_No_']
                     startDate = request.POST.get('startDate')[0:4]
                     year = request.session['years']
-                except ValueError as e:
-                    messages.error(request, "Not sent. Invalid Input, Try Again!!")
-                    return redirect('pNine')
-                filenameFromApp = "P9_For_" + str(nameChars) + str(year) + ".pdf"
-                year = int(startDate)
-                try:
-                    response = config.CLIENT.service.FnGeneratePNine(
+
+                    filenameFromApp = "P9_For_" + str(nameChars) + str(year) + ".pdf"
+                    year = int(startDate)
+                
+                    response = self.zeep_client(request).service.FnGeneratePNine(
                         employeeNo, filenameFromApp, year)
                     try:
                         buffer = BytesIO.BytesIO()
@@ -694,7 +643,7 @@ class PNineRequest(UserObjectMixin,View):
                     return redirect('pNine')
 
 
-class PayslipRequest(UserObjectMixin,View):
+class PayslipRequest(UserObjectMixins,View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
@@ -718,102 +667,87 @@ class PayslipRequest(UserObjectMixin,View):
 
     def post(self,request):
         if request.method == 'POST':
-                try:
-                    employeeNo = request.session['Employee_No_']
-                    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                            for i in range(5))
+            try:
+                employeeNo = request.session['Employee_No_']
+                nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                        for i in range(5))
 
-                    paymentPeriod = datetime.strptime(
-                        request.POST.get('paymentPeriod'), '%Y-%m-%d').date()
+                paymentPeriod = datetime.strptime(
+                    request.POST.get('paymentPeriod'), '%Y-%m-%d').date()
 
-                except ValueError as e:
-                    messages.error(request, "Not sent. Invalid Input, Try Again!!")
-                    return redirect('payslip')
+
                 filenameFromApp = "Payslip" + str(paymentPeriod) + str(nameChars) + ".pdf"
+
+                response = self.zeep_client(request).service.FnGeneratePayslip(
+                    employeeNo, filenameFromApp, paymentPeriod)
                 try:
-                    response = config.CLIENT.service.FnGeneratePayslip(
-                        employeeNo, filenameFromApp, paymentPeriod)
-                    try:
-                        buffer = BytesIO.BytesIO()
-                        content = base64.b64decode(response)
-                        buffer.write(content)
-                        responses = HttpResponse(
-                            buffer.getvalue(),
-                            content_type="application/pdf",
-                        )
-                        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-                        return responses
-                    except:
-                        messages.error(request, "Payslip not found for the selected period")
-                        return redirect('payslip')
-                except Exception as e:
-                    messages.error(request, e)
-                    print(e)
+                    buffer = BytesIO.BytesIO()
+                    content = base64.b64decode(response)
+                    buffer.write(content)
+                    responses = HttpResponse(
+                        buffer.getvalue(),
+                        content_type="application/pdf",
+                    )
+                    responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+                    return responses
+                except:
+                    messages.error(request, "Payslip not found for the selected period")
+                    return redirect('payslip')
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
 
 
-def FnGenerateLeaveReport(request, pk):
-    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                        for i in range(5))
-    employeeNo = request.session['Employee_No_']
-    filenameFromApp = ''
-    applicationNo = pk
-    if request.method == 'POST':
-        try:
-            filenameFromApp = pk
-        except ValueError as e:
-            messages.error(request, "Invalid Line number, Try Again!!")
-            return redirect('LeaveDetail', pk=pk)
-        filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
-        print("filenameFromApp", filenameFromApp)
-        print("applicationNo", applicationNo)
-        try:
-            response = config.CLIENT.service.FnGenerateLeaveReport(
-                employeeNo, filenameFromApp, applicationNo)
-            buffer = BytesIO.BytesIO()
-            content = base64.b64decode(response)
-            buffer.write(content)
-            responses = HttpResponse(
-                buffer.getvalue(),
-                content_type="application/pdf",
-            )
-            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-            return responses
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('LeaveDetail', pk=pk)
-# Training report
+class FnGenerateLeaveReport(UserObjectMixins, View):
+    def post(self,request,pk):    
+        if request.method == 'POST':
+            try:
+                employeeNo = request.session['Employee_No_']
+                nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                            for i in range(5))
+                filenameFromApp = pk + str(nameChars) + ".pdf"
 
+                response = self.zeep_client(request).service.FnGenerateLeaveReport(
+                    employeeNo, filenameFromApp, pk)
+                buffer = BytesIO.BytesIO()
+                content = base64.b64decode(response)
+                buffer.write(content)
+                responses = HttpResponse(
+                    buffer.getvalue(),
+                    content_type="application/pdf",
+                )
+                responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+                return responses
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('LeaveDetail', pk=pk)
 
-def FnGenerateTrainingReport(request, pk):
-    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                        for i in range(5))
-    employeeNo = request.session['Employee_No_']
-    filenameFromApp = ''
-    applicationNo = pk
-    if request.method == 'POST':
-        try:
-            filenameFromApp = pk
-        except ValueError as e:
-            messages.error(request, "Invalid Line number, Try Again!!")
+class FnGenerateTrainingReport(UserObjectMixins, View):
+    def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                            for i in range(5))
+                employeeNo = request.session['Employee_No_']
+
+                filenameFromApp = pk + str(nameChars) + ".pdf"
+                response = self.zeep_client(request).service.FnGenerateTrainingReport(
+                    employeeNo, filenameFromApp, pk)
+                buffer = BytesIO.BytesIO()
+                content = base64.b64decode(response)
+                buffer.write(content)
+                responses = HttpResponse(
+                    buffer.getvalue(),
+                    content_type="application/pdf",
+                )
+                responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+                return responses
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
             return redirect('TrainingDetail', pk=pk)
-    filenameFromApp = filenameFromApp + str(nameChars) + ".pdf"
-    try:
-        response = config.CLIENT.service.FnGenerateTrainingReport(
-            employeeNo, filenameFromApp, applicationNo)
-        buffer = BytesIO.BytesIO()
-        content = base64.b64decode(response)
-        buffer.write(content)
-        responses = HttpResponse(
-            buffer.getvalue(),
-            content_type="application/pdf",
-        )
-        responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-        return responses
-    except Exception as e:
-        messages.error(request, e)
-        print(e)
-    return redirect('TrainingDetail', pk=pk)
+
 def Disciplinary(request):
     fullname = request.session['User_ID']
     year = request.session['years']

@@ -167,9 +167,9 @@
                                                                                             Date:</label>
                                                                                     </div>
                                                                                     <div class="col-md-12">
-                                                                                        <input type="text"
-                                                                                            class="datepicker"
-                                                                                            id="EditDatepicker-range-start"
+                                                                                        <input type="date"
+                                                                                            class="form-control"
+                                                                                            id="-range-start"
                                                                                             name="startDate"
                                                                                             placeholder="{{line.Start_Date}}"
                                                                                             value="{{line.Start_Date}}">
@@ -183,10 +183,9 @@
 
                                                                                     </div>
                                                                                     <div class="col-md-12">
-                                                                                        <input type="text"
-                                                                                            class="datepicker"
+                                                                                        <input type="date"
+                                                                                            class="form-control"
                                                                                             name="endDate"
-                                                                                            id="EditDatepicker-range-end"
                                                                                             placeholder="{{line.End_Date}}"
                                                                                             value="{{line.End_Date}}">
                                                                                     </div>
@@ -214,10 +213,10 @@
                                                             {% csrf_token %}
                                                             <input type="hidden" name="lineNo"
                                                                 value="{{line.Line_No_}}">
-                                                            <button type="submit" class="btn btn-danger"
+                                                            <!-- <button type="submit" class="btn btn-danger"
                                                                 data-toggle="tooltip" data-placement="top"
                                                                 title="Delete"><i class="fas fa-trash-alt"></i>
-                                                            </button>
+                                                            </button> -->
                                                         </form>
                                                     </td>
                                                 </tr>
@@ -254,16 +253,16 @@
                             <div class="col-md-12">
                                 <label for="" class="form-label">Start
                                     Date:</label>
-                                <input type="text" class="datepicker" id="datepicker-range-start" name="startDate"
-                                    placeholder="dd/mm/yyyy" required>
+                                <input type="date" class="form-control" name="startDate" placeholder="dd/mm/yyyy"
+                                    required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="" class="form-label">End
                                     Date:</label>
-                                <input type="text" class="datepicker" name="endDate" id="datepicker-range-end"
-                                    placeholder="dd/mm/yyyy" required>
+                                <input type="date" class="form-control" name="endDate" placeholder="dd/mm/yyyy"
+                                    required>
                             </div>
                         </div>
                         <div class="row my-3">
@@ -284,35 +283,6 @@
         $("#approveBtn").click(function () {
             $("#approvalForm").toggle(500)
         })
-
-        window.setTimeout(function () {
-            $('#datepicker-range-start').Zebra_DatePicker({
-                direction: true,
-                pair: $('#datepicker-range-end'),
-                format: 'd-m-Y',
-                show_week_number: 'Wk',
-            });
-
-            $('#datepicker-range-end').Zebra_DatePicker({
-                direction: 1,
-                format: 'd-m-Y',
-                show_week_number: 'Wk',
-
-            });
-            $('#EditDatepicker-range-start').Zebra_DatePicker({
-                direction: true,
-                pair: $('#EditDatepicker-range-end'),
-                format: 'd-m-Y',
-                show_week_number: 'Wk',
-            });
-
-            $('#EditDatepicker-range-end').Zebra_DatePicker({
-                direction: 1,
-                format: 'd-m-Y',
-                show_week_number: 'Wk',
-
-            });
-        }, 100);
     })
 </script>
 {% endblock %}

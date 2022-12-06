@@ -15,6 +15,7 @@
                         <span>
                             <form action="{% url 'LeavePlanner' %}" method="post" style="float: right">
                                 {% csrf_token %}
+                                <input type="hidden" name="plannerNo" value="">
                                 <input type="hidden" name="myAction" value="insert">
                                 <button type="submit" class="btn btn-successs align-items-center"><i
                                         class="las la-plus text-white" style="font-size:15px;"></i>New Leave

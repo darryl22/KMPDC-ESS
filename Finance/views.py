@@ -261,12 +261,17 @@ def FnRequestPaymentApproval(request, pk):
 
 def FnCancelPaymentApproval(request, pk):
     if request.method == 'POST':
+        Username = request.session['User_ID']
+        Password = request.session['password']
+        AUTHS = Session()
+        AUTHS.auth = HTTPBasicAuth(Username, Password)
+        CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
         try:
             requisitionNo = request.POST.get('requisitionNo')
         except ValueError as e:
             return redirect('IMPDetails', pk=pk)
         try:
-            response = config.CLIENT.service.FnCancelPaymentApproval(
+            response = CLIENT.service.FnCancelPaymentApproval(
                 request.session['Employee_No_'], requisitionNo)
             messages.success(request, "Cancel Approval Successful")
             print(response)
