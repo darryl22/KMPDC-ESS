@@ -19,45 +19,21 @@
     });
 </script>
 {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-<script>
-    iziToast.error({
-        backgroundColor: '#e51e25',
-        iconColor: 'white',
-        titleColor: 'white',
-        messageColor: 'white',
-        progressBarColor: 'white',
-        progressBarEasing: 'linear',
-        theme: 'dark',
-        timeout: 2500,
-        drag: true,
-        overlay: false,
-        displayMode: 'once',
-        id: 'inputs',
-        zindex: 999,
-        position: 'bottomRight',
-        message: '{{message}}'
-    });
-</script>
+<div class="alert alert-danger alert-white rounded">
+    <button type="button" data-dismiss="alert" aria-hidden="true" class="close">×</button>
+    <div class="icon">
+        <i class="fa fa-times-circle"></i>
+    </div>
+    {{message}}
+</div>
 {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
-<script>
-    iziToast.info({
-        backgroundColor: '#6c8aaf',
-        iconColor: 'white',
-        titleColor: 'white',
-        messageColor: 'white',
-        progressBarColor: 'white',
-        progressBarEasing: 'linear',
-        theme: 'dark',
-        timeout: 2500,
-        drag: true,
-        overlay: false,
-        displayMode: 'once',
-        id: 'inputs',
-        zindex: 999,
-        position: 'bottomRight',
-        message: '{{message}}'
-    });
-</script>
+<div class="alert alert-info alert-white rounded">
+    <button type="button" data-dismiss="alert" aria-hidden="true" class="close">×</button>
+    <div class="icon">
+        <i class="fa fa-info-circle"></i>
+    </div>
+    {{message}}
+</div>
 {% endif %}
 {% endfor %}
 {% endif %}

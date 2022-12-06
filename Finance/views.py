@@ -83,17 +83,17 @@ class ImprestRequisition(UserObjectMixin,View):
                 response = config.CLIENT.service.FnImprestHeader(
                     imprestNo, accountNo, responsibilityCenter, travelType, purpose,
                      usersId, personalNo, isImprest, isDsa, myAction)
+                print("response",response)
                 if response == True:
                     messages.success(request, "Request Successful")
                     return redirect('imprestReq')
-                messages.error(request, f"{response}")
+                messages.error(request, response)
                 return redirect('imprestReq')
             except KeyError:
                 messages.info(request, "Session Expired. Please Login")
                 return redirect('auth')
             except Exception as e:
                 messages.error(request, e)
-                print(e)
                 return redirect('imprestReq')
         return redirect('imprestReq')
 
