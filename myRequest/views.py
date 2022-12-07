@@ -45,3 +45,9 @@ class UserObjectMixins(object):
         AUTHS.auth = HTTPBasicAuth(Username, Password)
         CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
         return CLIENT
+
+    def comparison_double_filter(self,endpoint,property_x,filter_x,field_name,operater_1,property_y,filter_y,property_z):
+        Access_Point = config.O_DATA.format(f"{endpoint}?$filter={property_x}%20{filter_x}%20%27{field_name}%27%20{operater_1}%20{property_y}%20{filter_y}%20{property_z}")
+        response = self.get_object(Access_Point)['value']
+        count=len(response)
+        return count,response

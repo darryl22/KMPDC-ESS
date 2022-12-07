@@ -332,15 +332,27 @@
                                     <th>Name</th>
                                     <th>Sequence</th>
                                     <th>Status</th>
+                                    <th>Modified By</th>
+                                    <th>Modified Date</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for res in Approvers %}
+                                {% for Approvers in Approvers %}
                                 <tr>
-                                    <td>{{res.Entry_No_}}</td>
-                                    <td>{{res.Approver_ID}}</td>
-                                    <td>{{res.Sequence_No_}}</td>
-                                    <td>{{res.Status}}</td>
+                                    <td>{{Approvers.Entry_No_}}</td>
+                                    <td>{{Approvers.Approver_ID}}</td>
+                                    <td>{{Approvers.Sequence_No_}}</td>
+                                    <td>{{Approvers.Status}}</td>
+                                    <td>{{Approvers.Last_Modified_By_User_ID}}</td>
+                                    <td id="ModifiedDate{{Approvers.Entry_No_}}">
+                                        {{Approvers.Last_Date_Time_Modified}}
+                                    </td>
+                                    <script>
+                                        $("#ModifiedDate{{Approvers.Entry_No_}}")
+                                            .empty()
+                                            .append(new Date(
+                                                '{{Approvers.Last_Date_Time_Modified}}').toString());
+                                    </script>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -363,7 +375,7 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="myForm needs-validation" action="{% url 'ClaimLines' res.No_ %}" method="post"
+                    <form class="myForm needs-validation" action="{% url 'ClaimDetail' res.No_ %}" method="post"
                         enctype="multipart/form-data" novalidate>
                         {% csrf_token %}
                         <div class="row">
