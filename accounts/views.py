@@ -9,6 +9,9 @@ from django.views import View
 from datetime import date
 import datetime
 import json
+from myRequest.views import HTTPResponseHXRedirect
+from django.urls import reverse_lazy
+
 
 # Create your views here.
 class UserObjectMixin(object):
@@ -60,6 +63,8 @@ class Login(UserObjectMixin,View):
                     loadedData2= json.loads(output_json2)
                     request.session['Department'] = loadedData2['Department_Code']
                 messages.success(request,f"Success. Logged in as {request.session['User_ID']}")
+                if request.htmx:
+                    return HTTPResponseHXRedirect(redirect_to=reverse_lazy("dashboard"))
                 return redirect('dashboard')
         except requests.exceptions.RequestException as e:
             print(e)
@@ -72,14 +77,7 @@ class Login(UserObjectMixin,View):
 
 def logout(request):
     try:
-        del request.session['User_ID']
-        del request.session['Employee_No_']
-        del request.session['Customer_No_']
-        del request.session['User_Responsibility_Center']
-        del request.session['Department']
-        del request.session['years']
-        del request.session['E_Mail']
-        del request.session['HOD_User']
+        request.session.flush()
         messages.success(request,"Logged out successfully")
     except KeyError:
         print(False)

@@ -985,7 +985,7 @@
                         </h4>
                         <ul class="inbox-wid list-unstyled">
                             {% for response in file %}
-                            <form action="{% url 'getDocs' res.Document_No_ res.Table_ID %}" method="post">
+                            <form action="{% url 'getDocs' response.No_ response.Table_ID %}" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="attachmentID" value="{{response.AuxiliaryIndex2}}">
                                 <input type="hidden" name="File_Name" value="{{response.File_Name}}">

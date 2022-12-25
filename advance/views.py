@@ -7,9 +7,11 @@ import datetime as dt
 from django.views import View
 from myRequest.views import UserObjectMixins
 import base64
+import time
 
 class advance(UserObjectMixins,View):
     def get(self,request):
+        starting_time = time.time()
         try:
             fullname =  request.session['User_ID']
             year = request.session['years']
@@ -35,9 +37,10 @@ class advance(UserObjectMixins,View):
             print(e)
             messages.error(request,e)
             return redirect('auth')
+        total_time = time.time() - starting_time
         ctx = {
             "today": self.todays_date, "res": openAdvance,
-            "response": Approved,
+            "response": Approved,"time": total_time,
             "pending": Pending, "year": year,
             "full": fullname,"salary":salary
             }

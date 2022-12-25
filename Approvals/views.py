@@ -1,4 +1,3 @@
-from typing_extensions import Self
 from django.shortcuts import render, redirect
 from datetime import date
 import requests
@@ -312,8 +311,8 @@ def viewDocs(request,pk,id):
         try:
             response = config.CLIENT.service.FnGetDocumentAttachment(
                 docNo, attachmentID, tableID)
-            
-            filenameFromApp = File_Name + "." + File_Extension
+            file_name = File_Name.split()
+            filenameFromApp = file_name[0] + "." + File_Extension
             buffer = BytesIO.BytesIO()
             content = base64.b64decode(response)
             buffer.write(content)

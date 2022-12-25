@@ -3,9 +3,12 @@ import requests
 from django.conf import settings as config
 import datetime as dt
 from requests.auth import HTTPBasicAuth
-from zeep import Client
+from zeep.client import Client
 from zeep.transports import Transport
+from asgiref.sync import sync_to_async
 from requests import Session
+from django.http import HttpResponseRedirect
+
 # Create your views here.
 class UserObjectMixins(object):
     model =None
@@ -23,6 +26,12 @@ class UserObjectMixins(object):
         response = self.get_object(Access_Point)['value']
         count=len(response)
         return count,response
+    async def one_filter_async(self,endpoint,property,filter,field_name):
+        Access_Point = config.O_DATA.format(f"{endpoint}?$filter={property}%20{filter}%20%27{field_name}%27")
+        response = sync_to_async(self.get_object(Access_Point)['value'])
+        await response
+        count=len(response)
+        return count, response
    
     def double_filtered_data(self,endpoint,property_x,filter_x,filed_name_x,operater_1,property_y,filter_y,field_name_y):
 
@@ -51,3 +60,8 @@ class UserObjectMixins(object):
         response = self.get_object(Access_Point)['value']
         count=len(response)
         return count,response
+class HTTPResponseHXRedirect(HttpResponseRedirect):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self["HX-Redirect"] = self["Location"]
+    status_code = 200

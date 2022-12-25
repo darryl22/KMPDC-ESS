@@ -42,10 +42,6 @@ class PurchaseRequisition(UserObjectMixins,View):
             Pending = [x for x in response[1] if x['Status'] == 'Pending Approval']
             Approved = [x for x in response[1] if x['Status'] == 'Released']
 
-            counts = len(openPurchase)
-            counter = len(Approved)
-            pend = len(Pending)
-
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
@@ -58,9 +54,7 @@ class PurchaseRequisition(UserObjectMixins,View):
 
         ctx = {
             "today": self.todays_date, "res": openPurchase,
-            "count": counts, "response": Approved,
-            "counter": counter, "pend": pend,
-            "pending": Pending, "year": year,
+            "response": Approved,"pending": Pending, "year": year,
             "full": userID
             }
     
@@ -76,11 +70,13 @@ class PurchaseRequisition(UserObjectMixins,View):
                 myAction = request.POST.get('myAction')
             
             
-                response = config.CLIENT.service.FnPurchaseRequisitionHeader(
+                response = self.zeep_client(request).service.FnPurchaseRequisitionHeader(
                     requisitionNo, orderDate, employeeNo, myUserId, myAction)
-                if response:
+                if response !=False:
                     messages.success(request,"Success")
                     return redirect('PurchaseDetail', pk=response)
+                messages.error(request,response)
+                return redirect('PurchaseDetail', pk=response)
             except KeyError:
                 messages.info(request, "Session Expired. Please Login")
                 return redirect('auth')
@@ -162,7 +158,7 @@ class PurchaseRequestDetails(UserObjectMixins,View):
                     procPlanItem = ""
                 if not Unit_of_Measure:
                     Unit_of_Measure = ''
-                response = config.CLIENT.service.FnPurchaseRequisitionLine(
+                response = self.zeep_client(request).service.FnPurchaseRequisitionLine(
                     pk, lineNo, procPlanItem, itemType, itemNo, specification,
                      quantity, myUserId, myAction,Unit_of_Measure)
                 if response == True:
@@ -202,137 +198,132 @@ def RequisitionCategory(request):
     return redirect('purchase') 
 
 
-def PurchaseApproval(request, pk):
-    Username = request.session['User_ID']
-    Password = request.session['password']
-    AUTHS = Session()
-    AUTHS.auth = HTTPBasicAuth(Username, Password)
-    CLIENT = Client(config.BASE_URL, transport=Transport(session=AUTHS))
-    requistionNo = ""
-    if request.method == 'POST':
-        try:
-            requistionNo = request.POST.get('requistionNo')
-            myUserID = request.session['User_ID']
-        except ValueError as e:
-            messages.error(request, "Missing Input")
-            return redirect('PurchaseDetail', pk=pk)
-        except KeyError:
-            messages.info(request, "Session Expired. Please Login")
-            return redirect('auth')
-        try:
-            response = CLIENT.service.FnRequestInternalRequestApproval(
-                myUserID, requistionNo)
-            messages.success(request, "Approval Request Sent Successfully")
-            print(response)
-            return redirect('PurchaseDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('PurchaseDetail', pk=pk)
-    return redirect('PurchaseDetail', pk=pk)
-
-
-def UploadPurchaseAttachment(request, pk):
-    response = ""
-    fileName = ""
-    attachment = ""
-    tableID = 52177432
-    if request.method == "POST":
-        try:
-            attach = request.FILES.getlist('attachment')
-        except Exception as e:
-            return redirect('PurchaseDetail', pk=pk)
-        for files in attach:
-            fileName = request.FILES['attachment'].name
-            attachment = base64.b64encode(files.read())
+class  PurchaseApproval(UserObjectMixins, View):
+    def post(self, request,pk):
+        if request.method == 'POST':
             try:
-                response = config.CLIENT.service.FnUploadAttachedDocument(
-                    pk, fileName, attachment, tableID,request.session['User_ID'])
+                requistionNo = request.POST.get('requistionNo')
+                myUserID = request.session['User_ID']
+
+                response = self.zeep_client(request).service.FnRequestInternalRequestApproval(
+                    myUserID, requistionNo)
+                if response == True:
+                    messages.success(request, "Approval Request Sent Successfully")
+                    return redirect('PurchaseDetail', pk=pk)
+                messages.error(request, response)
+                return redirect('PurchaseDetail', pk=pk)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
-        if response == True:
-            messages.success(request, "File(s) Uploaded Successfully")
-            return redirect('PurchaseDetail', pk=pk)
-        else:
-            messages.error(request, "Failed, try Again")
-            return redirect('PurchaseDetail', pk=pk)
-    return redirect('PurchaseDetail', pk=pk)
+                return redirect('PurchaseDetail', pk=pk)
+        return redirect('PurchaseDetail', pk=pk)
 
-def DeletePurchaseAttachment(request,pk):
-    if request.method == "POST":
-        docID = int(request.POST.get('docID'))
-        tableID= int(request.POST.get('tableID'))
-        try:
-            response = config.CLIENT.service.FnDeleteDocumentAttachment(
-                pk,docID,tableID)
-            print(response)
-            if response == True:
+
+class UploadPurchaseAttachment(UserObjectMixins, View):
+    def post(self, request,pk):
+        if request.method == "POST":
+            try:
+                tableID = 52177432
+                attach = request.FILES.getlist('attachment')
+
+                for files in attach:
+                    fileName = request.FILES['attachment'].name
+                    attachment = base64.b64encode(files.read())
+                    response = self.zeep_client(request).service.FnUploadAttachedDocument(
+                            pk, fileName, attachment, tableID,request.session['User_ID'])
+
+                if response == True:
+                    messages.success(request, "File(s) Uploaded Successfully")
+                    return redirect('PurchaseDetail', pk=pk)
+                messages.error(request, "Failed, try Again")
+                return redirect('PurchaseDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('PurchaseDetail', pk=pk)
+
+class DeletePurchaseAttachment(UserObjectMixins,View):
+    def post (self,request,pk):
+        if request.method == "POST":
+            try:
+                docID = int(request.POST.get('docID'))
+                tableID= int(request.POST.get('tableID'))
+                response = self.zeep_client(request).service.FnDeleteDocumentAttachment(
+                    pk,docID,tableID)
+                if response == True:
+                    messages.success(request, "Deleted Successfully")
+                    return redirect('PurchaseDetail', pk=pk)
                 messages.success(request, "Deleted Successfully ")
                 return redirect('PurchaseDetail', pk=pk)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-    return redirect('PurchaseDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+        return redirect('PurchaseDetail', pk=pk)
 
 
-def FnCancelPurchaseApproval(request, pk):
-    requistionNo = ""
-    if request.method == 'POST':
-        requistionNo = request.POST.get('requistionNo')
-        try:
-            response = config.CLIENT.service.FnCancelInternalRequestApproval(
-                request.session['User_ID'], requistionNo)
-            messages.success(request, "Cancel Approval Successful")
-            print(response)
-            return redirect('PurchaseDetail', pk=pk)
-        except KeyError:
-            messages.info(request, "Session Expired. Please Login")
-            return redirect('auth')
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('PurchaseDetail', pk=pk)
-    return redirect('PurchaseDetail', pk=pk)
+class FnCancelPurchaseApproval(UserObjectMixins, View):
+    def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                requistionNo = request.POST.get('requistionNo')
+                response = self.zeep_client(request).service.FnCancelInternalRequestApproval(
+                    request.session['User_ID'], requistionNo)
+                if response == True:
+                    messages.success(request, "Cancel Approval Successful")
+                    return redirect('PurchaseDetail', pk=pk)
+                messages.error(request, response)
+                return redirect('PurchaseDetail', pk=pk)
+            except KeyError:
+                messages.info(request, "Session Expired. Please Login")
+                return redirect('auth')
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('PurchaseDetail', pk=pk)
+        return redirect('PurchaseDetail', pk=pk)
 
-def FnGeneratePurchaseReport(request, pk):
-    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                        for i in range(5))
-    if request.method == 'POST':
-        filenameFromApp = pk + str(nameChars) + ".pdf"
-        try:
-            response = config.CLIENT.service.FnGenerateRequisitionReport(
-                pk, filenameFromApp)
-            buffer = BytesIO.BytesIO()
-            content = base64.b64decode(response)
-            buffer.write(content)
-            responses = HttpResponse(
-                buffer.getvalue(),
-                content_type="application/pdf",
-            )
-            responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
-            return responses
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('PurchaseDetail', pk=pk)
-    return redirect('PurchaseDetail', pk=pk)
+class FnGeneratePurchaseReport(UserObjectMixins, View):
+    def post(self,request,pk):
+        if request.method == 'POST':
+            nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                            for i in range(5))
+            filenameFromApp = pk + str(nameChars) + ".pdf"
+            try:
+                response = self.zeep_client(request).service.FnGenerateRequisitionReport(
+                    pk, filenameFromApp)
+                buffer = BytesIO.BytesIO()
+                content = base64.b64decode(response)
+                buffer.write(content)
+                responses = HttpResponse(
+                    buffer.getvalue(),
+                    content_type="application/pdf",
+                )
+                responses['Content-Disposition'] = f'inline;filename={filenameFromApp}'
+                return responses
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('PurchaseDetail', pk=pk)
+        return redirect('PurchaseDetail', pk=pk)
 
 
-def FnDeletePurchaseRequisitionLine(request, pk):
-    lineNo = ""
-    if request.method == 'POST':
-        lineNo = int(request.POST.get('lineNo'))
-        try:
-            response = config.CLIENT.service.FnDeletePurchaseRequisitionLine(
-                pk, lineNo)
-            messages.success(request, "Successfully Deleted")
-            print(response)
-        except Exception as e:
-            messages.error(request, e)
-            print(e)
-            return redirect('PurchaseDetail', pk=pk)
-    return redirect('PurchaseDetail', pk=pk)
+class FnDeletePurchaseRequisitionLine(UserObjectMixins, View):
+    def post(self,request,pk):
+        if request.method == 'POST':
+            try:
+                lineNo = int(request.POST.get('lineNo'))
+                response = self.zeep_client(request).service.FnDeletePurchaseRequisitionLine(
+                    pk, lineNo)
+                if response == True:
+                    messages.success(request, "Successfully Deleted")
+                    return redirect('PurchaseDetail', pk=pk)
+                messages.error(request, response)
+                return redirect('PurchaseDetail', pk=pk)
+            except Exception as e:
+                messages.error(request, e)
+                print(e)
+                return redirect('PurchaseDetail', pk=pk)
+        return redirect('PurchaseDetail', pk=pk)
 
 
 class RepairRequest(UserObjectMixins,View):
@@ -346,10 +337,6 @@ class RepairRequest(UserObjectMixins,View):
             Pending = [x for x in response[1] if x['Status'] == 'Pending Approval']
             Approved = [x for x in response[1] if x['Status'] == 'Released']
 
-            counts = len(openRepair)
-            counter = len(Approved)
-            pend = len(Pending)
-
         except requests.exceptions.RequestException as e:
             print(e)
             messages.info(request, "Whoops! Something went wrong. Please Login to Continue")
@@ -358,8 +345,8 @@ class RepairRequest(UserObjectMixins,View):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
 
-        ctx = {"today": self.todays_date, "res": openRepair,"count": counts, "response": Approved,
-            "counter": counter,"pend": pend,"year": year, "full": userID,"pending": Pending}
+        ctx = {"today": self.todays_date, "res": openRepair, "response": Approved,
+            "year": year, "full": userID,"pending": Pending}
         
         return render(request, 'repairReq.html', ctx)
     def post(self, request):
@@ -373,11 +360,13 @@ class RepairRequest(UserObjectMixins,View):
                 reason = request.POST.get('reason')
                 myAction = request.POST.get('myAction')
 
-                response = config.CLIENT.service.FnRepairRequisitionHeader(
+                response = self.zeep_client(request).service.FnRepairRequisitionHeader(
                     requisitionNo, orderDate, employeeNo, reason, myUserId, myAction)
-                if response:
+                if response !=False:
                     messages.success(request, "Success")
                     return redirect('RepairDetail', pk=response)
+                messages.error(request, response)
+                return redirect('repair')
             except KeyError:
                 messages.info(request, "Session Expired. Please Login")
                 return redirect('auth')
