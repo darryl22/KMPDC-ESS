@@ -57,6 +57,9 @@ INSTALLED_APPS = [
     'advance',
     'appraisal',
     'myRequest',
+    'django_htmx',
+    'base',
+    'fontawesome_6'
 
 ]
 
@@ -77,6 +80,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    "django_htmx.middleware.HtmxMiddleware",
 ]
 
 ROOT_URLCONF = 'KMPDC.urls'
