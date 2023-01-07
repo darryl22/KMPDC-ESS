@@ -37,6 +37,8 @@ class Login(UserObjectMixin,View):
             if res_data.status_code != 200:
                 print("QyUserSetup:",res_data.status_code)
                 messages.error(request,f"Wrong Password/Username. QyUserSetup failed with status code: {res_data.status_code}")
+                if request.htmx:
+                    return HTTPResponseHXRedirect(redirect_to=reverse_lazy("auth"))
                 return redirect('auth')
             cleanedData = res_data.json()
             for data in cleanedData['value']:
@@ -51,17 +53,20 @@ class Login(UserObjectMixin,View):
                 request.session['password'] = password
                 current_year = date.today().year
                 request.session['years'] = current_year
-                print(request.session['HOD_User'])
                 QyEmployees = config.O_DATA.format(f"/QyEmployees?$filter=No_%20eq%20%27{request.session['Employee_No_']}%27")
                 response = self.get_object(username, password,QyEmployees)
                 if response.status_code != 200:
                     messages.error(request,f"Wrong Password/Username. QyEmployees failed with status code: {response.status_code}")
+                    if request.htmx:
+                        return HTTPResponseHXRedirect(redirect_to=reverse_lazy("auth"))
                     return redirect('auth')
                 cleanedData2 = response.json()
                 for emp in cleanedData2['value']:
                     output_json2 = json.dumps(emp)
                     loadedData2= json.loads(output_json2)
                     request.session['Department'] = loadedData2['Department_Code']
+                    request.session['full_name'] = loadedData2['First_Name'] + " " + loadedData2['Last_Name'] 
+                    request.session['Department_Name'] = loadedData2['Department_Name']
                 messages.success(request,f"Success. Logged in as {request.session['User_ID']}")
                 if request.htmx:
                     return HTTPResponseHXRedirect(redirect_to=reverse_lazy("dashboard"))
@@ -69,10 +74,14 @@ class Login(UserObjectMixin,View):
         except requests.exceptions.RequestException as e:
             print(e)
             messages.error(request, "Invalid Username or Password")
+            if request.htmx:
+                return HTTPResponseHXRedirect(redirect_to=reverse_lazy("auth"))
             return redirect('auth')
         except TypeError as e:
             print(e)
             messages.error(request, e)
+            if request.htmx:
+                return HTTPResponseHXRedirect(redirect_to=reverse_lazy("auth"))
             return redirect('auth')
 
 def logout(request):

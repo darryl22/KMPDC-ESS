@@ -1,6 +1,7 @@
 {% extends 'offcanvas.html' %}
-{% load bootstrap5 %}
-{% load static %}
+{% block title %}
+IMPREST REQUISITION
+{% endblock %}
 {% block main %}
 <script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
@@ -26,7 +27,7 @@
                     <div class="m-4">
                         <ul class="nav nav-tabs d-flex" id="myTab">
                             <li class="nav-item flex-fill">
-                                <a href="#home" class="nav-link active" data-bs-toggle="tab">Open
+                                <a href="#home" class="nav-link active" data-bs-toggle="tab">Approved
                                     ({{res|length}})</a>
                             </li>
                             <li class="nav-item flex-fill">
@@ -34,7 +35,7 @@
                                     ({{pending|length}})</a>
                             </li>
                             <li class="nav-item flex-fill">
-                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Approved
+                                <a href="#profile" class="nav-link" data-bs-toggle="tab">Open
                                     ({{response|length}})</a>
                             </li>
                         </ul>
@@ -188,8 +189,7 @@
                                     type="button" data-toggle="tooltip" data-placement="top" title="Click to View"> View
                                     <i class="far fa-eye"></i>
                                 </a>
-                                </td>
-                                </tr>
+
                                 {% else %}
                                 <tr>
                                     <td>{{res.No_}}</td>
@@ -312,6 +312,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </td>
+                                </tr>
                             </div>
                             <a href="{% url 'IMPDetails' res.No_%}" class="btn btn-success btn-icon-text" type="button"
                                 data-toggle="tooltip" data-placement="top" title="Click to View"> View <i

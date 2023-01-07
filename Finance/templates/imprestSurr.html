@@ -27,7 +27,7 @@
                     <div class="m-4">
                         <ul class="nav nav-tabs d-flex" id="myTab">
                             <li class="nav-item flex-fill">
-                                <a href="#s-open" class="nav-link active" data-bs-toggle="tab"> Open
+                                <a href="#s-open" class="nav-link active" data-bs-toggle="tab">Appproved
                                     ({{res|length}})</a>
                             </li>
                             <li class="nav-item flex-fill">
@@ -35,13 +35,46 @@
                                     ({{pending|length}})</a>
                             </li>
                             <li class="nav-item flex-fill">
-                                <a href="#s-approve" class="nav-link" data-bs-toggle="tab">Appproved
+                                <a href="#s-approve" class="nav-link" data-bs-toggle="tab">Open
                                     ({{response|length}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="s-open">
-                                <h4 class="mt-2 text-dark">Open Surrender Imprest</h4>
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Imprest No</th>
+                                                <th>Date</th>
+                                                <th>Created By</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in response %}
+                                            <tr>
+                                                <td>{{res.No_}}</td>
+                                                <td id="rap">{{res.Date}}</td>
+                                                <td>{{res.User_Id}}</td>
+                                                <td>{{res.Status}}</td>
+                                                <td>
+                                                    <a href="{% url 'IMPSurrender' res.No_  %}"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="s-approve">
                                 <div class="card-body">
                                     <table id="example"
                                         class="display table table-striped table-bordered dt-responsive table-responsive-lg"
@@ -248,41 +281,6 @@
                                                 </td>
                                             </tr>
                                             {% endif %}
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="s-approve">
-                                <h4 class="mt-2 text-dark">Approved Surrender Imprest</h4>
-                                <div class="card-body">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Imprest No</th>
-                                                <th>Date</th>
-                                                <th>Created By</th>
-                                                <th>Status</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in response %}
-                                            <tr>
-                                                <td>{{res.No_}}</td>
-                                                <td id="rap">{{res.Date}}</td>
-                                                <td>{{res.User_Id}}</td>
-                                                <td>{{res.Status}}</td>
-                                                <td>
-                                                    <a href="{% url 'IMPSurrender' res.No_  %}"
-                                                        class="btn btn-success btn-icon-text" type="button"
-                                                        data-toggle="tooltip" data-placement="top"
-                                                        title="Click to View"> View <i class="far fa-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>

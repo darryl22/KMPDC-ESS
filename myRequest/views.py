@@ -60,6 +60,16 @@ class UserObjectMixins(object):
         response = self.get_object(Access_Point)['value']
         count=len(response)
         return count,response
+    def quotes(self):
+        category = 'health'
+        QUOTES_API_KEY = 'EIvOjryX23PBwPSqeoWNbA==52tdKajnJVd8uImQ'
+        api_url = 'https://api.api-ninjas.com/v1/quotes?category={}'.format(category)
+        try:
+            response = requests.get(api_url, headers={'X-Api-Key': QUOTES_API_KEY})
+            if response.status_code == requests.codes.ok:
+                return response.json()
+        except Exception as e:
+            return None
 class HTTPResponseHXRedirect(HttpResponseRedirect):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

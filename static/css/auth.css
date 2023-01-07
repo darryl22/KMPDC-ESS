@@ -243,14 +243,6 @@ form.sign-in-form {
   transform: translateX(0%);
 }
 
-.container.sign-up-mode .left-panel {
-  pointer-events: none;
-}
-
-.container.sign-up-mode .right-panel {
-  pointer-events: all;
-}
-
 @media (max-width: 870px) {
   .panels-container {
     grid-template-columns: 1fr;

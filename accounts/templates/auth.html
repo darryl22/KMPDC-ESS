@@ -28,31 +28,46 @@ LOGIN
         background: var(--first-color-light);
         font-family: "Poppins", sans-serif;
     }
+
+    .htmx-indicator {
+        opacity: 0;
+        transition: opacity 500ms ease-in;
+    }
+
+    .htmx-request .htmx-indicator {
+        opacity: 1
+    }
+
+    .htmx-request.htmx-indicator {
+        opacity: 1
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-{% include 'alerts.html' %}
 <section class="wrapping">
     <div class="container">
         <div class="row">
             <div class="col-md-6">
                 <div class="forms-container">
                     <div class="signin-signup">
-                        <form action="#" class="sign-in-form">
+                        <form hx-post="{% url 'auth' %}" class="sign-in-form">
+                            {% csrf_token %}
                             <div class="logo mx-auto text-center">
                                 <img src="../../static/img/logo/fav.png" alt="" srcset="">
                             </div>
                             <h2 class="title">Login</h2>
+                            {% include 'alerts.html' %}
                             <div class="input-field">
                                 <i class="las la-user-circle"></i>
-                                <input type="text" placeholder="Username" />
+                                <input type="text" placeholder="Username" name="username" />
                             </div>
                             <div class="input-field">
                                 <i class="las la-lock"></i>
-                                <input type="password" placeholder="Password" />
+                                <input type="password" placeholder="Password" name="password" />
                             </div>
-                            <input type="submit" value="Login" class="btn solid" />
+                            <button hx-post="{% url 'auth' %}" hx-swap="none" type="submit" class="btn">Login</button>
+                            <p class='htmx-indicator text-white text-small'>Loading ....</p>
                         </form>
                     </div>
                 </div>
