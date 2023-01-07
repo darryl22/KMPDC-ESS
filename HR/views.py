@@ -40,8 +40,11 @@ class Leave_Planner(UserObjectMixins,View):
             print(e)
             messages.info(request, e)
             return redirect('auth')
-        ctx = {"today": self.todays_date, "res": Plans,
-                "year": year, "full": userId}
+        ctx = {
+            "today": self.todays_date,
+            "res": Plans,
+            "year": year, "full": userId
+            }
         return render(request, 'planner.html', ctx)
 
     def post(self,request):

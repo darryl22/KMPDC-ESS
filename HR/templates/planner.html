@@ -1,10 +1,14 @@
 {% extends 'offcanvas.html' %}
-{% load bootstrap5 %}
-{% load static %}
+{% block title %}
+LEAVE PLANNER
+{% endblock %}
+{% block head %}
+
+{% endblock %}
 {% block main %}
-<script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
+<script src="../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
-    <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
+    <div class="content-wrapper general-bg" style="padding-bottom: 2rem;">
         <!--alert -->
         {% include 'alerts.html' %}
         <div class="row my-2">
@@ -30,9 +34,9 @@
                                 style="width:100%">
                                 <thead>
                                     <tr id="tops">
-                                        <th id="long">Plan No</th>
-                                        <th>Employee No </th>
-                                        <th>Date</th>
+                                        <th id="long">Plan No.</th>
+                                        <th>Employee No. </th>
+                                        <th>Document Date</th>
                                         <th>Days Planned</th>
                                         <th>Action</th>
                                     </tr>
@@ -42,12 +46,19 @@
                                     <tr>
                                         <td>{{res.No_}}</td>
                                         <td id="rap">{{res.Employee_No_}}</td>
-                                        <td>{{res.Date}}</td>
+                                        <td id="document_date{{res.No_}}">{{res.Date}}</td>
+                                        <script>
+                                            $(document).ready(function () {
+                                                $("#document_date{{res.No_}}").empty().append(moment(
+                                                    '{{res.Date}}', "YYYY-MM-DD").format(
+                                                    'Do MMM YYYY, h:mm:ss a'));
+                                            })
+                                        </script>
                                         <td>{{res.Days_Planned}}</td>
                                         <td>
                                             <a href="{% url 'PlanDetail' res.No_ %}" class="btn btn-success"
                                                 type="button" data-toggle="tooltip" data-placement="top"
-                                                title="Click to View">View <i class="far fa-eye"></i>
+                                                title="Click to View">View <i class="las la-arrow-circle-right"></i>
                                             </a>
                                         </td>
                                     </tr>
@@ -57,7 +68,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
