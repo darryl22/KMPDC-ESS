@@ -1,6 +1,7 @@
 {% extends 'offcanvas.html' %}
-{% load bootstrap5 %}
-{% load static %}
+{% block title %}
+PURCHASE REQUISITION DETAIL
+{% endblock %}
 {% block main %}
 <script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
@@ -114,7 +115,7 @@
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
+                                <h2 class="d-flex align-items-center mb-0" id="order_date_card">
                                     {{res.Order_Date}}
                                 </h2>
                             </div>
@@ -152,7 +153,7 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label class="form-label">Document Date</label>
-                                                        <input type="text" class="form-control"
+                                                        <input type="text" id="date_inserted" class="form-control"
                                                             placeholder="{{res.Document_Date}}" readonly>
                                                     </div>
                                                     <div class="col-md-4">
@@ -851,6 +852,14 @@
 </div>
 <script>
     $(document).ready(function () {
+        $("#order_date_card")
+            .empty().append(moment(
+                    '{{res.Order_Date}}', "YYYY-MM-DD")
+                .format(
+                    'Do MMM YYYY'));
+        $("#date_inserted").attr("placeholder", moment(
+            '{{res.Document_Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
         $('#itemType').on('change', function (e) {
             e.preventDefault();
             var ItemCode = $("#itemType").val();
