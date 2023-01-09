@@ -117,7 +117,7 @@
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
+                                <h2 class="d-flex align-items-center mb-0" id="request_date">
                                     {{res.Request_Date}}
                                 </h2>
                             </div>
@@ -208,8 +208,8 @@
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
-                                    {{res.Planned_Start_Date}}
+                                <h2 class="d-flex align-items-center mb-0" id="planned_start_date">
+                                    {{res.planned_start_date}}
                                 </h2>
                             </div>
                         </div>
@@ -221,7 +221,7 @@
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-calendar-times"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">No Of Days</h5>
+                            <h5 class="card-title mb-0">No. Of Days</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
@@ -238,135 +238,173 @@
         {% endif %}
         <div class="row">
             <div class="col-md-12">
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Request Number</label>
-                        <input type="text" class="form-control" placeholder="{{res.Request_No_}}" readonly>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Designation</label>
-                        <input type="text" class="form-control" placeholder="{{res.Designation}}" readonly>
-                    </div>
-                    {% if res.Adhoc == False %}
-                    <div class="col-md-4">
-                        <label class="form-label">Training Name</label>
-                        <input type="text" class="form-control" placeholder="{{res.Description}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Training Need</label>
-                        <input type="text" class="form-control" placeholder="{{res.Training_Need}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Planned End Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.Planned_End_Date}}" readonly>
-                    </div>
+                <div id="accordion" class="accordion-style">
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                    aria-expanded="true" aria-controls="collapseOne">
+                                    Details
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                            data-bs-parent="#accordion">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <form class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Request Number</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Request_No_}}" readonly>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Designation</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Designation}}" readonly>
+                                            </div>
+                                            {% if res.Adhoc == False %}
+                                            <div class="col-md-4">
+                                                <label class="form-label">Training Name</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Description}}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Training Need</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Training_Need}}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Planned End Date</label>
+                                                <input type="text" class="form-control" id="planned_end_date"
+                                                    placeholder="{{res.Planned_End_Date}}" readonly>
+                                            </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Sponsor Type</label>
-                        <input type="text" class="form-control" placeholder="{{res.Sponsor_Type}}" readonly>
-                    </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Sponsor Type</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Sponsor_Type}}" readonly>
+                                            </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Venue</label>
-                        <input type="text" class="form-control" placeholder="{{res.Venue}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Provider</label>
-                        <input type="text" class="form-control" placeholder="{{res.Provider}}" readonly>
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Training Objectives</label>
-                        <textarea class="form-control" placeholder="{{res.Training_Objectives}}" readonly></textarea>
-                    </div>
-                    {% endif %}
-                </form>
-            </div>
-        </div>
-        {% if res.Adhoc == True %}
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Adhoc Training Lines </h4>
-                    <div class="card-body">
-                        <table id="example"
-                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                            style="width:100%">
-                            <thead>
-                                <tr id="tops">
-                                    <th id="long">Training Name</th>
-                                    <th>Training Area</th>
-                                    <th>Training Objectives</th>
-                                    <th>Location</th>
-                                    <th>Venue</th>
-                                    <th>Provider</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for res in line %}
-                                <tr>
-                                    <td>{{res.Training_Name}}</td>
-                                    <td>{{res.Training_area}}</td>
-                                    <td>{{res.Training_Objectives}}</td>
-                                    <td>{{res.Location}}</td>
-                                    <td>{{res.Venue}}</td>
-                                    <td>{{res.Provider}}</td>
-                                    <td>
-                                        <form action="{% url 'FnAdhocLineDelete' res.Source_Document_No %}"
-                                            method="post" style="display: inline-block;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="needNo" value="{{res.No}}">
-                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
-                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
-                                            </button>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Venue</label>
+                                                <input type="text" class="form-control" placeholder="{{res.Venue}}"
+                                                    readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Provider</label>
+                                                <input type="text" class="form-control" placeholder="{{res.Provider}}"
+                                                    readonly>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label">Training Objectives</label>
+                                                <textarea class="form-control" placeholder="{{res.Training_Objectives}}"
+                                                    readonly></textarea>
+                                            </div>
+                                            {% endif %}
                                         </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        <div class="row my-2 py-3">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">
-                            My Attachments
-                        </h4>
-                        <div class="row">
-                            {% for data in file %}
-                            <div class="col-lg-4 col-xl-3">
-                                <div class="file-man-box">
-                                    <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
-                                    <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
-                                        <input type="hidden" name="File_Name" value="{{data.File_Name}}">
-                                        <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
-                                        <button class="file-download mx-1"><i
-                                                class="fa fa-download text-success"></i></button>
-                                    </form>
-                                    <div class="file-man-title">
-                                        <h5 class="mb-0 text-overflow">
-                                            {{data.File_Name}}.{{data.File_Extension}}</h5>
                                     </div>
                                 </div>
                             </div>
-                            {% empty %}
-                            <p class="text-danger">
-                                You have not uploaded any attachments <i class="las la-file-download"></i>
-                            </p>
-                            {% endfor %}
                         </div>
-
+                    </div>
+                    {% if res.Adhoc == True %}
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTwo" aria-expanded="false"
+                                    aria-controls="collapseTwo">Adhoc Training Lines</button>
+                            </h5>
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-bs-parent="#accordion">
+                            <div class="row m-2">
+                                <div class="col-md-12 card-body bg-white">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Training Name</th>
+                                                <th>Training Area</th>
+                                                <th>Training Objectives</th>
+                                                <th>Location</th>
+                                                <th>Venue</th>
+                                                <th>Provider</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for res in line %}
+                                            <tr>
+                                                <td>{{res.Training_Name}}</td>
+                                                <td>{{res.Training_area}}</td>
+                                                <td>{{res.Training_Objectives}}</td>
+                                                <td>{{res.Location}}</td>
+                                                <td>{{res.Venue}}</td>
+                                                <td>{{res.Provider}}</td>
+                                                <td>
+                                                    <form action="{% url 'FnAdhocLineDelete' res.Source_Document_No %}"
+                                                        method="post" style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="needNo" value="{{res.No}}">
+                                                        <button type="submit" class="btn btn-danger"
+                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
+                                                                class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingFour">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">My
+                                    Attachments</button>
+                            </h5>
+                        </div>
+                        <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
+                            data-bs-parent="#accordion">
+                            <div class="row m-2">
+                                {% for data in file %}
+                                <div class="col-lg-4 col-xl-3">
+                                    <div class="file-man-box">
+                                        <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon">
+                                        </div>
+                                        <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
+                                            <input type="hidden" name="File_Name" value="{{data.File_Name}}">
+                                            <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
+                                            <button class="file-download mx-1"><i
+                                                    class="fa fa-download text-success"></i></button>
+                                        </form>
+                                        <div class="file-man-title">
+                                            <h5 class="mb-0 text-overflow">
+                                                {{data.File_Name}}.{{data.File_Extension}}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <img src="../../static/icons/empty-box.png" class="img-fluid" height="100" width="100"
+                                    alt="">
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
         {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
         <div class="row my-2 py-3">
             <div class="col-md-12">
@@ -433,7 +471,7 @@
                             style="width:100%">
                             <thead>
                                 <tr id="tops">
-                                    <th id="long">Entry No</th>
+                                    <th id="long">Entry No.</th>
                                     <th>Name</th>
                                     <th>Sequence</th>
                                     <th>Status</th>
@@ -455,8 +493,10 @@
                                     <script>
                                         $("#ModifiedDate{{Approvers.Entry_No_}}")
                                             .empty()
-                                            .append(new Date(
-                                                '{{Approvers.Last_Date_Time_Modified}}').toString());
+                                            .append(moment(
+                                                    '{{Approvers.Last_Date_Time_Modified}}', "YYYY-MM-DD")
+                                                .format(
+                                                    'Do MMM YYYY'));
                                     </script>
                                 </tr>
                                 {% endfor %}
@@ -634,6 +674,20 @@
 </section>
 <script>
     $(document).ready(function () {
+        $("#request_date")
+            .empty().append(moment(
+                    '{{res.Request_Date}}', "YYYY-MM-DD")
+                .format(
+                    'Do MMM YYYY'));
+        $("#planned_start_date")
+            .empty().append(moment(
+                    '{{res.planned_start_date}}', "YYYY-MM-DD")
+                .format(
+                    'Do MMM YYYY'));
+        $("#planned_end_date").attr("placeholder", moment(
+            '{{res.Planned_End_Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
+
         $('#travelType').on('change', function () {
             if (this.value == "1") {
                 $("#LocaldestinationsRow").show(1000);

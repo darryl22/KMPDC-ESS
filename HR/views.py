@@ -113,9 +113,11 @@ class PlanDetail(UserObjectMixins,View):
             messages.info(request, e)
             print(e)
             return redirect('auth')
-        ctx = {"today": self.todays_date, 
-                "year": year, "full": fullname,
-                "line": openLines,"res":res}
+        ctx = {
+            "today": self.todays_date, 
+            "year": year, "full": fullname,
+            "line": openLines,"res":res
+            }
         return render(request, 'planDetails.html', ctx)
 
     def post(self,request, pk):
@@ -384,7 +386,7 @@ class Training_Request(UserObjectMixins,View):
             "response": approvedTraining,
             "train": trains,"pending": pendingTraining,
             "year": year, "full": userId
-                }
+            }
         return render(request, 'training.html', ctx)
     def post(self,request):
         if request.method == 'POST':

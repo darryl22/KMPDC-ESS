@@ -38,6 +38,9 @@
                 <h3> {{surrender_app}} </h3>
                 <p> Approved Imprest Surrenders </p>
             </div>
+            <div class="icon">
+                <i class="las la-handshake"></i>
+            </div>
             {% if surrender_app == 0 %}
             <a href="{% url 'imprestSurr' %}" class="card-box-footer">New Request <i class="las la-plus"></i></a>
             {% elif surrender_app > 0  %}

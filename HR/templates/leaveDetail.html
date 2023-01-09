@@ -134,103 +134,138 @@
                 </div>
             </div>
         </div>
-        <div class="row py-3">
+        <div class="row">
             <div class="col-md-12">
-                <form class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Leave Number</label>
-                        <input type="text" class="form-control" placeholder="{{res.Application_No}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Application Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.Application_Date}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Resumption Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.Resumption_Date}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Start Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.Start_Date}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Leave Period</label>
-                        <input type="text" class="form-control" placeholder="{{res.Leave_Period}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">User</label>
-                        <input type="text" class="form-control" placeholder="{{res.User_ID}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Planner Start Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.Planner_Start_Date}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Return same day</label>
-                        <input type="text" class="form-control" placeholder="{{res.Return_same_day}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Leave Allowance Payable</label>
-                        <input type="text" class="form-control" placeholder="{{res.Leave_Allowance_Payable}}" readonly>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">End Date</label>
-                        <input type="text" class="form-control" placeholder="{{res.End_Date}}" readonly>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Employment Type</label>
-                        <input type="text" class="form-control" placeholder="{{res.Employment_Type}}" readonly>
-                    </div>
-                </form>
-                <div class="row my-2 py-3">
-                    <div class="col-md-12">
-                        <div class="card">
+                <div id="accordion" class="accordion-style">
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                    aria-expanded="true" aria-controls="collapseOne">
+                                    Details
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                            data-bs-parent="#accordion">
                             <div class="card-body">
-                                <h4 class="card-title mb-4">
-                                    My Attachments
-                                </h4>
                                 <div class="row">
-                                    {% for data in file %}
-                                    <div class="col-lg-4 col-xl-3">
-                                        <div class="file-man-box">
-                                            {% if res.Status == 'Open' %}
-                                            <form action="{% url 'DeleteLeaveAttachment' data.No_  %}" method="POST">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
-                                                <input type="hidden" name="tableID" value="{{data.Table_ID}}">
-                                                <button class="file-close" id="file-close"><i
-                                                        class="fa fa-times-circle"></i></button>
-                                            </form>
-                                            {% endif %}
-                                            <div class="file-img-box"><img src="../../static/img/logo/f1.png"
-                                                    alt="icon"></div>
-                                            <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="attachmentID"
-                                                    value="{{data.AuxiliaryIndex2}}">
-                                                <input type="hidden" name="File_Name" value="{{data.File_Name}}">
-                                                <input type="hidden" name="File_Extension"
-                                                    value="{{data.File_Extension}}">
-                                                <button class="file-download mx-1"><i
-                                                        class="fa fa-download text-success"></i></button>
-                                            </form>
-                                            <div class="file-man-title">
-                                                <h5 class="mb-0 text-overflow">
-                                                    {{data.File_Name}}.{{data.File_Extension}}</h5>
+                                    <div class="col-md-12">
+                                        <form class="row g-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Leave Number</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Application_No}}" readonly>
                                             </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Employee</label>
+                                                <input type="text" class="form-control" placeholder="{{res.User_ID}}"
+                                                    readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Leave Period</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Leave_Period}}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Application Date</label>
+                                                <input type="text" class="form-control" id="application_date"
+                                                    placeholder="{{res.Application_Date}}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Leave Start Date</label>
+                                                <input type="text" class="form-control" id="start_date"
+                                                    placeholder="{{res.Start_Date}}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Resumption Date</label>
+                                                <input type="text" class="form-control" id="resumption_date"
+                                                    placeholder="{{res.Resumption_Date}}" readonly>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <label class="form-label">Planner Start Date</label>
+                                                <input type="text" class="form-control" id="planner_start_date"
+                                                    placeholder="{{res.Planner_Start_Date}}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Return same day</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Return_same_day}}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Leave Allowance Payable</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Leave_Allowance_Payable}}" readonly>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">End Date</label>
+                                                <input type="text" class="form-control" id="end_date"
+                                                    placeholder="{{res.End_Date}}" readonly>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Employment Type</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Employment_Type}}" readonly>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingFour">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">My
+                                    Attachments</button>
+                            </h5>
+                        </div>
+                        <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
+                            data-bs-parent="#accordion">
+                            <div class="row m-2">
+                                {% for data in file %}
+                                <div class="col-lg-4 col-xl-3">
+                                    <div class="file-man-box">
+                                        {% if res.Status == 'Open' %}
+                                        <form action="{% url 'DeleteLeaveAttachment' data.No_  %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
+                                            <input type="hidden" name="tableID" value="{{data.Table_ID}}">
+                                            <button class="file-close" id="file-close"><i
+                                                    class="fa fa-times-circle"></i></button>
+                                        </form>
+                                        {% endif %}
+                                        <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon">
+                                        </div>
+                                        <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
+                                            <input type="hidden" name="File_Name" value="{{data.File_Name}}">
+                                            <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
+                                            <button class="file-download mx-1"><i
+                                                    class="fa fa-download text-success"></i></button>
+                                        </form>
+                                        <div class="file-man-title">
+                                            <h5 class="mb-0 text-overflow">
+                                                {{data.File_Name}}.{{data.File_Extension}}</h5>
                                         </div>
                                     </div>
-                                    {% empty %}
-                                    <p class="text-danger">
-                                        You have not uploaded any attachments <i class="las la-file-download"></i>
-                                    </p>
-                                    {% endfor %}
                                 </div>
-
+                                {% empty %}
+                                <img src="../../static/icons/empty-box.png" class="img-fluid" height="100" width="100"
+                                    alt="">
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row py-3">
+            <div class="col-md-12">
                 {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
                 <div class="row my-2 py-3">
                     <div class="col-md-12">
@@ -296,7 +331,7 @@
                             style="width:100%">
                             <thead>
                                 <tr id="tops">
-                                    <th id="long">Entry No</th>
+                                    <th id="long">Entry No.</th>
                                     <th>Name</th>
                                     <th>Sequence</th>
                                     <th>Status</th>
@@ -316,10 +351,12 @@
                                         {{Approvers.Last_Date_Time_Modified}}
                                     </td>
                                     <script>
-                                        $("#ModifiedDate{{Approvers.Entry_No_}}")
-                                            .empty()
-                                            .append(new Date(
-                                                '{{Approvers.Last_Date_Time_Modified}}').toString());
+                                        $(document).ready(function () {
+                                            $("#ModifiedDate{{Approvers.Entry_No_}}").empty().append(moment(
+                                                    '{{Approvers.Last_Date_Time_Modified}}', "YYYY-MM-DD")
+                                                .format(
+                                                    'Do MMM YYYY'));
+                                        })
                                     </script>
                                 </tr>
                                 {% endfor %}
@@ -363,6 +400,22 @@
         $("#approveBtn").click(function () {
             $("#approvalForm").toggle(500)
         })
+        $("#application_date").attr("placeholder", moment(
+            '{{res.Application_Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
+        $("#resumption_date").attr("placeholder", moment(
+            '{{res.Resumption_Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
+        $("#start_date").attr("placeholder", moment(
+            '{{res.Start_Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
+        $("#planner_start_date").attr("placeholder", moment(
+            '{{res.Planner_Start_Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
+        $("#end_date").attr("placeholder", moment(
+            '{{res.End_Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
+
     })
 </script>
 {% endblock %}

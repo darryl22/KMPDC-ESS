@@ -1,8 +1,13 @@
 {% extends 'offcanvas.html' %}
-{% load bootstrap5 %}
-{% load static %}
+
+{% block title %}
+LEAVE PLANNER DETAILS
+{% endblock %}
+{% block head %}
+
+{% endblock %}
 {% block main %}
-<script src="../../static/plugins/flaviusmatis-simplePagination.js-da97104/tests/lib/jquery.min.js"></script>
+<script src="../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
@@ -24,9 +29,9 @@
             <div class="col-md-3">
                 <div class="card l-bg-cherry statCard h-100">
                     <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-users"></i></div>
+                        <div class="card-icon card-icon-large"><i class="las la-users"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Employee No</h5>
+                            <h5 class="card-title mb-0">Employee No.</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
@@ -123,8 +128,25 @@
                                             <tbody>
                                                 {% for line in line %}
                                                 <tr>
-                                                    <td>{{line.Start_Date}}</td>
-                                                    <td>{{line.End_Date}}</td>
+                                                    <td id="planner_start_date{{line.Line_No_}}">{{line.Start_Date}}
+                                                    </td>
+                                                    <td id="planner_end_date{{line.Line_No_}}">{{line.End_Date}}</td>
+                                                    <script>
+                                                        $(document).ready(function () {
+                                                            $("#planner_start_date{{line.Line_No_}}").empty()
+                                                                .append(
+                                                                    moment(
+                                                                        '{{line.Start_Date}}', "YYYY-MM-DD")
+                                                                    .format(
+                                                                        'Do MMM YYYY'));
+                                                            $("#planner_end_date{{line.Line_No_}}").empty()
+                                                                .append(
+                                                                    moment(
+                                                                        '{{line.End_Date}}', "YYYY-MM-DD")
+                                                                    .format(
+                                                                        'Do MMM YYYY'));
+                                                        })
+                                                    </script>
                                                     <td>{{line.Days}}</td>
                                                     <td>{{line.Leave_Period}}</td>
                                                     <td>

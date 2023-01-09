@@ -1,12 +1,15 @@
 {% extends 'offcanvas.html' %}
+
 {% block title %}
 LEAVE PLANNER
 {% endblock %}
+
 {% block head %}
 
 {% endblock %}
 {% block main %}
 <script src="../../static/css/boot/js/vendor.bundle.base.js"></script>
+
 <section class="dash2">
     <div class="content-wrapper general-bg" style="padding-bottom: 2rem;">
         <!--alert -->
@@ -51,7 +54,7 @@ LEAVE PLANNER
                                             $(document).ready(function () {
                                                 $("#document_date{{res.No_}}").empty().append(moment(
                                                     '{{res.Date}}', "YYYY-MM-DD").format(
-                                                    'Do MMM YYYY, h:mm:ss a'));
+                                                    'Do MMM YYYY'));
                                             })
                                         </script>
                                         <td>{{res.Days_Planned}}</td>
