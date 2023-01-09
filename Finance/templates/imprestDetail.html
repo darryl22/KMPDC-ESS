@@ -1,8 +1,14 @@
 {% extends 'offcanvas.html' %}
-{% load bootstrap5 %}
-{% load static %}
+{% block title %}
+IMPREST REQUISITION DETAILS
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
 {% block main %}
-<script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
+<script src="../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
@@ -97,7 +103,7 @@
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
+                                <h2 class="d-flex align-items-center mb-0" id="imprest_amount_card">
                                     {{res.Imprest_Amount}}
                                 </h2>
                             </div>
@@ -114,7 +120,7 @@
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
+                                <h2 class="d-flex align-items-center mb-0" id="dsa_amount_card">
                                     {{res.DSA_Allowance_Amount}}
                                 </h2>
                             </div>
@@ -131,7 +137,7 @@
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-md-12">
-                                <h2 class="d-flex align-items-center mb-0">
+                                <h2 class="d-flex align-items-center mb-0" id="due_date_card">
                                     {{res.Due_Date}}
                                 </h2>
                             </div>
@@ -143,155 +149,213 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <form class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Imprest Number</label>
-                        <input type="text" class="form-control" placeholder="{{res.No_}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Date Inserted</label>
-                        <input type="text" class="form-control" placeholder="{{res.Date}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Account No</label>
-                        <input type="text" class="form-control" placeholder="{{res.Account_No_}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Status</label>
-                        <input type="text" class="form-control" placeholder="{{res.Status}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Travel Type</label>
-                        <input type="text" class="form-control" placeholder="{{res.Travel_Type}}" readonly>
-                    </div>
+                <div id="accordion" class="accordion-style">
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                    aria-expanded="true" aria-controls="collapseOne">
+                                    Details
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                            data-bs-parent="#accordion">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <form class="row g-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Imprest Number</label>
+                                                <input type="text" class="form-control" placeholder="{{res.No_}}"
+                                                    readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Date Inserted</label>
+                                                <input type="text" id="date_inserted" class="form-control"
+                                                    placeholder="{{res.Date}}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Account No</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Account_No_}}" readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Status</label>
+                                                <input type="text" class="form-control" placeholder="{{res.Status}}"
+                                                    readonly>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Travel Type</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Travel_Type}}" readonly>
+                                            </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label">Account Type</label>
-                        <input type="text" class="form-control" placeholder="{{res.Account_Type}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Imprest Amount</label>
-                        <input type="text" class="form-control" placeholder="{{res.Imprest_Amount}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">DSA Amount</label>
-                        <input type="text" class="form-control" placeholder="{{res.DSA_Allowance_Amount}}" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Imprest</label>
-                        <input type="text" class="form-control" placeholder="{{res.Imprest}}" readonly>
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">DSA</label>
-                        <input type="text" class="form-control" placeholder="{{res.DSA}}" readonly>
-                    </div>
-                    <div class="col-12">
-                        <label for="inputAddress" class="form-label">purpose</label>
-                        <textarea class="form-control" placeholder="{{res.Payment_Narration}}" rows="3"
-                            readonly></textarea>
-                    </div>
-                </form>
-            </div>
-        </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Account Type</label>
+                                                <input type="text" class="form-control"
+                                                    placeholder="{{res.Account_Type}}" readonly>
+                                            </div>
 
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card" id="d-card">
-                    <h4 class="mt-2 mx-2 text-dark">Imprest Requisitions Lines</h4>
-                    <div class="card-body">
-                        <table id="example"
-                            class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                            style="width:100%">
-                            <thead>
-                                <tr id="tops">
-                                    <th id="long">Destination</th>
-                                    <th>Travel Date</th>
-                                    <th>Return Date</th>
-                                    <th>No of Days</th>
-                                    <th>Daily Rate</th>
-                                    <th>Quantity</th>
-                                    <th>Amount</th>
-                                    {% if res.Status == "Open" %}
-                                    <th>Action</th>
-                                    {% endif %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for line in line %}
-                                <tr>
-                                    <td>{{line.Destination}}</td>
-                                    <td>{{line.Date_of_Project}}</td>
-                                    <td>{{line.Date_of_Completion}}</td>
-                                    <td>{{line.No_of_Days}}</td>
-                                    <td>{{line.Daily_Rate}}</td>
-                                    <td>{{line.Quantity}}</td>
-                                    <td>{{line.Amount}}</td>
-                                    {% if res.Status == "Open" %}
-                                    <td>
-
-                                        <form action="{% url 'FnDeleteImprestLine' line.AuxiliaryIndex1 %}"
-                                            method="post" style="display: inline-block;">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="lineNo" value="{{line.Line_No}}">
-                                            <button type="submit" class="btn btn-danger" data-toggle="tooltip"
-                                                data-placement="top" title="Delete"><i class="fas fa-trash-alt"></i>
-                                            </button>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Imprest</label>
+                                                <input type="text" class="form-control" placeholder="{{res.Imprest}}"
+                                                    readonly>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">DSA</label>
+                                                <input type="text" class="form-control" placeholder="{{res.DSA}}"
+                                                    readonly>
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="inputAddress" class="form-label">purpose</label>
+                                                <textarea class="form-control" placeholder="{{res.Payment_Narration}}"
+                                                    rows="3" readonly></textarea>
+                                            </div>
                                         </form>
-                                    </td>
-                                    {% endif %}
-                                </tr>
-
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row my-2 py-3">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">
-                            My Attachments
-                        </h4>
-                        <div class="row">
-                            {% for data in file %}
-                            <div class="col-lg-4 col-xl-3">
-                                <div class="file-man-box">
-                                    {% if res.Status == 'Open' %}
-                                    <form action="{% url 'DeleteImprestAttachment' data.No_  %}" method="POST">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
-                                        <input type="hidden" name="tableID" value="{{data.Table_ID}}">
-                                        <button class="file-close" id="file-close"><i
-                                                class="fa fa-times-circle"></i></button>
-                                    </form>
-                                    {% endif %}
-                                    <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon"></div>
-                                    <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
-                                        <input type="hidden" name="File_Name" value="{{data.File_Name}}">
-                                        <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
-                                        <button class="file-download mx-1"><i
-                                                class="fa fa-download text-success"></i></button>
-                                    </form>
-                                    <div class="file-man-title">
-                                        <h5 class="mb-0 text-overflow">
-                                            {{data.File_Name}}.{{data.File_Extension}}</h5>
                                     </div>
                                 </div>
                             </div>
-                            {% empty %}
-                            <p class="text-danger">
-                                You have not uploaded any attachments <i class="las la-file-download"></i>
-                            </p>
-                            {% endfor %}
                         </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTwo" aria-expanded="false"
+                                    aria-controls="collapseTwo">Imprest Requisitions Lines</button>
+                            </h5>
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-bs-parent="#accordion">
+                            <div class="row m-2">
+                                <div class="col-md-12 card-body bg-white">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th id="long">Destination</th>
+                                                <th>Travel Date</th>
+                                                <th>Return Date</th>
+                                                <th>No of Days</th>
+                                                <th>Daily Rate</th>
+                                                <th>Quantity</th>
+                                                <th>Amount</th>
+                                                {% if res.Status == "Open" %}
+                                                <th>Action</th>
+                                                {% endif %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for line in line %}
+                                            <tr>
+                                                <td>{{line.Destination}}</td>
+                                                <td id="travel_date{{line.Line_No}}">{{line.Date_of_Project}}</td>
+                                                <td id="return_date{{line.Line_No}}">{{line.Date_of_Completion}}</td>
+                                                <td>{{line.No_of_Days}}</td>
+                                                <td id="daily_rate{{line.Line_No}}">{{line.Daily_Rate}}</td>
+                                                <td>{{line.Quantity}}</td>
+                                                <td id="amount_rate{{line.Line_No}}">{{line.Amount}}</td>
+                                                <script>
+                                                    $(document).ready(function () {
+                                                        $("#travel_date{{line.Line_No}}")
+                                                            .empty().append(moment(
+                                                                    '{{line.Date_of_Project}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
+                                                        $("#return_date{{line.Line_No}}")
+                                                            .empty().append(moment(
+                                                                    '{{line.Date_of_Completion}}', "YYYY-MM-DD")
+                                                                .format(
+                                                                    'Do MMM YYYY'));
 
+                                                        $("#daily_rate{{line.Line_No}}")
+                                                            .empty()
+                                                            .append(currency(
+                                                                '{{line.Daily_Rate}}', {
+                                                                    separator: ','
+                                                                }).format());
+                                                        $("#amount_rate{{line.Line_No}}")
+                                                            .empty()
+                                                            .append(currency(
+                                                                '{{line.Amount}}', {
+                                                                    separator: ','
+                                                                }).format());
+
+                                                    })
+                                                </script>
+                                                {% if res.Status == "Open" %}
+                                                <td>
+
+                                                    <form action="{% url 'FnDeleteImprestLine' line.AuxiliaryIndex1 %}"
+                                                        method="post" style="display: inline-block;">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="lineNo" value="{{line.Line_No}}">
+                                                        <button type="submit" class="btn btn-danger"
+                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
+                                                                class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                                {% endif %}
+                                            </tr>
+
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header" id="headingFour">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">My
+                                    Attachments</button>
+                            </h5>
+                        </div>
+                        <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
+                            data-bs-parent="#accordion">
+                            <div class="row m-2">
+                                {% for data in file %}
+                                <div class="col-lg-4 col-xl-3">
+                                    <div class="file-man-box">
+                                        {% if res.Status == 'Open' %}
+                                        <form action="{% url 'DeleteImprestAttachment' data.No_  %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="docID" value="{{data.AuxiliaryIndex2}}">
+                                            <input type="hidden" name="tableID" value="{{data.Table_ID}}">
+                                            <button class="file-close" id="file-close"><i
+                                                    class="fa fa-times-circle"></i></button>
+                                        </form>
+                                        {% endif %}
+                                        <div class="file-img-box"><img src="../../static/img/logo/f1.png" alt="icon">
+                                        </div>
+                                        <form action="{% url 'getDocs' data.No_ data.Table_ID %}" method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="attachmentID" value="{{data.AuxiliaryIndex2}}">
+                                            <input type="hidden" name="File_Name" value="{{data.File_Name}}">
+                                            <input type="hidden" name="File_Extension" value="{{data.File_Extension}}">
+                                            <button class="file-download mx-1"><i
+                                                    class="fa fa-download text-success"></i></button>
+                                        </form>
+                                        <div class="file-man-title">
+                                            <h5 class="mb-0 text-overflow">
+                                                {{data.File_Name}}.{{data.File_Extension}}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <img src="../../static/icons/empty-box.png" class="img-fluid" height="100" width="100"
+                                    alt="">
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
         {% if res.Rejected_By_Approver == True and res.Status == 'Open' %}
@@ -378,10 +442,13 @@
                                         {{Approvers.Last_Date_Time_Modified}}
                                     </td>
                                     <script>
-                                        $("#ModifiedDate{{Approvers.Entry_No_}}")
-                                            .empty()
-                                            .append(new Date(
-                                                '{{Approvers.Last_Date_Time_Modified}}').toString());
+                                        $(document).ready(function () {
+                                            $("#ModifiedDate{{Approvers.Entry_No_}}")
+                                                .empty().append(moment(
+                                                        '{{Approvers.Last_Date_Time_Modified}}', "YYYY-MM-DD")
+                                                    .format(
+                                                        'Do MMM YYYY'));
+                                        })
                                     </script>
                                 </tr>
                                 {% endfor %}
@@ -566,6 +633,26 @@
         }
     }
     $(document).ready(function () {
+        $("#imprest_amount_card")
+            .empty()
+            .append(currency(
+                '{{res.Imprest_Amount}}', {
+                    separator: ','
+                }).format());
+        $("#dsa_amount_card")
+            .empty()
+            .append(currency(
+                '{{res.DSA_Allowance_Amount}}', {
+                    separator: ','
+                }).format());
+        $("#due_date_card")
+            .empty().append(moment(
+                    '{{res.Due_Date}}', "YYYY-MM-DD")
+                .format(
+                    'Do MMM YYYY'));
+        $("#date_inserted").attr("placeholder", moment(
+            '{{res.Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
         $('#imprestType').on('change', function () {
             if (this.value == "1") {
                 $('#imprestTypeRow').show(1000)
