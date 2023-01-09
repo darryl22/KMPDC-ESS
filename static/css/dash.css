@@ -20,7 +20,18 @@
   --third-font: "Hind", sans-serif;
   --lato-family: "Lato", sans-serif;
 }
-
+.green_icon {
+  background-color: var(--green-color);
+}
+.dark_icon {
+  background-color: var(--dark-color);
+}
+.red_icon {
+  background-color: var(--red-color);
+}
+.blue_icon {
+  background-color: var(--first-color);
+}
 .smalls a {
   font-size: 0.9rem;
   margin-left: 40px;

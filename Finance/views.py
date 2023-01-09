@@ -64,9 +64,9 @@ class ImprestRequisition(UserObjectMixins,View):
                 response = self.zeep_client(request).service.FnImprestHeader(
                     imprestNo, accountNo, responsibilityCenter, travelType, purpose,
                      usersId, personalNo, isImprest, isDsa, myAction)
-                if response == True:
+                if response !='0':
                     messages.success(request, "Request Successful")
-                    return redirect('imprestReq')
+                    return redirect('IMPDetails', pk=response)
                 messages.error(request, response)
                 return redirect('imprestReq')
             except KeyError:
@@ -337,9 +337,9 @@ class ImprestSurrender(UserObjectMixins,View):
 
                 response = self.zeep_client(request).service.FnImprestSurrenderHeader(
                     surrenderNo, imprestIssueDocNo, accountNo, purpose, usersId, staffNo, myAction)
-                if response == True:
+                if response != '0':
                     messages.success(request, "Request Successful")
-                    return redirect('imprestSurr')
+                    return redirect('IMPSurrender', pk=response)
                 messages.error(request, response)
                 return redirect('imprestSurr')
             except Exception as e:

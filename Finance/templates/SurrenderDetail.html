@@ -1,9 +1,13 @@
 {% extends 'offcanvas.html' %}
-{% load bootstrap5 %}
-{% load static %}
+{% block title %}
+IMPREST SURRENDER DETAILS
+{% endblock %}
+
+{% block head %}
+
+{% endblock %}
 {% block main %}
 <script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
-<script src="../../static/plugins/currency.js"></script>
 <section class="dash2">
     <div class="content-wrapper">
         <div class="d-xl-flex justify-content-between align-items-start">
@@ -160,12 +164,12 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label">Date Created</label>
-                                                <input type="text" class="form-control" placeholder="{{res.Date}}"
-                                                    readonly>
+                                                <input type="text" id="date_inserted" class="form-control"
+                                                    placeholder="{{res.Date}}" readonly>
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label">Surrender Date</label>
-                                                <input type="text" class="form-control"
+                                                <input type="text" id="surrender_date" class="form-control"
                                                     placeholder="{{res.Surrender_Date}}" readonly>
                                             </div>
                                             <div class="col-md-4">
@@ -185,8 +189,8 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <label class="form-label">Due Date</label>
-                                                <input type="text" class="form-control" placeholder="{{res.Due_Date}}"
-                                                    readonly>
+                                                <input type="text" class="form-control" id="due_date"
+                                                    placeholder="{{res.Due_Date}}" readonly>
                                             </div>
                                             <div class="col-md-12">
                                                 <label for="inputAddress" class="form-label">Purpose</label>
@@ -459,9 +463,10 @@
                                     </td>
                                     <script>
                                         $("#ModifiedDate{{Approvers.Entry_No_}}")
-                                            .empty()
-                                            .append(new Date(
-                                                '{{Approvers.Last_Date_Time_Modified}}').toString());
+                                            .empty().append(moment(
+                                                    '{{Approvers.Last_Date_Time_Modified}}', "YYYY-MM-DD")
+                                                .format(
+                                                    'Do MMM YYYY'));
                                     </script>
                                 </tr>
                                 {% endfor %}
@@ -509,6 +514,15 @@
             '{{res.Actual_Amount_Spent}}', {
                 separator: ','
             }).format());
+        $("#date_inserted").attr("placeholder", moment(
+            '{{res.Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
+        $("#surrender_date").attr("placeholder", moment(
+            '{{res.Surrender_Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
+        $("#due_date").attr("placeholder", moment(
+            '{{res.Due_Date}}', "YYYY-MM-DD").format(
+            'Do MMM YYYY')).val("").focus().blur();
 
     })
 </script>
