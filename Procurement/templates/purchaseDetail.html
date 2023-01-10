@@ -637,9 +637,8 @@ PURCHASE REQUISITION DETAIL
                                             </div>
                                         </div>
                                         {% empty %}
-                                        <p class="text-danger p-4">
-                                            You have not uploaded any attachments <i class="las la-file-download"></i>
-                                        </p>
+                                        <img src="../../static/icons/empty-box.png" class="img-fluid" height="100"
+                                            width="100" alt="">
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -714,7 +713,7 @@ PURCHASE REQUISITION DETAIL
                             style="width:100%">
                             <thead>
                                 <tr id="tops">
-                                    <th id="long">Entry No</th>
+                                    <th id="long">Entry No.</th>
                                     <th>Name</th>
                                     <th>Sequence</th>
                                     <th>Status</th>
@@ -735,9 +734,10 @@ PURCHASE REQUISITION DETAIL
                                     </td>
                                     <script>
                                         $("#ModifiedDate{{Approvers.Entry_No_}}")
-                                            .empty()
-                                            .append(new Date(
-                                                '{{Approvers.Last_Date_Time_Modified}}').toString());
+                                            .empty().append(moment(
+                                                    '{{Approvers.Last_Date_Time_Modified}}', "YYYY-MM-DD")
+                                                .format(
+                                                    'Do MMM YYYY'));
                                     </script>
                                 </tr>
                                 {% endfor %}

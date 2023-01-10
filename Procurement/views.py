@@ -610,14 +610,14 @@ class StoreRequest(UserObjectMixin,View):
             except KeyError:
                 messages.info(request, "Session Expired. Please Login")
                 return redirect('auth')
-            if not requisitionNo:
-                requisitionNo = " "
-
             try:
                 response = config.CLIENT.service.FnStoreRequisitionHeader(
                     requisitionNo, employeeNo, reason, myUserId, myAction)
-                messages.success(request, "Request Successful")
-                print(response)
+                if response !='0':
+                    messages.success(request, "Success")
+                    return redirect('StoreDetail', pk=response)
+                messages.error(request, "Failed")
+                return redirect('store')
             except Exception as e:
                 print(e)
                 messages.info(request, e)
@@ -905,7 +905,7 @@ class GeneralRequisition(UserObjectMixins,View):
             
                 response = config.CLIENT.service.FnGeneralRequisitionHeader(
                     requisitionNo, orderDate, reason, myUserId, myAction)
-                if response == True:
+                if response != "0":
                     messages.success(request, "Request Successful")
                     return redirect('GeneralRequisition')
                 messages.success(request, "False")
