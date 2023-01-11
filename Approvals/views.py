@@ -75,7 +75,7 @@ class Approve(UserObjectMixin,View):
             rejOther = [x for x in response['value'] if (x['Status'] == 'Rejected' and x['Document_Type']=='Payment Voucher') or (x['Status']=='Rejected' and x['Document_Type']=='Petty Cash') or (x['Status']=='Rejected' and x['Document_Type']=='Petty Cash Surrender') or (x['Status']=='Rejected' and x['Document_Type']=='Staff Payroll Approval') or (x['Status']=='Rejected' and x['Document_Type']=='Invoice') or (x['Status']=='Rejected' and x['Document_Type']=='Order') or (x['Status']=='Rejected' and x['Document_Type']=='Payroll Loan Application')]
  
             countIMP = len(openImp)
-            CountLeave = len(openLeave)
+
             countSurrender = len(openSurrender)
             countClaim = len(openClaim)
             countPurchase = len(openPurchase)
@@ -94,7 +94,7 @@ class Approve(UserObjectMixin,View):
 
         ctx = {"today": self.todays_date, "imprest": openImp,"year": year, "full": userID,
             "countIMP": countIMP, "approvedIMP":approvedImp,"rejectedImp":rejectedImp,
-            "openLeave":openLeave,"CountLeave":CountLeave,"approvedLeave":approvedLeave,
+            "openLeave":openLeave,"approvedLeave":approvedLeave,
             "rejectedLeave":rejectedLeave,"openSurrender":openSurrender,"countSurrender":countSurrender,"approveSurrender":approveSurrender,"rejectSurrender":rejectSurrender,
             "countClaim":countClaim,"openClaim":openClaim,"approveClaim":approveClaim,"rejectClaim":rejectClaim,
             "countPurchase":countPurchase,"openPurchase":openPurchase,"approvePurchase":approvePurchase,
