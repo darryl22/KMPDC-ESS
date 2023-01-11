@@ -94,7 +94,8 @@ class HODAppraisalRequests(UserObjectMixins,View):
             dpt_code = '0'
             outputTarget = '0'
             submittedAppraisals = '0'
-
+            allFiles = 'None'
+        
             financialYearResponse = self.one_filter("/QyFinancialYears","Code","eq",pk)
 
             for x in financialYearResponse[1]:

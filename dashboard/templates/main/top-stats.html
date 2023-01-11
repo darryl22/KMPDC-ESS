@@ -18,15 +18,15 @@
     <div class="col-lg-2 col-sm-6">
         <div class="card-box bg-orange h-100">
             <div class="inner">
-                <h3> {{imprest_open}} </h3>
+                <h3> {{imprest_app}} </h3>
                 <p> Approved Imprest Requests </p>
             </div>
             <div class="icon">
                 <i class="las la-thumbs-up"></i>
             </div>
-            {% if imprest_open == 0 %}
+            {% if imprest_app == 0 %}
             <a href="{% url 'imprestReq' %}" class="card-box-footer">New Request <i class="las la-plus"></i></a>
-            {% elif imprest_open > 0  %}
+            {% elif imprest_app > 0  %}
             <a href="{% url 'imprestReq' %}" class="card-box-footer">View All <i
                     class="las la-arrow-circle-right"></i></a>
             {% endif %}

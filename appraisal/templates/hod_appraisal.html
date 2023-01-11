@@ -30,6 +30,7 @@
                 <div class="card card-body data-card">
                     <h1 class="heading display-5 pb-3"><img src="../../../static/img/logo/fav.png" width="70px"
                             class="img-fluid"> Appraisals Targets
+                        {% if file != 'None' %}
                         <form action="{% url 'getDocs' file.No_ file.Table_ID %}" method="post" style="float: right;">
                             {% csrf_token %}
                             <input type="hidden" name="attachmentID" value="{{file.AuxiliaryIndex2}}">
@@ -40,6 +41,7 @@
                                     class="btn-wrap">{{file.File_Name}}.{{file.File_Extension}}</button>
                             </div>
                         </form>
+                        {% endif %}
                     </h1>
                     <div class="row my-2">
                         <div class="btn-group btn-group-justified pb-2">

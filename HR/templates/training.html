@@ -9,6 +9,23 @@ TRAINING REQUEST
 <script src="../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
     <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
+        <div class="row">
+            <div class="col-md-12">
+                <ol class="breadcrumb shadow-lg d-flex justify-content-start inner-breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'dashboard' %}" class="breadcrumbs text-danger">
+                            <i class="fa fa-home"></i>
+                            Home
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <span class="breadcrumbs text-muted">
+                            Training Request
+                        </span>
+                    </li>
+                </ol>
+            </div>
+        </div>
         <!--alert -->
         {% include 'alerts.html' %}
         <div class="row my-2">
@@ -24,17 +41,17 @@ TRAINING REQUEST
                         </span>
                     </h1>
                     <div class="m-4">
-                        <ul class="nav nav-tabs d-flex" id="myTab">
+                        <ul class="nav nav-tabs table-tabs d-flex" id="myTab">
                             <li class="nav-item flex-fill">
                                 <a href="#home" class="nav-link" data-bs-toggle="tab">Open
-                                    <span class="ml-1  badge rounded-pill dark_icon">
+                                    <span class="ml-1  badge rounded-pill green_icon">
                                         {{res|length}}
                                     </span>
                                 </a>
                             </li>
                             <li class="nav-item flex-fill">
                                 <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
-                                    <span class="ml-1  badge rounded-pill blue_icon">
+                                    <span class="ml-1  badge rounded-pill green_icon">
                                         {{pending|length}}
                                     </span>
                                 </a>

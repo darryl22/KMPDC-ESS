@@ -5,7 +5,26 @@
 <script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
     <div class="content-wrapper">
-        <div class="d-xl-flex justify-content-between align-items-start">
+        <div class="row">
+            <div class="col-md-12">
+                <ol class="breadcrumb shadow-lg  d-flex justify-content-start inner-breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'dashboard' %}" class="breadcrumbs text-danger">
+                            <i class="fa fa-home"></i>
+                            Home</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a href="{% url 'leave' %}" class="breadcrumbs text-dark">
+                            Leave Requests
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item "><span class="breadcrumbs text-muted">
+                            {{res.Application_No}}
+                        </span></li>
+                </ol>
+            </div>
+        </div>
+        <div class="d-xl-flex justify-content-end align-items-start">
             <h2 class="text-dark font-weight-bold mb-2"> Leave Requests </h2>
 
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
@@ -153,25 +172,11 @@
                                     <div class="col-md-12">
                                         <form class="row g-3">
                                             <div class="col-md-4">
-                                                <label class="form-label">Leave Number</label>
-                                                <input type="text" class="form-control"
-                                                    placeholder="{{res.Application_No}}" readonly>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label class="form-label">Employee</label>
-                                                <input type="text" class="form-control" placeholder="{{res.User_ID}}"
-                                                    readonly>
-                                            </div>
-                                            <div class="col-md-4">
                                                 <label class="form-label">Leave Period</label>
                                                 <input type="text" class="form-control"
                                                     placeholder="{{res.Leave_Period}}" readonly>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label class="form-label">Application Date</label>
-                                                <input type="text" class="form-control" id="application_date"
-                                                    placeholder="{{res.Application_Date}}" readonly>
-                                            </div>
+
                                             <div class="col-md-4">
                                                 <label class="form-label">Leave Start Date</label>
                                                 <input type="text" class="form-control" id="start_date"
@@ -182,7 +187,11 @@
                                                 <input type="text" class="form-control" id="resumption_date"
                                                     placeholder="{{res.Resumption_Date}}" readonly>
                                             </div>
-
+                                            <div class="col-md-4">
+                                                <label class="form-label">Application Date</label>
+                                                <input type="text" class="form-control" id="application_date"
+                                                    placeholder="{{res.Application_Date}}" readonly>
+                                            </div>
                                             <div class="col-md-4">
                                                 <label class="form-label">Planner Start Date</label>
                                                 <input type="text" class="form-control" id="planner_start_date"
@@ -198,12 +207,12 @@
                                                 <input type="text" class="form-control"
                                                     placeholder="{{res.Leave_Allowance_Payable}}" readonly>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <label class="form-label">End Date</label>
                                                 <input type="text" class="form-control" id="end_date"
                                                     placeholder="{{res.End_Date}}" readonly>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <label class="form-label">Employment Type</label>
                                                 <input type="text" class="form-control"
                                                     placeholder="{{res.Employment_Type}}" readonly>
