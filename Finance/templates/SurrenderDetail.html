@@ -10,18 +10,34 @@ IMPREST SURRENDER DETAILS
 <script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
     <div class="content-wrapper">
-        <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Imprest Surrender
-            </h2>
+        <div class="row">
+            <div class="col-md-12">
+                <ol class="breadcrumb shadow-lg  d-flex justify-content-start inner-breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'dashboard' %}" class="breadcrumbs text-danger">
+                            <i class="fa fa-home"></i>
+                            Home</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a href="{% url 'imprestSurr' %}" class="breadcrumbs text-dark">
+                            Imprest
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item "><span class="breadcrumbs text-muted">
+                            {{res.No_}}
+                        </span></li>
+                </ol>
+            </div>
+        </div>
+        <div class="d-xl-flex justify-content-end align-items-start">
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
-                <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     {% if res.Status == "Open" %}
-                    <button class="btn btn-successs p-3 d-flex align-items-center" data-bs-toggle="modal"
-                        data-bs-target="#Attachment" type="button"> <i class="las la-plus text-white"
-                            style="font-size:15px;"></i> Upload Attachment
-                    </button>
+                    <button class="btn btn-successs me-md-2" type="button" data-bs-toggle="modal"
+                        data-bs-target="#Attachment">
+                        <i class="fas fa-upload mr-1" style="display:inline-block"></i> Upload Attachment</button>
                     {% elif res.Status == "Released" %}
-                    <form action="{% url 'FnGenerateImprestSurrenderReport' res.No_%}" method="post"
+                    <form action="{% url 'FnGenerateImprestSurrenderReport' res.No_ %}" method="post"
                         style="display:inline-block">
                         {% csrf_token %}
                         <button class="btn btn-successs" type="submit"> Preview

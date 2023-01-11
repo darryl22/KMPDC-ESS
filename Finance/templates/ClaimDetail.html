@@ -6,10 +6,26 @@ STAFF CLAIM DETAIL
 <script src="../../../static/css/boot/js/vendor.bundle.base.js"></script>
 <section class="dash2">
     <div class="content-wrapper" style="padding-bottom: 5rem;">
-        <div class="d-xl-flex justify-content-between align-items-start">
-            <h2 class="text-dark font-weight-bold mb-2"> Staff Claim
-            </h2>
-
+        <div class="row">
+            <div class="col-md-12">
+                <ol class="breadcrumb shadow-lg  d-flex justify-content-start inner-breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'dashboard' %}" class="breadcrumbs text-danger">
+                            <i class="fa fa-home"></i>
+                            Home</a>
+                    </li>
+                    <li class="breadcrumb-item ">
+                        <a href="{% url 'claim' %}" class="breadcrumbs text-dark">
+                            Staff Claim
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item "><span class="breadcrumbs text-muted">
+                            {{res.No_}}
+                        </span></li>
+                </ol>
+            </div>
+        </div>
+        <div class="d-xl-flex justify-content-end align-items-start">
             <div class="d-sm-flex justify-content-xl-between align-items-center mb-2">
                 <div class="dropdown ml-0 ml-md-4 mt-2 mt-lg-0">
                     {% if res.Status == "Open" %}
@@ -137,14 +153,13 @@ STAFF CLAIM DETAIL
                     <div class="card mb-3">
                         <div class="card-header" id="headingOne">
                             <h5 class="mb-0">
-                                <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                                    aria-expanded="true" aria-controls="collapseOne">
+                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                                     Details
                                 </button>
                             </h5>
                         </div>
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                            data-bs-parent="#accordion">
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#accordion">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -193,70 +208,68 @@ STAFF CLAIM DETAIL
                     <div class="card mb-3">
                         <div class="card-header" id="headingTwo">
                             <h5 class="mb-0">
-                                <button class="btn btn-link collapsed" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseTwo" aria-expanded="false"
-                                    aria-controls="collapseTwo">Staff Claim Lines</button>
+                                <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                    aria-expanded="true" aria-controls="collapseTwo">Staff Claim Lines</button>
                             </h5>
                         </div>
-                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-bs-parent="#accordion">
-                            <div class="row m-2">
-                                <div class="col-md-12 bg-white">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Claim Type</th>
-                                                <th>Payment Type</th>
-                                                <th>Description</th>
-                                                <th>Amount</th>
-                                                <th>Expenditure Date</th>
-                                                {% if res.Status == "Open" %}
-                                                <th>Action</th>
-                                                {% endif %}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for line in line %}
-                                            <tr>
-                                                <td>{{line.Claim_Type}}</td>
-                                                <td>{{line.Payment_Type}}</td>
-                                                <td>{{line.Description}}</td>
-                                                <td id="amount_lcy{{line.Line_No}}">{{line.Amount__LCY_}}</td>
-                                                <td id="expenditure_date{{line.Line_No}}">{{line.Expenditure_Date}}</td>
-                                                <script>
-                                                    $(document).ready(function () {
-                                                        $("#amount_lcy{{line.Line_No}}")
-                                                            .empty()
-                                                            .append(currency(
-                                                                '{{line.Amount__LCY_}}', {
-                                                                    separator: ','
-                                                                }).format());
-                                                        $("#expenditure_date{{line.Line_No}}")
-                                                            .empty().append(moment(
-                                                                    '{{line.Expenditure_Date}}', "YYYY-MM-DD")
-                                                                .format(
-                                                                    'Do MMM YYYY'));
-                                                    })
-                                                </script>
-                                                {% if res.Status == "Open" %}
-                                                <td>
-                                                    <form action="{% url 'FnDeleteStaffClaimLine' line.No %}"
-                                                        method="post" style="display: inline-block;">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="lineNo" value="{{line.Line_No}}">
-                                                        <button type="submit" class="btn btn-danger"
-                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
-                                                                class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
-                                                </td>
-                                                {% endif %}
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
+                            data-bs-parent="#accordion">
+                            <div class="card-body">
+                                <table id="example"
+                                    class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr id="tops">
+                                            <th id="long">Claim Type</th>
+                                            <th>Payment Type</th>
+                                            <th>Description</th>
+                                            <th>Amount</th>
+                                            <th>Expenditure Date</th>
+                                            {% if res.Status == "Open" %}
+                                            <th>Action</th>
+                                            {% endif %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for line in line %}
+                                        <tr>
+                                            <td>{{line.Claim_Type}}</td>
+                                            <td>{{line.Payment_Type}}</td>
+                                            <td>{{line.Description}}</td>
+                                            <td id="amount_lcy{{line.Line_No}}">{{line.Amount__LCY_}}</td>
+                                            <td id="expenditure_date{{line.Line_No}}">{{line.Expenditure_Date}}</td>
+                                            <script>
+                                                $(document).ready(function () {
+                                                    $("#amount_lcy{{line.Line_No}}")
+                                                        .empty()
+                                                        .append(currency(
+                                                            '{{line.Amount__LCY_}}', {
+                                                                separator: ','
+                                                            }).format());
+                                                    $("#expenditure_date{{line.Line_No}}")
+                                                        .empty().append(moment(
+                                                                '{{line.Expenditure_Date}}', "YYYY-MM-DD")
+                                                            .format(
+                                                                'Do MMM YYYY'));
+                                                })
+                                            </script>
+                                            {% if res.Status == "Open" %}
+                                            <td>
+                                                <form action="{% url 'FnDeleteStaffClaimLine' line.No %}" method="post"
+                                                    style="display: inline-block;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="lineNo" value="{{line.Line_No}}">
+                                                    <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                        data-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            {% endif %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
