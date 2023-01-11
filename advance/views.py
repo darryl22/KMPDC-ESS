@@ -63,9 +63,9 @@ class advance(UserObjectMixins,View):
                 response = self.zeep_client(request).service.FnSalaryAdvanceApplication(
                     loanNo, employeeNo,productType,amountRequested,myUserId,installments, myAction)
 
-                if response == True:
-                    messages.success(request, "Request Successful")
-                    return redirect('advance')
+                if response != "0":
+                    messages.success(request, "Success")
+                    return redirect('advanceDetail', pk=response) 
                 messages.error(request, response)
                 return redirect('advance')
             except Exception as e:

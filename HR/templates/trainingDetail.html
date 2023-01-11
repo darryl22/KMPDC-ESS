@@ -331,47 +331,45 @@
                         </div>
                         <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
                             data-bs-parent="#accordion">
-                            <div class="row m-2">
-                                <div class="col-md-12">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Training Name</th>
-                                                <th>Training Area</th>
-                                                <th>Training Objectives</th>
-                                                <th>Location</th>
-                                                <th>Venue</th>
-                                                <th>Provider</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for res in line %}
-                                            <tr>
-                                                <td>{{res.Training_Name}}</td>
-                                                <td>{{res.Training_area}}</td>
-                                                <td>{{res.Training_Objectives}}</td>
-                                                <td>{{res.Location}}</td>
-                                                <td>{{res.Venue}}</td>
-                                                <td>{{res.Provider}}</td>
-                                                <td>
-                                                    <form action="{% url 'FnAdhocLineDelete' res.Source_Document_No %}"
-                                                        method="post" style="display: inline-block;">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="needNo" value="{{res.No}}">
-                                                        <button type="submit" class="btn btn-danger"
-                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
-                                                                class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div class="card-body">
+                                <table id="example"
+                                    class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr id="tops">
+                                            <th id="long">Training Name</th>
+                                            <th>Training Area</th>
+                                            <th>Training Objectives</th>
+                                            <th>Location</th>
+                                            <th>Venue</th>
+                                            <th>Provider</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for res in line %}
+                                        <tr>
+                                            <td>{{res.Training_Name}}</td>
+                                            <td>{{res.Training_area}}</td>
+                                            <td>{{res.Training_Objectives}}</td>
+                                            <td>{{res.Location}}</td>
+                                            <td>{{res.Venue}}</td>
+                                            <td>{{res.Provider}}</td>
+                                            <td>
+                                                <form action="{% url 'FnAdhocLineDelete' res.Source_Document_No %}"
+                                                    method="post" style="display: inline-block;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="needNo" value="{{res.No}}">
+                                                    <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                        data-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
