@@ -57,8 +57,6 @@ INSTALLED_APPS = [
     'myRequest',
     'django_htmx',
     'base',
-    'fontawesome_6'
-
 ]
 
 ASGI_APPLICATION = "KMPDC.asgi.application"
@@ -153,14 +151,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHS = Session()
 
-WEB_SERVICE_PWD = 'W3C0d3@llD@y'
+WEB_SERVICE_UID = config('WEB_SERVICE_UID')
+WEB_SERVICE_PWD = config('WEB_SERVICE_PWD')
 
 
 O_DATA = "http://20.121.189.145:7048/KMPDC/ODataV4/Company('KMPDC'){}"
 BASE_URL = 'http://20.121.189.145:7047/KMPDC/WS/KMPDC/Codeunit/WebPortal'
-AUTHS.auth = HTTPBasicAuth('EMAEBA', WEB_SERVICE_PWD)
+AUTHS.auth = HTTPBasicAuth(WEB_SERVICE_UID, WEB_SERVICE_PWD)
 
 CLIENT = Client(BASE_URL, transport=Transport(session=AUTHS))
-AUTHS = HTTPBasicAuth('EMAEBA', WEB_SERVICE_PWD)
+AUTHS = HTTPBasicAuth(WEB_SERVICE_UID, WEB_SERVICE_PWD)
 
 

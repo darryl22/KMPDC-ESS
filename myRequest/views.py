@@ -8,6 +8,7 @@ from zeep.transports import Transport
 from asgiref.sync import sync_to_async
 from requests import Session
 from django.http import HttpResponseRedirect
+import aiohttp
 
 # Create your views here.
 class UserObjectMixins(object):
@@ -15,7 +16,43 @@ class UserObjectMixins(object):
     session = requests.Session()
     session.auth = config.AUTHS
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
+    O_DATA_AUTH = aiohttp.BasicAuth(config.WEB_SERVICE_UID, config.WEB_SERVICE_PWD)  
     
+    async def fetch_data(self,session,username,password,endpoint,property,filter):
+        auth =aiohttp.BasicAuth(login=username,password=password)
+        async with session.get(config.O_DATA.format(f"{endpoint}?$filter={property}%20{filter}%20%27{username}%27"),auth=auth) as res:
+            data =  await res.json()
+            response = {
+                "status_code":res.status,
+                "data": data['value']
+                
+            }
+            return response
+    async def simple_fetch_data(self,session,endpoint):
+        async with session.get(config.O_DATA.format(endpoint),auth=self.O_DATA_AUTH) as res:
+            data = await res.json()
+            response = data['value']
+            return response 
+    async def fetch_one_filtered_data(self,session,endpoint,property,filter,field_name):
+        async with session.get(config.O_DATA.format(f"{endpoint}?$filter={property}%20{filter}%20%27{field_name}%27"),auth=self.O_DATA_AUTH) as res:
+            data = await res.json()
+            response = {
+                "status_code":res.status,
+                "data": data['value']
+                
+            }
+            return response   
+    async def simple_one_filtered_data(self,session,endpoint,property,filter,field_name):
+        async with session.get(config.O_DATA.format(f"{endpoint}?$filter={property}%20{filter}%20%27{field_name}%27"),auth=self.O_DATA_AUTH) as res:
+            data = await res.json()
+            response = data['value']
+            return response 
+    async def simple_double_filtered_data(self,session,endpoint,property_x,filter_x,filed_name_x,operater_1,property_y,filter_y,field_name_y):
+        async with session.get(config.O_DATA.format(f"{endpoint}?$filter={property_x}%20{filter_x}%20%27{filed_name_x}%27%20{operater_1}%20{property_y}%20{filter_y}%20%27{field_name_y}%27"),auth=self.O_DATA_AUTH) as res:
+            data = await res.json()
+            response = data['value']
+            return response
+        
     def get_object(self,endpoint):
         response = self.session.get(endpoint).json()
         return response
