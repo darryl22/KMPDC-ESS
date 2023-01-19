@@ -20,7 +20,6 @@ class ImprestRequisition(UserObjectMixins,View):
     def get(self,request):
         try:
             userID =  request.session['User_ID']
-            year = request.session['years']
 
             response = self.one_filter("/Imprests","User_Id","eq",userID)
             openImprest = [x for x in response[1] if x['Status'] == 'Open']
@@ -38,7 +37,7 @@ class ImprestRequisition(UserObjectMixins,View):
 
         ctx = {
             "today": self.todays_date, "res": openImprest,
-            "response": Approved,"pending": Pending, "year": year,
+            "response": Approved,"pending": Pending,
             "full": userID
             }
         return render(request, 'imprestReq.html', ctx)
@@ -82,7 +81,6 @@ class ImprestDetails(UserObjectMixins, View):
     def get(self, request,pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
 
             response = self.double_filtered_data("/Imprests","No_","eq",pk,
                         "and","User_Id","eq",userID)
@@ -119,7 +117,7 @@ class ImprestDetails(UserObjectMixins, View):
             return redirect('imprestReq')
                         
         ctx = {"today": self.todays_date, "res": res,"line": openLines,"Approvers": Approvers,
-               "type": res_type,"area": Area, "biz": BizGroup,"Local": Local, "year": year,
+               "type": res_type,"area": Area, "biz": BizGroup,"Local": Local,
                "full": userID, "Foreign": ForegnDest, "dest": destination,"file":allFiles,"Comments":Comments}
         return render(request, 'imprestDetail.html', ctx)
     def post(self, request,pk):
@@ -293,7 +291,6 @@ class ImprestSurrender(UserObjectMixins,View):
     def get(self,request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
 
             response = self.one_filter("/QyImprestSurrenders","User_Id","eq",userID)
             openSurrender = [x for x in response[1] if x['Status'] == 'Open']
@@ -316,7 +313,7 @@ class ImprestSurrender(UserObjectMixins,View):
         ctx = {
             "today": self.todays_date, "res": openSurrender,
             "full": userID,"response": Approved,
-            "app": APPImp, "year": year,"pending": Pending
+            "app": APPImp,"pending": Pending
             }
         
         return render(request, 'imprestSurr.html', ctx)
@@ -354,7 +351,6 @@ class SurrenderDetails(UserObjectMixins, View):
     def get(self, request,pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
 
             response = self.double_filtered_data("/QyImprestSurrenders","No_","eq",pk,
                                         "and","User_Id","eq",userID)
@@ -385,7 +381,7 @@ class SurrenderDetails(UserObjectMixins, View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": res,"line": openLines,
-            "Approvers": Approvers, "type": res_type, "year": year, "full": userID,"file":allFiles,"Comments":Comments}
+            "Approvers": Approvers, "type": res_type, "full": userID,"file":allFiles,"Comments":Comments}
         
         return render(request, 'SurrenderDetail.html', ctx)
     def post(self, request,pk):
@@ -516,7 +512,6 @@ class StaffClaim(UserObjectMixins,View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
 
             response = self.one_filter("/QyStaffClaims","User_Id","eq",userID)
             openClaim = [x for x in response[1] if x['Status'] == 'Open']
@@ -538,7 +533,7 @@ class StaffClaim(UserObjectMixins,View):
         ctx = {
             "today": self.todays_date, "res": openClaim,
             "response": Approved,"my_claim": My_Claim,
-            "year": year, "pending": Pending,
+            "pending": Pending,
             "full": userID
             }
         return render(request, 'staffClaim.html', ctx)
@@ -574,7 +569,6 @@ class ClaimDetails(UserObjectMixins, View):
     def get(self, request,pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
 
             response = self.double_filtered_data("/QyStaffClaims","No_","eq",pk,
                             "and","User_Id","eq",userID)
@@ -605,7 +599,7 @@ class ClaimDetails(UserObjectMixins, View):
 
         ctx = {"today": self.todays_date, "res": res,
               "res_type": res_type,"Approvers": Approvers, "line": openLines,
-            "year": year, "full": userID,"file":allFiles,"Comments":Comments}
+            "full": userID,"file":allFiles,"Comments":Comments}
         
         return render(request, "ClaimDetail.html", ctx)
     def post(self, request,pk):

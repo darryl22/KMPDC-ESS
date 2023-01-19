@@ -18,7 +18,6 @@ class Leave_Planner(UserObjectMixins,View):
     def get(self,request):
         try:
             userId = request.session['User_ID']
-            year = request.session['years']
             empNo =request.session['Employee_No_']
 
             response = self.one_filter("/QyLeavePlannerHeaders","Employee_No_","eq",empNo)
@@ -43,7 +42,7 @@ class Leave_Planner(UserObjectMixins,View):
         ctx = {
             "today": self.todays_date,
             "res": Plans,
-            "year": year, "full": userId
+            "full": userId
             }
         return render(request, 'planner.html', ctx)
 
@@ -83,7 +82,6 @@ class Leave_Planner(UserObjectMixins,View):
 class PlanDetail(UserObjectMixins,View):
     def get(self,request,pk):
         fullname = request.session['User_ID']
-        year = request.session['years']
         empNo =request.session['Employee_No_']
         
         try:
@@ -115,7 +113,7 @@ class PlanDetail(UserObjectMixins,View):
             return redirect('auth')
         ctx = {
             "today": self.todays_date, 
-            "year": year, "full": fullname,
+            "full": fullname,
             "line": openLines,"res":res
             }
         return render(request, 'planDetails.html', ctx)
@@ -169,10 +167,9 @@ class myLeave(UserObjectMixins,View):
     """
     def get(self, request):
         fullname = request.session['User_ID']
-        year = request.session['years']
         ctx = {
             "today": self.todays_date, 
-            "year": year, "full": fullname,
+             "full": fullname,
             }
         return render(request,"myLeave.html",ctx)
 
@@ -180,7 +177,6 @@ class Leave_Request(UserObjectMixins,View):
     def get(self,request):
         try:
             UserId = request.session['User_ID']
-            year = request.session['years']
             empNo =request.session['Employee_No_']
 
             response = self.one_filter("/QyLeaveApplications","User_ID","eq",UserId)
@@ -204,7 +200,7 @@ class Leave_Request(UserObjectMixins,View):
         ctx = {
             "today": self.todays_date, "res": openLeave,
             "response": approvedLeave,'leave': Leave,
-            "plan": Plan,"pending": pendingLeave, "year": year,
+            "plan": Plan,"pending": pendingLeave,
             "full": UserId
             }
         return render(request, 'leave.html', ctx)
@@ -244,7 +240,6 @@ class LeaveDetail(UserObjectMixins,View):
     def get(self,request,pk):
         try:
             userId = request.session['User_ID']
-            year = request.session['years']
 
             response = self.double_filtered_data("/QyLeaveApplications","Application_No","eq",pk,
                                         "and","User_ID","eq",userId)
@@ -269,7 +264,7 @@ class LeaveDetail(UserObjectMixins,View):
 
         ctx = {
             "today": self.todays_date, "res": res,
-            "Approvers": Approvers, "year": year,
+            "Approvers": Approvers,
             "full": userId,"file":allFiles,"Comments":Comments
             }
         return render(request, 'leaveDetail.html', ctx)
@@ -360,7 +355,6 @@ class Training_Request(UserObjectMixins,View):
     def get(self, request):
         try:
             userId = request.session['User_ID']
-            year = request.session['years']
             empNo = request.session['Employee_No_']
 
             response = self.one_filter("/QyTrainingRequests","Employee_No","eq",empNo)
@@ -385,7 +379,7 @@ class Training_Request(UserObjectMixins,View):
             "today": self.todays_date, "res": openTraining,
             "response": approvedTraining,
             "train": trains,"pending": pendingTraining,
-            "year": year, "full": userId
+            "full": userId
             }
         return render(request, 'training.html', ctx)
     def post(self,request):
@@ -419,7 +413,6 @@ class TrainingDetail(UserObjectMixins, View):
     def get(self,request,pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
             empNo = request.session['Employee_No_'] 
 
             response = self.double_filtered_data("/QyTrainingRequests","Request_No_","eq",pk,
@@ -461,7 +454,7 @@ class TrainingDetail(UserObjectMixins, View):
 
         ctx = {
             "today": self.todays_date, "res": res,
-            "Approvers": Approvers,"year": year, "full": userID,"file":allFiles,
+            "Approvers": Approvers, "full": userID,"file":allFiles,
             "line": openLines,"local":Local,"foreign":Foreign,"Comments":Comments
             }
         return render(request, 'trainingDetail.html', ctx)
@@ -599,7 +592,6 @@ class PNineRequest(UserObjectMixins,View):
     def get(self,request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
             
             Access_Point = config.O_DATA.format("/QyPayrollPeriods")
             response = self.get_object(Access_Point)
@@ -613,7 +605,7 @@ class PNineRequest(UserObjectMixins,View):
             messages.error(request, e)
             print(e)
             return redirect('pNine')
-        ctx = {"today": self.todays_date, "year": year, "full": userID,"res":res}
+        ctx = {"today": self.todays_date,"full": userID,"res":res}
         return render(request, "p9.html", ctx)
     def post(self,request):
          if request.method == 'POST':
@@ -622,7 +614,6 @@ class PNineRequest(UserObjectMixins,View):
                             for i in range(5))
                     employeeNo = request.session['Employee_No_']
                     startDate = request.POST.get('startDate')[0:4]
-                    year = request.session['years']
 
                     filenameFromApp = "P9_For_" + str(nameChars) + str(year) + ".pdf"
                     year = int(startDate)
@@ -652,7 +643,6 @@ class PayslipRequest(UserObjectMixins,View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
             
             Access_Point = config.O_DATA.format("/QyPayrollPeriods?$filter=Closed%20eq%20true")
             response = self.get_object(Access_Point)
@@ -666,7 +656,7 @@ class PayslipRequest(UserObjectMixins,View):
             print(e)
             return redirect('payslip')
                     
-        ctx = {"today": self.todays_date, "year": year, "full": userID,"res":Payslip}
+        ctx = {"today": self.todays_date,"full": userID,"res":Payslip}
         
         return render(request, "payslip.html", ctx)
 
@@ -755,7 +745,6 @@ class FnGenerateTrainingReport(UserObjectMixins, View):
 
 def Disciplinary(request):
     fullname = request.session['User_ID']
-    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
 
@@ -774,13 +763,12 @@ def Disciplinary(request):
 
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     ctx = {"today": todays_date, "res": openCase,
-           "year": year, "full": fullname,
+           "full": fullname,
            "count": counts}
     return render(request,'disciplinary.html',ctx)
 
 def DisciplineDetail(request,pk):
     fullname = request.session['User_ID']
-    year = request.session['years']
     session = requests.Session()
     session.auth = config.AUTHS
     res = ''
@@ -808,7 +796,7 @@ def DisciplineDetail(request,pk):
     except requests.exceptions.ConnectionError as e:
         print(e)
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
-    ctx = {"today": todays_date, "res": res, "full": fullname, "year": year,"line": openLines}
+    ctx = {"today": todays_date, "res": res, "full": fullname,"line": openLines}
     return render (request, 'disciplineDetail.html',ctx)
 
 def DisciplinaryResponse(request, pk):

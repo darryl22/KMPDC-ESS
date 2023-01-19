@@ -136,7 +136,7 @@
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="collapse" href="#hr" aria-expanded="false"
                             aria-controls="ui-basic">
-                            <span class="icon-bg"><i class="las la-briefcase"></i></span>
+                            <span class="icon-bg"><i class="las la-users"></i></span>
                             <span class="menu-title">Human Resource</span>
                             <i class="las la-angle-down" id="drops"></i>
                         </a>
@@ -168,7 +168,7 @@
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="collapse" href="#fn" aria-expanded="false"
                             aria-controls="ui-basic">
-                            <span class="icon-bg"><i class="las la-briefcase"></i></span>
+                            <span class="icon-bg"><i class="las la-coins"></i></span>
                             <span class="menu-title">Finance</span>
                             <i class="las la-angle-down" id="drops"></i>
                         </a>
@@ -183,17 +183,13 @@
                                     <a class="nav-link" href="{% url 'claim' %}"><i
                                             class="las la-arrow-right mr-2"></i>Staff Claim</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'advance' %}"><i
-                                            class="las la-arrow-right mr-2"></i>Salary Advance</a>
-                                </li>
                             </ul>
                         </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="collapse" href="#pr" aria-expanded="false"
                             aria-controls="ui-basic">
-                            <span class="icon-bg"><i class="las la-briefcase"></i></span>
+                            <span class="icon-bg"><i class="las la-dolly"></i></span>
                             <span class="menu-title">Procurement</span>
                             <i class="las la-angle-down" id="drops"></i>
                         </a>
@@ -213,7 +209,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'approve' %}">
-                            <span class="icon-bg"><i class="las la-briefcase"></i></span>
+                            <span class="icon-bg"><i class="las la-stamp"></i></span>
                             <span class="menu-title">Approvals </span>
                         </a>
                     </li>
@@ -223,14 +219,12 @@
                             <span class="menu-title">Appraisals </span>
                         </a>
                     </li>
-                    <!-- <li class="nav-item" style="margin-top:.1rem;">
-                    <a class="nav-link" href="../../static/img/2.jpg" download>
-                        <span class="icon-bg"><i class="las la-file-pdf"></i></span>
-
-                        <span class="menu-title text-danger">User Manual</span> <i
-                            class="las la-download text-danger"></i>
-                    </a>
-                </li> -->
+                    <li class="nav-item" style="margin-top:.1rem;">
+                        <a class="nav-link" href="{% url 'advance' %}"></i></span>
+                            <span class="icon-bg"><i class="las la-coins"></i></span>
+                            <span class="menu-title">Salary Advance</span>
+                        </a>
+                    </li>
                     <li class="nav-item sidebar-user-actions" style="margin-top:.1rem;">
                         <div class="sidebar-user-menu">
                             <a href="{% url 'logout' %}" class="nav-link"><i class="las la-sign-out-alt"></i>

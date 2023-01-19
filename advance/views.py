@@ -14,7 +14,6 @@ class advance(UserObjectMixins,View):
         starting_time = time.time()
         try:
             fullname =  request.session['User_ID']
-            year = request.session['years']
             empNo =request.session['Employee_No_']
 
             response = self.one_filter("/QySalaryAdvances","Employee_No","eq",empNo)
@@ -41,7 +40,7 @@ class advance(UserObjectMixins,View):
         ctx = {
             "today": self.todays_date, "res": openAdvance,
             "response": Approved,"time": total_time,
-            "pending": Pending, "year": year,
+            "pending": Pending,
             "full": fullname,"salary":salary
             }
         return render(request,"advance.html",ctx)
@@ -77,7 +76,6 @@ class advanceDetail(UserObjectMixins,View):
     def get(self, request,pk):
         try:
             fullname = request.session['User_ID']
-            year = request.session['years']
             empNo =request.session['Employee_No_']
 
             response = self.double_filtered_data("/QySalaryAdvances","Loan_No", "eq",pk,
@@ -109,7 +107,7 @@ class advanceDetail(UserObjectMixins,View):
         ctx = {
             "today": self.todays_date, "res": res,
             "Approvers": Approvers, "state": state,"file":allFiles,
-            "year": year, "full": fullname,"Comments":Comments
+            "full": fullname,"Comments":Comments
             }
 
         return render(request,"advanceDetails.html",ctx)

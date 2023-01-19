@@ -29,8 +29,6 @@ class Approve(UserObjectMixin,View):
     def get(self,request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
- 
 
             Access_Point = config.O_DATA.format(f"/QyApprovalEntries?$filter=Approver_ID%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
@@ -92,7 +90,7 @@ class Approve(UserObjectMixin,View):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth') 
 
-        ctx = {"today": self.todays_date, "imprest": openImp,"year": year, "full": userID,
+        ctx = {"today": self.todays_date, "imprest": openImp,"full": userID,
             "countIMP": countIMP, "approvedIMP":approvedImp,"rejectedImp":rejectedImp,
             "openLeave":openLeave,"approvedLeave":approvedLeave,
             "rejectedLeave":rejectedLeave,"openSurrender":openSurrender,"countSurrender":countSurrender,"approveSurrender":approveSurrender,"rejectSurrender":rejectSurrender,
@@ -109,7 +107,6 @@ class ApproveDetails(UserObjectMixins, View):
     def get(self, request,pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
   
             response = self.double_filtered_data("/QyApprovalEntries","Document_No_","eq",pk,"and",
                                             "Approver_ID","eq",userID)
@@ -221,7 +218,7 @@ class ApproveDetails(UserObjectMixins, View):
             messages.info(request,e)
             return redirect('auth')
         ctx = {
-            "today": self.todays_date,"full": userID, "year": year,
+            "today": self.todays_date,"full": userID, 
              "res": res,"file":allFiles,"data":data,"state":state,
              "SurrenderLines":SurrenderLines,"ClaimLines":ClaimLines,
              "PurchaseLines":PurchaseLines,"ImpLine":ImprestLine,
@@ -230,11 +227,6 @@ class ApproveDetails(UserObjectMixins, View):
              "PettyLines":PettyLines,"PettySurrenderLines":PettySurrenderLines
         }
 
-        # ctx = {"today": self.todays_date, "full": userID, "year": year,
-        # 
-        # 
-        # 
-        # }
         return render(request, 'approveDetails.html', ctx)
 
 

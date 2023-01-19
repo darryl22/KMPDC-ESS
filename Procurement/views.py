@@ -34,7 +34,6 @@ class PurchaseRequisition(UserObjectMixins,View):
     def get(self,request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
             empNo = request.session['Employee_No_']
 
             response = self.one_filter("/QyPurchaseRequisitionHeaders","Employee_No_","eq",empNo)
@@ -54,7 +53,7 @@ class PurchaseRequisition(UserObjectMixins,View):
 
         ctx = {
             "today": self.todays_date, "res": openPurchase,
-            "response": Approved,"pending": Pending, "year": year,
+            "response": Approved,"pending": Pending,
             "full": userID
             }
     
@@ -330,7 +329,6 @@ class RepairRequest(UserObjectMixins,View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
 
             response = self.one_filter("/QyRepairRequisitionHeaders","Requested_By","eq",userID)
             openRepair = [x for x in response[1] if x['Status'] == 'Open']
@@ -346,7 +344,7 @@ class RepairRequest(UserObjectMixins,View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": openRepair, "response": Approved,
-            "year": year, "full": userID,"pending": Pending}
+            "full": userID,"pending": Pending}
         
         return render(request, 'repairReq.html', ctx)
     def post(self, request):
@@ -381,7 +379,6 @@ class RepairRequestDetails(UserObjectMixin,View):
         try:
             empNo = request.session['Employee_No_']
             userID = request.session['User_ID']
-            year = request.session['years']
 
             Access_Point = config.O_DATA.format(f"/QyRepairRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
@@ -416,8 +413,7 @@ class RepairRequestDetails(UserObjectMixin,View):
             messages.info(request, "Session Expired. Please Login")
             return redirect('auth')
         ctx = {"res": res,"line": openLines,"Approvers": Approvers,
-            "asset": my_asset, "full": userID,
-            "year": year,"file":allFiles,"Comments":Comments}
+            "file":allFiles,"Comments":Comments}
         return render(request, 'repairDetail.html', ctx)
     def post(self, request,pk):
         if request.method == 'POST':
@@ -571,7 +567,6 @@ class StoreRequest(UserObjectMixin,View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
 
             Access_Point = config.O_DATA.format(f"/QyStoreRequisitionHeaders?$filter=Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
@@ -594,7 +589,7 @@ class StoreRequest(UserObjectMixin,View):
         ctx = {"today": self.todays_date, "res": openStore,
             "count": counts, "response": Approved,
             "counter": counter,"pend": pend, "pending": Pending,
-            "full": userID, "year": year}
+            "full": userID}
         return render(request, 'storeReq.html', ctx)
     def post(self, request):
         if request.method == 'POST':
@@ -628,8 +623,7 @@ class StoreRequestDetails(UserObjectMixin, View):
     def get(self, request,pk):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
-
+            
             Access_Point = config.O_DATA.format(f"/QyStoreRequisitionHeaders?$filter=No_%20eq%20%27{pk}%27%20and%20Requested_By%20eq%20%27{userID}%27")
             response = self.get_object(Access_Point)
             for document in response['value']:
@@ -668,7 +662,7 @@ class StoreRequestDetails(UserObjectMixin, View):
             return redirect('auth')
 
         ctx = {"today": self.todays_date, "res": res,"line": openLines,
-            "Approvers": Approvers, "loc": Location,"year": year, "full": userID,
+            "Approvers": Approvers, "loc": Location,"full": userID,
             "itemsCategory": itemsCategory,"file":allFiles,
             "Comments":Comments}
         return render(request, 'storeDetail.html', ctx)
@@ -864,7 +858,6 @@ class GeneralRequisition(UserObjectMixins,View):
     def get(self, request):
         try:
             userID = request.session['User_ID']
-            year = request.session['years']
 
             response = self.one_filter("/QyGeneralRequisitionHeaders","Requested_By","eq",userID)
             openRequest = [x for x in response[1] if x['Status'] == 'Open']
@@ -889,7 +882,7 @@ class GeneralRequisition(UserObjectMixins,View):
             "today": self.todays_date, "res": openRequest,
             "count": counts, "response": Approved,
             "counter": counter, "pend": pend,
-            "pending": Pending, "year": year,
+            "pending": Pending,
             "full": userID
             }
         return render(request,"generalReq.html",ctx)
