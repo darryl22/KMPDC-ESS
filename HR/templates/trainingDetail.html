@@ -343,29 +343,33 @@
                                             <th>Location</th>
                                             <th>Venue</th>
                                             <th>Provider</th>
+                                            {% if res.Status == "Open" %}
                                             <th>Action</th>
+                                            {% endif %}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for res in line %}
+                                        {% for line in line %}
                                         <tr>
-                                            <td>{{res.Training_Name}}</td>
-                                            <td>{{res.Training_area}}</td>
-                                            <td>{{res.Training_Objectives}}</td>
-                                            <td>{{res.Location}}</td>
-                                            <td>{{res.Venue}}</td>
-                                            <td>{{res.Provider}}</td>
+                                            <td>{{line.Training_Name}}</td>
+                                            <td>{{line.Training_area}}</td>
+                                            <td>{{line.Training_Objectives}}</td>
+                                            <td>{{line.Location}}</td>
+                                            <td>{{line.Venue}}</td>
+                                            <td>{{line.Provider}}</td>
+                                            {% if res.Status == "Open" %}
                                             <td>
-                                                <form action="{% url 'FnAdhocLineDelete' res.Source_Document_No %}"
+                                                <form action="{% url 'FnAdhocLineDelete' line.Source_Document_No %}"
                                                     method="post" style="display: inline-block;">
                                                     {% csrf_token %}
-                                                    <input type="hidden" name="needNo" value="{{res.No}}">
+                                                    <input type="hidden" name="needNo" value="{{line.No}}">
                                                     <button type="submit" class="btn btn-danger" data-toggle="tooltip"
                                                         data-placement="top" title="Delete"><i
                                                             class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </form>
                                             </td>
+                                            {% endif %}
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -600,15 +604,15 @@
                                 <input type="text" class="form-control" name="venue" id="venue" disabled>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row my-3">
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label for="" class="form-label">Start Date:</label>
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="date" class="form-control" id="datepicker-range-start"
-                                            name="startDate" required>
+                                        <input type="date" class="form-control" name="startDate" id="adhoc_start_date"
+                                            required>
                                     </div>
                                 </div>
                             </div>
@@ -618,7 +622,7 @@
                                         <label for="" class="form-label">End Date:</label>
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="date" class="form-control" id="datepicker-range-end" name="endDate"
+                                        <input type="date" class="form-control" name="endDate" id="adhoc_end_date"
                                             required>
                                     </div>
                                 </div>
@@ -684,6 +688,20 @@
 </section>
 <script>
     $(document).ready(function () {
+        // Get the start date input element
+        const startDateInput = document.getElementById('adhoc_start_date');
+
+        // Set the min attribute to today's date
+        startDateInput.min = new Date().toISOString().split('T')[0];
+
+        // Add an event listener to the start date input to update the end date input
+        startDateInput.addEventListener('input', () => {
+            const startDate = new Date(startDateInput.value);
+            const endDateInput = document.getElementById('adhoc_end_date');
+
+            // Set the min attribute of the end date input to the start date
+            endDateInput.min = startDate.toISOString().split('T')[0];
+        });
         $("#request_date")
             .empty().append(moment(
                     '{{res.Request_Date}}', "YYYY-MM-DD")

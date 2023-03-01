@@ -230,83 +230,81 @@ IMPREST REQUISITION DETAILS
                         </div>
                         <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
                             data-bs-parent="#accordion">
-                            <div class="row m-2">
-                                <div class="col-md-12">
-                                    <table id="example"
-                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr id="tops">
-                                                <th id="long">Destination</th>
-                                                <th>Travel Date</th>
-                                                <th>Return Date</th>
-                                                <th>No of Days</th>
-                                                <th>Daily Rate</th>
-                                                <th>Quantity</th>
-                                                <th>Amount</th>
-                                                {% if res.Status == "Open" %}
-                                                <th>Action</th>
-                                                {% endif %}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for line in line %}
-                                            <tr>
-                                                <td>{{line.Destination}}</td>
-                                                <td id="travel_date{{line.Line_No}}">{{line.Date_of_Project}}</td>
-                                                <td id="return_date{{line.Line_No}}">{{line.Date_of_Completion}}</td>
-                                                <td>{{line.No_of_Days}}</td>
-                                                <td id="daily_rate{{line.Line_No}}">{{line.Daily_Rate}}</td>
-                                                <td>{{line.Quantity}}</td>
-                                                <td id="amount_rate{{line.Line_No}}">{{line.Amount}}</td>
-                                                <script>
-                                                    $(document).ready(function () {
-                                                        $("#travel_date{{line.Line_No}}")
-                                                            .empty().append(moment(
-                                                                    '{{line.Date_of_Project}}', "YYYY-MM-DD")
-                                                                .format(
-                                                                    'Do MMM YYYY'));
-                                                        $("#return_date{{line.Line_No}}")
-                                                            .empty().append(moment(
-                                                                    '{{line.Date_of_Completion}}', "YYYY-MM-DD")
-                                                                .format(
-                                                                    'Do MMM YYYY'));
+                            <div class="card-body">
+                                <table id="example"
+                                    class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr id="tops">
+                                            <th id="long">Destination</th>
+                                            <th>Travel Date</th>
+                                            <th>Return Date</th>
+                                            <th>No of Days</th>
+                                            <th>Daily Rate</th>
+                                            <th>Quantity</th>
+                                            <th>Amount</th>
+                                            {% if res.Status == "Open" %}
+                                            <th>Action</th>
+                                            {% endif %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for line in line %}
+                                        <tr>
+                                            <td>{{line.Destination}}</td>
+                                            <td id="travel_date{{line.Line_No}}">{{line.Date_of_Project}}</td>
+                                            <td id="return_date{{line.Line_No}}">{{line.Date_of_Completion}}</td>
+                                            <td>{{line.No_of_Days}}</td>
+                                            <td id="daily_rate{{line.Line_No}}">{{line.Daily_Rate}}</td>
+                                            <td>{{line.Quantity}}</td>
+                                            <td id="amount_rate{{line.Line_No}}">{{line.Amount}}</td>
+                                            <script>
+                                                $(document).ready(function () {
+                                                    $("#travel_date{{line.Line_No}}")
+                                                        .empty().append(moment(
+                                                                '{{line.Date_of_Project}}', "YYYY-MM-DD")
+                                                            .format(
+                                                                'Do MMM YYYY'));
+                                                    $("#return_date{{line.Line_No}}")
+                                                        .empty().append(moment(
+                                                                '{{line.Date_of_Completion}}', "YYYY-MM-DD")
+                                                            .format(
+                                                                'Do MMM YYYY'));
 
-                                                        $("#daily_rate{{line.Line_No}}")
-                                                            .empty()
-                                                            .append(currency(
-                                                                '{{line.Daily_Rate}}', {
-                                                                    separator: ','
-                                                                }).format());
-                                                        $("#amount_rate{{line.Line_No}}")
-                                                            .empty()
-                                                            .append(currency(
-                                                                '{{line.Amount}}', {
-                                                                    separator: ','
-                                                                }).format());
+                                                    $("#daily_rate{{line.Line_No}}")
+                                                        .empty()
+                                                        .append(currency(
+                                                            '{{line.Daily_Rate}}', {
+                                                                separator: ','
+                                                            }).format());
+                                                    $("#amount_rate{{line.Line_No}}")
+                                                        .empty()
+                                                        .append(currency(
+                                                            '{{line.Amount}}', {
+                                                                separator: ','
+                                                            }).format());
 
-                                                    })
-                                                </script>
-                                                {% if res.Status == "Open" %}
-                                                <td>
+                                                })
+                                            </script>
+                                            {% if res.Status == "Open" %}
+                                            <td>
 
-                                                    <form action="{% url 'FnDeleteImprestLine' line.AuxiliaryIndex1 %}"
-                                                        method="post" style="display: inline-block;">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="lineNo" value="{{line.Line_No}}">
-                                                        <button type="submit" class="btn btn-danger"
-                                                            data-toggle="tooltip" data-placement="top" title="Delete"><i
-                                                                class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
-                                                </td>
-                                                {% endif %}
-                                            </tr>
+                                                <form action="{% url 'FnDeleteImprestLine' line.AuxiliaryIndex1 %}"
+                                                    method="post" style="display: inline-block;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="lineNo" value="{{line.Line_No}}">
+                                                    <button type="submit" class="btn btn-danger" data-toggle="tooltip"
+                                                        data-placement="top" title="Delete"><i
+                                                            class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            {% endif %}
+                                        </tr>
 
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -635,6 +633,13 @@ IMPREST REQUISITION DETAILS
             $('.tableAmountRow').hide(1000)
         }
     }
+    // date validations 
+    var today = new Date().toISOString().substr(0, 10);
+    document.querySelector("input[name='travel']").setAttribute('min', today);
+    document.querySelector("input[name='travel']").addEventListener('change', function () {
+        document.querySelector("input[name='returnDate']").setAttribute('min', this.value);
+    });
+    // end validations 
     $(document).ready(function () {
         $("#imprest_amount_card")
             .empty()

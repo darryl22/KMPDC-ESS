@@ -610,14 +610,12 @@ class PNineRequest(UserObjectMixins,View):
     def post(self,request):
          if request.method == 'POST':
                 try:
-                    nameChars = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                            for i in range(5))
                     employeeNo = request.session['Employee_No_']
                     startDate = request.POST.get('startDate')[0:4]
-
-                    filenameFromApp = "P9_For_" + str(nameChars) + str(year) + ".pdf"
                     year = int(startDate)
-                
+
+                    filenameFromApp = "P9_For_" + str(year) + ".pdf"
+                                    
                     response = self.zeep_client(request).service.FnGeneratePNine(
                         employeeNo, filenameFromApp, year)
                     try:
