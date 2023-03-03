@@ -1,0 +1,118 @@
+{% extends 'offcanvas.html' %}
+{% block title %}
+P9
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block main %}
+<script src="../../static/css/boot/js/vendor.bundle.base.js"></script>
+<section class="dash2">
+    <div class="content-wrapper general-bg">
+        <!--alert -->
+        {% include 'alerts.html' %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card data-card">
+                    <h1 class="heading display-5 pb-3"><img src="../../static/img/logo/fav.png" width="70px"
+                            class="img-fluid"> Payroll Documents
+                    </h1>
+                    <!-- HTML -->
+                    <form class="d-flex" action="{% url 'PayrollDocuments' %}" method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row w-100 gx-2">
+                            <div class="col-md-12">
+                                <select class="form-select" id="document_type" name="document_type" required>
+                                    <option selected disabled value="0">--Select Document--</option>
+                                    <option value="1">Payslip</option>
+                                    <option value="2">P9</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12 mt-2" id="payRollDateDiv" style="display: none;">
+                                <select class="form-select" name="startDate" id="payRollDate" disabled>
+                                    <option selected disabled value="0">--Select Payslip Period--</option>
+                                    {% for res in payroll_periods %}
+                                    <option value="{{res.Starting_Date}}">{{res.Starting_Date}} - {{res.Name}}</option>
+                                    {% empty %}
+                                    <option disabled value="0">No Closed Payment Period</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-12 mt-2" id="p9DateDiv" style="display: none;">
+                                <select class="form-select" name="startDate" id="p9Date" disabled>
+                                    <option selected disabled value="0">--Select P9 Period--</option>
+                                    {% for res in p9_years %}
+                                    <option value="{{res.year}}">{{res.year}}</option>
+                                    {% empty %}
+                                    <option disabled value="0">No Closed Payment Period</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" class="w-100 btn btn-warning mt-4" id="submit-button" disabled>
+                                    --Select
+                                    Payroll
+                                    Document-- </button>
+                            </div>
+                        </div>
+                    </form>
+                    <script>
+                        $(document).ready(function () {
+                            $('#document-select').on('change', function () {
+                                if (this.value == '1') {
+                                    $('#payRollDateDiv').show();
+                                    $('#p9DateDiv').hide();
+                                    $('#submit-button').prop('disabled', false);
+                                } else if (this.value == '2') {
+                                    $('#payRollDateDiv').hide();
+                                    $('#p9DateDiv').show();
+                                    $('#submit-button').prop('disabled', false);
+                                } else {
+                                    $('#payRollDateDiv').hide();
+                                    $('#p9DateDiv').hide();
+                                    $('#submit-button').prop('disabled', true);
+                                }
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<script>
+    $(document).ready(function () {
+        $('#document_type').on('change', function () {
+            if (this.value == '1') {
+                $('#payRollDateDiv').show();
+                $('#p9DateDiv').hide();
+                $('#submit-button').prop('disabled', true);
+                $('#payRollDate').prop('disabled', false);
+                $('#submit-button').text('--Select Payslip Period--');
+            } else if (this.value == '2') {
+                $('#payRollDateDiv').hide();
+                $('#p9DateDiv').show();
+                $('#submit-button').prop('disabled', true);
+                $('#p9Date').prop('disabled', false);
+                $('#submit-button').text('--Select P9 Period--');
+            } else {
+                $('#payRollDateDiv').hide();
+                $('#p9DateDiv').hide();
+                $('#p9Date').prop('disabled', true);
+                $('#payRollDate').prop('disabled', true);
+                $('#submit-button').prop('disabled', false);
+                $('#submit-button').text('Submit');
+            }
+        });
+
+        $('#payRollDate, #p9Date').on('change', function () {
+            $('#submit-button').prop('disabled', false);
+            $('#submit-button').text('Submit');
+            $('#submit-button').removeClass('btn-warning').addClass('button-88');
+            $('#submit-button').html('Submit <i class="las la-arrow-right submit-icon"></i>');
+        });
+    });
+</script>
+{% endblock %}

@@ -577,3 +577,39 @@
   color: #fff !important;
   font-family: var(--lato-family);
 }
+
+.button-88 {
+  padding: 14px 20px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+  border-radius: 5px;
+  border: 0px;
+  font-family: var(--lato-family);
+  box-shadow: 0px 0px 14px -7px #444342;
+  background-image: linear-gradient(
+    45deg,
+    #25cc88 0%,
+    #0f0f0f 51%,
+    #161616 100%
+  );
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+button:hover .submit-icon {
+  transform: translateX(10px);
+}
+
+.button-88:hover {
+  background-position: right center;
+  color: #fff;
+  text-decoration: none;
+}
+
+.button-88:active {
+  transform: scale(0.95);
+}

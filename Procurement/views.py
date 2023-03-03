@@ -88,9 +88,11 @@ class PurchaseRequisition(UserObjectMixins,View):
 class PurchaseRequestDetails(UserObjectMixins,View):
     def get(self, request,pk):
         try:
-            Dpt = request.session['Department']
+            Dpt = request.session['User_Responsibility_Center']
             empNo = request.session['Employee_No_']
             myUserId = request.session['User_ID']
+            
+            print(Dpt)
 
             response = self.double_filtered_data("/QyPurchaseRequisitionHeaders","No_","eq",pk,"and",
                                                     "Employee_No_","eq",empNo)

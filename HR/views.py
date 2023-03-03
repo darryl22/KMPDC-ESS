@@ -1,4 +1,7 @@
+import asyncio
 import base64
+import logging
+import aiohttp
 from django.shortcuts import render, redirect
 from datetime import datetime
 import requests
@@ -12,6 +15,8 @@ import secrets
 import string
 from django.views import View
 from myRequest.views import UserObjectMixins
+from asgiref.sync import sync_to_async
+import datetime as p9Years
 # Create your views here.
 
 class Leave_Planner(UserObjectMixins,View):
@@ -819,4 +824,63 @@ def DisciplinaryResponse(request, pk):
         messages.error(request, e)
         print(e)
     return redirect('DisciplineDetail', pk=pk)
+class PayrollDocuments(UserObjectMixins, View):
+    async def get(self, request):
+        try:
+            full_name = await sync_to_async(request.session.__getitem__)('full_name')
+            
+            async with aiohttp.ClientSession() as session:
+                task_get_closed_payroll_period = asyncio.ensure_future(self.simple_fetch_data(session,
+                            '/QyPayrollPeriods?$filter=Closed%20eq%20true%20and%20Status%20eq%20%27Approved%27')) 
+                response = await asyncio.gather(task_get_closed_payroll_period)          
+                payroll_periods = response[0]
+                years = list(set(p9Years.datetime.strptime(period['Starting_Date'], '%Y-%m-%d').year 
+                                 for period in payroll_periods))
+                p9_years = [{'year': int(year)} for year in years]
+                
+                print(p9_years)
+                
+                ctx = {
+                    "today": self.todays_date,
+                    "full": full_name,
+                    "payroll_periods": payroll_periods,
+                    "p9_years": p9_years
+                }
+        except KeyError as e:
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+        except Exception as e:
+            messages.error(request, 'Failed, non-200 error')
+            logging.exception(e)
+            return redirect('dashboard')
+        return render(request, "payroll_docs.html", ctx)
+    
+    async def post(self,request):
+        try:
+            soap_headers = await sync_to_async(request.session.__getitem__)('soap_headers')
+            employeeNo = await sync_to_async(request.session.__getitem__)('Employee_No_')
+            startDate = request.POST.get('startDate')
+            document_type =int(request.POST.get('document_type'))
 
+            if document_type == 1:
+                paymentPeriod = datetime.strptime(startDate, '%Y-%m-%d').date()
+                filenameFromApp = f"P9_For_{paymentPeriod}.pdf"
+                response = self.make_soap_request(soap_headers,'FnGeneratePayslip',
+                    employeeNo, filenameFromApp, paymentPeriod)
+            elif document_type == 2:
+                year = int(startDate[0:4])
+                filenameFromApp = f"P9_For_{year}.pdf"
+                response = self.make_soap_request(soap_headers,'FnGeneratePNine',
+                    employeeNo, filenameFromApp,year)
+            content = base64.b64decode(response)
+            response = HttpResponse(content, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment;filename={filenameFromApp}'
+            return response
+        except KeyError as e:
+            logging.exception(e)
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+        except Exception as e:
+            messages.error(request, 'Failed, non-200 error')
+            logging.exception(e)
+            return redirect('PayrollDocuments')

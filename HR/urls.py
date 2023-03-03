@@ -16,8 +16,7 @@ urlpatterns = [
     path('FnGenerateLeave/<str:pk>', views.FnGenerateLeaveReport.as_view(),
          name='FnGenerateLeaveReport'),
     path("DeleteLeaveAttachment/<str:pk>",views.DeleteLeaveAttachment.as_view(),name ="DeleteLeaveAttachment"),
-
-
+     path('PayrollDocuments', views.PayrollDocuments.as_view(), name='PayrollDocuments'),
     path('training', views.Training_Request.as_view(), name='training_request'),
     path('training/detail/<str:pk>', views.TrainingDetail.as_view(), name='TrainingDetail'),
     path('TrainApprove/<str:pk>', views.TrainingApproval.as_view(), name='TrainApprove'),

@@ -153,15 +153,6 @@
                                 </li>
                                 <li class="nav-item"> <a class="nav-link" href="{% url 'training_request' %}"><i
                                             class="las la-arrow-right mr-2"></i>Training Requests</a></li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'pNine' %}"><i
-                                            class="las la-arrow-right mr-2"></i>P9
-                                        Form</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'payslip' %}"><i
-                                            class="las la-arrow-right mr-2"></i>Payslip</a>
-                                </li>
                             </ul>
                         </div>
                     </li>
@@ -206,6 +197,12 @@
                                             class="las la-arrow-right mr-2"></i>General Requisition</a></li>
                             </ul>
                         </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'PayrollDocuments' %}">
+                            <span class="icon-bg"><i class="las la-file-alt"></i></span>
+                            <span class="menu-title">Payroll Reports </span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'approve' %}">

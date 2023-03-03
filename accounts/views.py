@@ -28,6 +28,12 @@ class Login(UserObjectMixins,View):
                         await sync_to_async(request.session.__setitem__)('User_Responsibility_Center', data['User_Responsibility_Center'])
                         await sync_to_async(request.session.__setitem__)('HOD_User', data['HOD_User'])
                         await sync_to_async(request.session.__setitem__)('password', password)
+                        soap_headers = {
+                            "username":data['User_ID'],
+                            "password":password
+                        }
+                        await sync_to_async(request.session.__setitem__)('soap_headers', soap_headers)
+                        
                         await sync_to_async(request.session.save)()
                         
                         Employee_No_ = await sync_to_async(request.session.__getitem__)('Employee_No_')
