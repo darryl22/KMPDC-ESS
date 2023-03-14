@@ -615,32 +615,37 @@ class ClaimDetails(UserObjectMixins, View):
                 expenditureDescription = request.POST.get('expenditureDescription')
                 attach = request.FILES.getlist('attachment')
                 myAction = request.POST.get('myAction')
-                tableID = 52177431
                 claimReceiptNo = ""
                 dimension3 = ''
 
                 response = self.zeep_client(request).service.FnStaffClaimLine(
                     lineNo, claimNo, claimType, accountNo, amount, claimReceiptNo, dimension3, expenditureDate, expenditureDescription, myAction)
 
-                if response != 0:
-                    for files in attach:
-                        fileName = request.FILES['attachment'].name
-                        attachment = base64.b64encode(files.read())
-                        try:
-                            responses = self.zeep_client(request).service.FnUploadAttachedDocument(
-                                pk +'#'+str(response), fileName, attachment, tableID,request.session['User_ID'])
-                            if responses == True:
-                                messages.success(request, "Request Successful")
-                                return redirect('ClaimDetail', pk=pk)
-                            messages.error(request, "Failed, Try Again")
-                            return redirect('ClaimDetail', pk=pk)
-                        except Exception as e:
-                            messages.error(request, e)
-                            print(e)
+                if response != 0 and response !=None and response !='':
+                    messages.success(request, "Request Successful")
+                    return redirect('ClaimDetail', pk=pk)
             except Exception as e:
                 messages.error(request, e)
                 print(e)
         return redirect('ClaimDetail', pk=pk)
+class ClaimAttachment(UserObjectMixins, View):
+    def post(self,request,pk):
+        try:
+            attach = request.FILES.getlist('attachment')
+            tableID = 52177430
+            for files in attach:
+                fileName = request.FILES['attachment'].name
+                attachment = base64.b64encode(files.read())
+                response = self.zeep_client(request).service.FnUploadAttachedDocument(
+                        pk, fileName, attachment, tableID,request.session['User_ID'])
+            if response == True:
+                messages.success(request, "File(s) Upload Successful")
+                return redirect('ClaimDetail', pk=pk)
+            messages.error(request, "Failed, Try Again")
+            return redirect('ClaimDetail', pk=pk)
+        except Exception as e:
+            messages.error(request, e)
+            return redirect('ClaimDetail', pk=pk)
 
 class ClaimApproval(UserObjectMixins, View):
     def post(self, request,pk):
