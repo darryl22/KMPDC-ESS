@@ -390,6 +390,7 @@ class Training_Request(UserObjectMixins,View):
     def post(self,request):
         if request.method == 'POST':
             try:
+                soap_headers = request.session['soap_headers']
                 employeeNo = request.session['Employee_No_']
                 usersId = request.session['User_ID']
                 requestNo = request.POST.get('requestNo')
@@ -400,8 +401,9 @@ class Training_Request(UserObjectMixins,View):
                 if not trainingNeed:
                     trainingNeed = ''
 
-                response = self.zeep_client(request).service.FnTrainingRequest(
-                    requestNo, employeeNo, usersId, isAdhoc, trainingNeed, myAction)
+                response = self.make_soap_request(soap_headers,
+                                    'FnTrainingRequest',requestNo, employeeNo, usersId,
+                                        isAdhoc, trainingNeed, myAction)
                 if response != False:
                     messages.success(request, "Success")
                     return redirect('TrainingDetail', pk=response)
