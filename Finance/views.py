@@ -10,6 +10,11 @@ from django.contrib import messages
 import enum
 import secrets
 import string
+import logging
+import asyncio
+import aiohttp
+from asgiref.sync import sync_to_async
+from django.core.cache import cache
 from django.http import HttpResponse
 import io as BytesIO
 from django.views import View
@@ -742,3 +747,126 @@ class FnGenerateStaffClaimReport(UserObjectMixins, View):
                 messages.error(request, e)
                 print(e)
         return redirect('ClaimDetail', pk=pk)
+    
+class PettyCash(UserObjectMixins, View):
+    async def get(self, request):
+        try:
+            UserID = await sync_to_async(request.session.__getitem__)('User_ID')
+            fullname = await sync_to_async(request.session.__getitem__)("full_name")
+            ctx = {}
+            async with aiohttp.ClientSession() as session:
+                task_get_advances = asyncio.ensure_future(self.simple_one_filtered_data(session, "/QyPettyCashHeaders", "Created_By", "eq", UserID))
+                response = await asyncio.gather(task_get_advances)
+                new_cash_headers = [x for x in response[0] if x['Status'] == "Open"]
+                pending_cash_header = [x for x in response[0] if x['Status'] == "Pending Approval"]
+                released_cash_header = [x for x in response[0] if x['Status'] == "Released"]
+                ctx = {
+                    "cash_headers": new_cash_headers,
+                    "full": fullname,
+                    "pending_cash_header": pending_cash_header,
+                    "released_cash_header": released_cash_header,
+                }
+
+        except Exception as e:
+            logging.exception(e)
+            return redirect("pettyCash")
+        return render(request, 'pettyCash.html', ctx)
+    
+    async def post(self, request):
+
+        try:
+            soap_headers = await sync_to_async(request.session.__getitem__)("soap_headers")
+            UserID = await sync_to_async(request.session.__getitem__)('User_ID')
+            docNo = request.POST.get("docNo")
+            payee = request.POST.get("Payee")
+            paymentNarration = request.POST.get("PaymentNarration")
+            myAction = request.POST.get("myAction")
+
+            response = self.make_soap_request(soap_headers, "FnPettyCashHeader",
+                docNo,
+                payee,
+                paymentNarration,
+                UserID,
+                myAction
+            )
+
+            print(response)
+            return redirect("pettyCash")
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request, f"{e}")
+            return redirect("pettyCash")
+
+class PettyCashDetails(UserObjectMixins, View):
+    def get(self, request, pk):
+        try:
+            userID = request.session['User_ID']
+            full_name =request.session['full_name']
+            res = {}
+            full_name =request.session['full_name']
+
+            response = self.double_filtered_data("/QyPettyCashHeaders","No_","eq",pk, "and","Created_By","eq",userID)
+            for imprest in response[1]:
+                res = imprest
+        except Exception as e:
+            logging.exception(e)
+            messages.error(request, f'Failed, {e}')
+            return redirect('pettyCash')
+        ctx = {
+            "res": res,
+            "full": full_name
+        }
+        return render(request, 'pettyCashDetails.html', ctx)
+    
+    def post(self, request, pk):
+        return redirect("pettyCashDetails")
+    
+class PettyCashSurrender(UserObjectMixins, View):
+    def get(self, request):
+        try:
+            userID = request.session['User_ID']
+            full_name =request.session['full_name']
+            encoded_string = cache.get('encoded_string')
+            image_format = cache.get('image_format')
+            Customer_No_ = request.session['Customer_No_']
+            
+            ctx = {}
+
+            response = self.one_filter("/QyPettyCashSurrenderHeaders","Created_By","eq","RWAFUKHO")
+            openSurrender = [x for x in response[1] if x['Status'] == 'Open']
+            Pending = [x for x in response[1] if x['Status'] == 'Pending Approval']
+            Approved = [x for x in response[1] if x['Status'] == 'Released']
+
+            Released = self.double_filtered_data("/QyPettyCashHeaders","Created_By","eq",userID,
+                            "and","Status","eq","Released")
+            APPImp=[x for x in Released[1] if x['Surrendered'] ==False and x['Posted'] == True 
+                    and x['Account_No_']==Customer_No_]
+
+        except requests.exceptions.RequestException as e:
+            logging.exception(e)
+            messages.info(request, "Whoops! Something went wrong. Please Retry")
+            return redirect('dashboard')
+        except KeyError as e:
+            logging.exception(e)
+            messages.info(request, "Session Expired. Please Login")
+            return redirect('auth')
+
+        ctx = {
+            "res": openSurrender,
+            "full": full_name,"response": Approved,
+            "app": APPImp,"pending": Pending,
+            "encoded_string":encoded_string,
+            "image_format":image_format
+        }
+        
+        return render(request, 'pettyCashSurrender.html', ctx)
+    
+    def post(self, request):
+        return redirect('pettyCashSurrender')
+    
+class PettyCashSurrenderDetails(UserObjectMixins, View):
+    def get(self, request):
+        return render(request, 'pettyCashSurrenderDetails.html')
+    
+    def post(self, request):
+        return redirect("pettyCashSurrenderDetails")

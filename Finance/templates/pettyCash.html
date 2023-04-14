@@ -1,0 +1,190 @@
+{% extends 'offcanvas.html' %}
+{% block title %}
+IMPREST REQUISITION
+{% endblock %}
+{% block main %}
+<script src="../../static/css/boot/js/vendor.bundle.base.js"></script>
+<section class="dash2">
+    <div class="content-wrapper general-bg" style="padding-bottom: 5rem;">
+        <!--alert -->
+        {% include 'alerts.html' %}
+        <div class="row my-2">
+            <div class="col-md-12">
+                <div class="card data-card">
+                    <h1 class="heading display-5 pb-3"><img src="../../static/img/logo/2.png" width="70px"
+                            class="img-fluid"> Petty Cash
+                        <span>
+                            <button type="submit" class="button-87" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdrop" style="float: right;"> <i
+                                    class="las la-plus text-white" style="font-size:15px;"></i> Request Petty Cash
+                            </button>
+                        </span>
+                    </h1>
+                    <div class="m-4">
+                        <ul class="nav nav-tabs table-tabs d-flex" id="myTab">
+                            <li class="nav-item flex-fill">
+                                <a href="#home" class="nav-link" data-bs-toggle="tab">Open
+                                    <span class="ml-1 badge rounded-pill olive_icon">
+                                        {{cash_headers|length}}
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a href="#pending" class="nav-link" data-bs-toggle="tab">Pending Approval
+                                    <span class="ml-1 badge rounded-pill olive_icon">
+                                        {{pending_cash_header|length}}
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item flex-fill">
+                                <a href="#profile" class="nav-link active" data-bs-toggle="tab">Approved
+                                    <span class="ml-1 badge rounded-pill olive_icon">
+                                        {{released_cash_header|length}}
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade" id="home">
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th>Petty Cash No.</th>
+                                                <th>Date</th>
+                                                <th>Payee</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for new_cash in cash_headers %}
+                                            <tr>
+                                                <td>{{new_cash.No_}}</td>
+                                                <td>{{new_cash.Date}}</td>
+                                                <td>{{new_cash.Payee}}</td>
+                                                <td>{{new_cash.Status}}</td>
+                                                <td>
+                                                    <a href="/pettyCashDetails/{{new_cash.No_}}/"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="pending">
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th>Petty Cash No.</th>
+                                                <th>Date</th>
+                                                <th>Payee</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for pending_cash in pending_cash_header %}
+                                            <tr>
+                                                <td>{{pending_cash.No_}}</td>
+                                                <td>{{pending_cash.Date}}</td>
+                                                <td>{{pending_cash.Payee}}</td>
+                                                <td>{{pending_cash.Status}}</td>
+                                                <td>
+                                                    <a href="/pettyCashDetails/{{pending_cash.No_}}/"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade show active" id="profile">
+                                <div class="card-body">
+                                    <table id="example"
+                                        class="display table table-striped table-bordered dt-responsive table-responsive-lg"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr id="tops">
+                                                <th>Petty Cash No.</th>
+                                                <th>Date</th>
+                                                <th>Payee</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for relesed_cash in released_cash_header %}
+                                            <tr>
+                                                <td>{{relesed_cash.No_}}</td>
+                                                <td>{{relesed_cash.Date}}</td>
+                                                <td>{{relesed_cash.Payee}}</td>
+                                                <td>{{relesed_cash.Status}}</td>
+                                                <td>
+                                                    <a href="/pettyCashDetails/{{relesed_cash.No_}}/"
+                                                        class="btn btn-success btn-icon-text" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Click to View"> View <i class="far fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Add Petty Cash
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="myForm" action="{% url 'pettyCash' %}" method="post" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="docNo" value="">
+                        <input type="hidden" name="myAction" value="insert">
+
+                        <label for="Payee" class="form-label">Payee</label>
+                        <input type="text" name="Payee" class="form-control">
+
+                        <label for="PaymentNarration" class="form-label">payment narration</label>
+                        <input type="text" name="PaymentNarration" class="form-control">
+
+                        <button type="submit" id="sasa" class="button-88 my-3 w-100">Submit <i
+                                class="las la-arrow-right submit-icon"></i></button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+{% endblock %}
