@@ -234,6 +234,7 @@ class Leave_Request(UserObjectMixins,View):
                     return redirect('LeaveDetail', pk=response)
                 messages.error(request, response)
                 return redirect('leave')
+
             except Exception as e:
                 messages.error(request, e)
                 print(e)
