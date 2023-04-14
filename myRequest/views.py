@@ -14,6 +14,7 @@ from concurrent.futures import as_completed
 
 
 
+
 session = None
 # Create your views here.
 class UserObjectMixins(object):
@@ -22,6 +23,7 @@ class UserObjectMixins(object):
     session.auth = config.AUTHS
     todays_date = dt.datetime.now().strftime("%b. %d, %Y %A")
     O_DATA_AUTH = aiohttp.BasicAuth(config.WEB_SERVICE_UID, config.WEB_SERVICE_PWD)  
+    
     
     async def fetch_data(self,session,username,password,endpoint,property,filter):
         auth =aiohttp.BasicAuth(login=username,password=password)

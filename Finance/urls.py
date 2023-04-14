@@ -33,6 +33,7 @@ urlpatterns = [
 
     path('StaffClaim', views.StaffClaim.as_view(), name='claim'),
     path('Claim/<str:pk>', views.ClaimDetails.as_view(), name='ClaimDetail'),
+    path('ClaimAttachment/<str:pk>', views.ClaimAttachment.as_view(), name='ClaimAttachment'),
     path('ClaimApprove/<str:pk>', views.ClaimApproval.as_view(), name='ClaimApprove'),
     path('ClaimCancel/<str:pk>', views.FnCancelClaimApproval.as_view(), name='ClaimCancel'),
     path('FnDeleteStaffClaimLine/<str:pk>', views.FnDeleteStaffClaimLine.as_view(),
